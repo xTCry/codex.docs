@@ -30,6 +30,7 @@ export default class Writing {
       autoSaveCheckbox: null,
       lastSaveAt: null,
       removeButton: null,
+      goViewButton: null,
       parentIdSelector: null,
       putAboveIdSelector: null,
       uriInput: null
@@ -84,6 +85,13 @@ export default class Writing {
         }
         window.onbeforeunload = null;
         this.removeButtonClicked();
+      });
+    }
+
+    this.nodes.goViewButton = moduleEl.querySelector('[name="js-go-view"]');
+    if (this.nodes.goViewButton) {
+      this.nodes.goViewButton.addEventListener('click', () => {
+        document.location = `${this.basePath}/page/` + this.page._id;
       });
     }
 
