@@ -42,7 +42,20 @@
 
 .writing-buttons {
   display: flex;
+  justify-content: center;
   align-items: center;
+
+  z-index: 900;
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%, 0);
+  padding: 0.75rem 1.5rem;
+  background-color: var(--color-bg-light);
+  max-height: 40px;
+
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
 
   button:not(:last-child) {
     margin-right: 20px;
