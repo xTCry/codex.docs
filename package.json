@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.181.0",
-    "@codex-team/config-loader": "0.1.0-rc1",
+    "@codex-team/config-loader": "1.0.0",
     "@codexteam/shortcuts": "^1.2.0",
     "@hawk.so/javascript": "^3.0.1",
     "@hawk.so/nodejs": "^3.1.4",
