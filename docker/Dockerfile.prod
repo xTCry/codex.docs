@@ -16,7 +16,7 @@ RUN yarn install
 
 COPY . .
 
-RUN yarn build-all
+RUN yarn build:all
 
 # Stage 2 - make final image
 FROM node:16.14.0-alpine3.15
