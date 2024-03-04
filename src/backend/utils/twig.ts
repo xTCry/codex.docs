@@ -59,6 +59,20 @@ export default (function () {
   });
 
   /**
+   * Get link hostname
+   *
+   * @param {string} linkUrl - link to be processed
+   * @returns {string} hostname
+   */
+  twig.extendFunction('linkHostname', function (linkUrl: string): string {
+    try {
+      return new URL(linkUrl).hostname;
+    } catch (e) {
+      return linkUrl;
+    }
+  });
+
+  /**
    * Converts object to string
    *
    * @param {object} object - object to be converted

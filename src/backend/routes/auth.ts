@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import csrf from 'csurf';
-import appConfig from '../utils/appConfig.js';
+import appConfig, { AppConfig } from '../utils/appConfig.js';
 
 const router = express.Router();
 const csrfProtection = csrf({ cookie: true });
@@ -25,6 +25,7 @@ router.post(
   parseForm,
   csrfProtection,
   async (req: Request, res: Response) => {
+    const config = req.app.locals.config as AppConfig['frontend'];
     try {
       if (!appConfig.auth.password) {
         res.render('auth', {
@@ -55,12 +56,12 @@ router.post(
         appConfig.auth.password + appConfig.auth.secret,
       );
 
-      res.cookie('authToken', token, {
+      res.cookie(`${appConfig.frontend.appName}AuthToken`, token, {
         httpOnly: true,
         expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year
       });
 
-      res.redirect('/');
+      res.redirect(config.basePath || '/');
     } catch (err) {
       res.render('auth', {
         title: 'Login page',

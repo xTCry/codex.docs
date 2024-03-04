@@ -34,6 +34,8 @@ export default class Editor {
    * @param {string} options.headerPlaceholder - placeholder for Header tool
    */
   constructor(editorConfig = {}, options = {}) {
+    this.basePath = window.config.basePath || '';
+
     const defaultConfig = {
       tools: {
         header: {
@@ -50,8 +52,8 @@ export default class Editor {
           config: {
             types: 'image/*, video/mp4',
             endpoints: {
-              byFile: '/api/transport/image',
-              byUrl: '/api/transport/fetch',
+              byFile: `${this.basePath}/api/transport/image`,
+              byUrl: `${this.basePath}/api/transport/fetch`,
             },
           },
         },
@@ -59,7 +61,7 @@ export default class Editor {
         linkTool: {
           class: LinkTool,
           config: {
-            endpoint: '/api/fetchUrl',
+            endpoint: `${this.basePath}/api/fetchUrl`,
           },
         },
 

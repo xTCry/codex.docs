@@ -14,7 +14,7 @@ export default async function verifyToken(
   res: Response,
   next: NextFunction,
 ): Promise<void> {
-  const token = req.cookies.authToken;
+  const token = req.cookies[`${appConfig.frontend.appName}AuthToken`];
 
   try {
     if (!appConfig.auth.password) {

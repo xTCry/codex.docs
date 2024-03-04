@@ -21,7 +21,7 @@ Usage example:
     <{{ tag }}
       {{ name is not empty ? 'name="' ~ name ~ '"': '' }}
         class="{{ mainClass }} {{ mainClass }}--previous {{ class ?? '' }}"
-      href="/{{ previousPage.uri }}"
+      href="{{ config.basePath ~ '/' ~ previousPage.uri }}"
       >
       <div class="{{ mainClass }}-direction">
        previous
@@ -36,7 +36,7 @@ Usage example:
     <{{ tag }}
       {{ name is not empty ? 'name="' ~ name ~ '"': '' }}
          class="{{ mainClass }} {{ mainClass }}--next {{ class ?? '' }}"
-      href="/{{ nextPage.uri }}"
+      href="{{ config.basePath ~ '/' ~ nextPage.uri }}"
       >
       <div class="{{ mainClass }}-direction">
         next

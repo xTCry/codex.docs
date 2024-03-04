@@ -5,6 +5,7 @@ import Alias from '../models/alias.js';
 import verifyToken from './middlewares/token.js';
 import PagesFlatArray from '../models/pagesFlatArray.js';
 import HttpException from '../exceptions/httpException.js';
+import appConfig from '../utils/appConfig.js';
 
 const router = express.Router();
 
@@ -15,7 +16,7 @@ const router = express.Router();
  */
 router.get('*', verifyToken, async (req: Request, res: Response) => {
   try {
-    let url = req.originalUrl.slice(1); // Cuts first '/' character
+    let url = req.originalUrl.slice(appConfig.frontend.basePath.length + 1); // Cuts base route path
     const queryParamsIndex = url.indexOf('?');
 
     if (queryParamsIndex !== -1) {

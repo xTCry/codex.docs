@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
+import { AppConfig } from '../../utils/appConfig.js';
 
 /**
  * Middleware for checking locals.isAuthorized property, which allows to edit/create pages
@@ -12,9 +13,10 @@ export default function allowEdit(
   res: Response,
   next: NextFunction,
 ): void {
+  const config = req.app.locals.config as AppConfig['frontend'];
   if (res.locals.isAuthorized) {
     next();
   } else {
-    res.redirect('/auth');
+    res.redirect(`${config.basePath}/auth`);
   }
 }

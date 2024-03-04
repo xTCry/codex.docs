@@ -35,6 +35,7 @@ export default class Writing {
       uriInput: null
     };
     this.autoSaveInterval = null;
+    this.basePath = window.config.basePath || '';
   }
 
   /**
@@ -178,7 +179,7 @@ export default class Writing {
   async saveButtonClicked() {
     try {
       const writingData = await this.getData();
-      const endpoint = this.page ? '/api/page/' + this.page._id : '/api/page';
+      const endpoint = this.page ? `${this.basePath}/api/page/` + this.page._id : `${this.basePath}/api/page`;
 
       try {
         let response = await fetch(endpoint, {
@@ -195,7 +196,9 @@ export default class Writing {
           this.nodes.lastSaveAt.textContent = `Last save at ${new Date().toLocaleString()}`;
           if (!this.page) {
             // if first create page, reload with this result
-            window.location.pathname = response.result.uri ? response.result.uri : '/page/edit/' + response.result._id;
+            window.location.pathname = response.result.uri
+              ? `${this.basePath}/${response.result.uri}`
+              : `${this.basePath}/page/` + response.result._id;
           }
         } else {
           alert(response.error);
@@ -215,7 +218,7 @@ export default class Writing {
    */
   async removeButtonClicked() {
     try {
-      const endpoint = this.page ? '/api/page/' + this.page._id : '';
+      const endpoint = this.page ? `${this.basePath}/api/page/` + this.page._id : '';
 
       let response = await fetch(endpoint, {
         method: 'DELETE'
@@ -224,9 +227,9 @@ export default class Writing {
       response = await response.json();
       if (response.success) {
         if (response.result && response.result._id) {
-          document.location = '/page/' + response.result._id;
+          document.location = `${this.basePath}/page/` + response.result._id;
         } else {
-          document.location = '/';
+          document.location = this.basePath || '/';
         }
       } else {
         alert(response.error);

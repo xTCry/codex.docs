@@ -12,6 +12,8 @@ uploads:
     accessKeyId: "my-access-key"
     secretAccessKey: "my-secret-key"
 frontend:
+  basePath: "" # Example: /docs
+  appName: "docs"
   title: "CodeX Docs"
   description: "Free Docs app powered by Editor.js ecosystemt"
   startPage: ""

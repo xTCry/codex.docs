@@ -2,24 +2,32 @@
 <html style="height: 100%">
 <head>
   <title>{{ config.title }}</title>
-  <link rel="stylesheet" href="/dist/main.css" />
+  <link rel="stylesheet" href="{{ config.basePath ~ '/dist/main.css' }}" />
   <link rel="icon" type="{{ favicon.type }}" href="{{ favicon.destination }}">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta property="og:title" content="{{ config.title }}" />
   <meta property="og:site_name" content="{{ config.title }}" />
   <meta name="description" property="og:description" content="{{ config.description }}">
+
+  <script>
+    window.config = {
+      misprintsChatId: "{{ config.misprintsChatId }}",
+      hawkClientToken:"{{ config.hawkClientToken }}",
+      basePath: "{{ config.basePath }}",
+    };
+  </script>
 </head>
-<script>
-</script>
 <body class="greeting-body">
   {% include "../components/header.twig" %}
+
   <div class="greeting-content">
     {{ svg('frog') }}
     <p class="greeting-content__message">
       It’s time to create the first page!
     </p>
-    {% include '../components/button.twig' with {label: 'Add page', icon: 'plus', size: 'small', url: '/page/new'} %}
+    {% include '../components/button.twig' with {label: 'Add page', icon: 'plus', size: 'small', url: config.basePath ~ '/page/new'} %}
   </div>
+
   {% if config.yandexMetrikaId is not empty %}
     <script type="text/javascript" >
       (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};

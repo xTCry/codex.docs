@@ -49,7 +49,7 @@ const fileUploader = multer({
  */
 function getFileUrl(fileData: FileData): string {
   if (appConfig.uploads.driver === 'local') {
-    return '/uploads/' + fileData.filename;
+    return appConfig.frontend.basePath + '/uploads/' + fileData.filename;
   } else {
     const baseUrlWithoutTrailingSlash = appConfig.uploads.s3.baseUrl.replace(
       /\/+$/,

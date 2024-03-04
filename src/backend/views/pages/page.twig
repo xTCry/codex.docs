@@ -4,16 +4,16 @@
   <article class="page" data-module="page">
     <header class="page__header">
       <div class="page__header-nav">
-        <a href="/" class="page__header-nav-item">
+        <a href="{{ config.basePath ?: '/' }}" class="page__header-nav-item">
           Documentation
         </a>
         {{ svg('arrow-right') }}
         {% if page._parent %}
           <a class="page__header-nav-item"
             {% if pageParent.uri %}
-              href="/{{ pageParent.uri }}"
+              href="{{ config.basePath ~ '/' ~ pageParent.uri }}"
             {% else %}
-              href="/page/{{ pageParent._id }}"
+              href="{{ config.basePath ~ '/page/' ~ pageParent._id }}"
             {% endif %}>
             {{ pageParent.title }}
           </a>
@@ -23,7 +23,7 @@
         Last edit {{ (page.body.time / 1000)  | date("M d Y") }}
       </time>
       {% if isAuthorized == true %}
-        {% include 'components/button.twig' with {label: 'Edit', icon: 'pencil', size: 'small', url: '/page/edit/' ~ page._id, class: 'page__header-button'} %}
+        {% include 'components/button.twig' with {label: 'Edit', icon: 'pencil', size: 'small', url: config.basePath ~ '/page/edit/' ~ page._id, class: 'page__header-button'} %}
       {% endif %}
     </header>
     <h1 class="page__title">
@@ -46,5 +46,4 @@
     </section>
     {% include '../components/navigator.twig' with {previousPage:  previousPage, nextPage: nextPage} %}
   </article>
-
 {% endblock %}

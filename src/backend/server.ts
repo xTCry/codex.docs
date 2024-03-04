@@ -75,7 +75,7 @@ function createApp(): express.Express {
   } else {
     console.log('Favicon is empty, using default path');
     app.locals.favicon = {
-      destination: '/favicon.png',
+      destination: appConfig.frontend.basePath + '/favicon.png',
       type: 'image/png',
     } as FaviconData;
   }
@@ -84,17 +84,16 @@ function createApp(): express.Express {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
   app.use(cookieParser());
-  app.use(express.static(path.join(__dirname, '../../public')));
 
+  const baseRouter = express.Router();
+  baseRouter.use(express.static(path.join(__dirname, '../../public')));
+  baseRouter.use('/favicon', express.static(downloadedFaviconFolder));
   if (appConfig.uploads.driver === 'local') {
     const uploadsPath = path.join(cwd, appConfig.uploads.local.path);
-
-    app.use('/uploads', express.static(uploadsPath));
+    baseRouter.use('/uploads', express.static(uploadsPath));
   }
-
-  app.use('/favicon', express.static(downloadedFaviconFolder));
-
-  app.use('/', routes);
+  baseRouter.use(routes);
+  app.use(appConfig.frontend.basePath || '/', baseRouter);
 
   // global error handler
   app.use(function (
@@ -154,7 +153,7 @@ export default function runHttpServer(): void {
     drawBanner([
       `CodeX Docs server is running`,
       ``,
-      `Main page: http://localhost:${port}`,
+      `Main page: http://localhost:${port}${appConfig.frontend.basePath}`,
     ]);
   }
 
