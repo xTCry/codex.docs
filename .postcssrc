@@ -1,5 +1,5 @@
 plugins:
-    postcss-smart-import: {}
+    postcss-import: {}
     postcss-custom-properties: {}
     postcss-apply: {}
     postcss-custom-media: {}
@@ -12,4 +12,3 @@ plugins:
     postcss-color-hex-alpha: {}
     postcss-font-family-system-ui: {}
     cssnano: {}
-
