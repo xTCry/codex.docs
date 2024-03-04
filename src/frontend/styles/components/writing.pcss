@@ -21,7 +21,7 @@
       flex-flow: column;
     }
 
-    & > * {
+    &>* {
       flex: 0 1 33.3%;
     }
 
@@ -42,10 +42,21 @@
 
 .writing-buttons {
   display: flex;
+  align-items: center;
 
   button:not(:last-child) {
     margin-right: 20px;
   }
+}
+
+.writing-auto-save {
+  display: flex;
+  flex-direction: column;
+}
+
+.writing-time {
+  color: var(--color-text-second);
+  font-size: 13px;
 }
 
 .writing-editor {
@@ -62,7 +73,7 @@
     line-height: inherit;
 
     a {
-     @apply --text-inline-link;
+      @apply --text-inline-link;
     }
   }
 
@@ -80,7 +91,7 @@
   }
 
   .inline-code {
-    @apply  --text-inline-code;
+    @apply --text-inline-code;
   }
 
   .tc-table {
@@ -100,6 +111,7 @@
   }
 
   @media (--desktop) {
+
     .ce-block__content,
     .ce-toolbar__content {
       max-width: var(--layout-width-main-col);

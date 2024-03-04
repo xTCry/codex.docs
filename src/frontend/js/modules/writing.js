@@ -27,11 +27,14 @@ export default class Writing {
     this.nodes = {
       editorWrapper: null,
       saveButton: null,
+      autoSaveCheckbox: null,
+      lastSaveAt: null,
       removeButton: null,
       parentIdSelector: null,
       putAboveIdSelector: null,
       uriInput: null
     };
+    this.autoSaveInterval = null;
   }
 
   /**
@@ -52,13 +55,20 @@ export default class Writing {
       this.editor = editor;
     });
 
-    window.onbeforeunload = (e) => {
-      return '';
-    }
+    this.checkAutosave();
 
     /**
      * Activate form elements
      */
+    this.nodes.lastSaveAt = moduleEl.querySelector('#last-save-at');
+
+    this.nodes.autoSaveCheckbox = moduleEl.querySelector('[name="js-auto-save"]');
+    if (this.nodes.autoSaveCheckbox) {
+      this.nodes.autoSaveCheckbox.addEventListener('change', () => {
+        this.checkAutosave();
+      })
+    }
+
     this.nodes.saveButton = moduleEl.querySelector('[name="js-submit-save"]');
     this.nodes.saveButton.addEventListener('click', () => {
       window.onbeforeunload = null;
@@ -66,7 +76,6 @@ export default class Writing {
     });
 
     this.nodes.removeButton = moduleEl.querySelector('[name="js-submit-remove"]');
-
     if (this.nodes.removeButton) {
       this.nodes.removeButton.addEventListener('click', () => {
         const isUserAgree = window.confirm('Are you sure?');
@@ -88,6 +97,26 @@ export default class Writing {
      */
     document.documentElement.style.setProperty('--main-col-min-margin-left', '50px');
   };
+
+  checkAutosave() {
+    // if create mode
+    if (this.nodes.autoSaveCheckbox && this.nodes.autoSaveCheckbox.checked) {
+      window.onbeforeunload = null;
+      if (this.page) {
+        this.autoSaveInterval = setInterval(() => this.saveButtonClicked(), 5e3);
+      }
+    } else {
+      // if create mode
+      if (!this.page) {
+        window.onbeforeunload = (e) => {
+          return '';
+        }
+      }
+      if (this.autoSaveInterval) {
+        clearInterval(this.autoSaveInterval);
+      }
+    }
+  }
 
   /**
    * Loads class for working with Editor
@@ -163,7 +192,11 @@ export default class Writing {
         response = await response.json();
 
         if (response.success) {
-          window.location.pathname = response.result.uri ? response.result.uri : '/page/' + response.result._id;
+          this.nodes.lastSaveAt.textContent = `Last save at ${new Date().toLocaleString()}`;
+          if (!this.page) {
+            // if first create page, reload with this result
+            window.location.pathname = response.result.uri ? response.result.uri : '/page/edit/' + response.result._id;
+          }
         } else {
           alert(response.error);
           console.log('Validation failed:', response.error);

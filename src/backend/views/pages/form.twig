@@ -58,6 +58,7 @@
         {% endif %}
       </div>
     </header>
+
     <div class="writing-editor">
       <div id="editorjs"></div>
     </div>
@@ -67,6 +68,20 @@
       {% if toString(page._id) is not empty %}
           {% include 'components/button.twig' with {label: 'Delete doc', name: 'js-submit-remove', icon: 'trash', style: 'warning'} %}
       {% endif %}
+
+      <div class="writing-auto-save">
+        {% if toString(page._id) is not empty %}
+          <label>
+            <input type="checkbox" id="js-auto-save" name="js-auto-save" checked />
+            Auto save (every 5 seconds)
+          </label>
+        {% endif %}
+        <time id="last-save-at" class="writing-time">
+          {% if toString(page._id) is not empty %}
+            Last save at {{ (page.body.time / 1000)  | date("d.m.Y, H:i:s") }}
+          {% endif %}
+        </time>
+      </div>
     </div>
 
   </section>
