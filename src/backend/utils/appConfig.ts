@@ -81,8 +81,9 @@ const FrontendConfig = z.object({
     serve: z.string().optional(), // Carbon serve url
     placement: z.string().optional(), // Carbon placement
   }),
-  menu: z.array(z.union([z.string(), z.object({ title: z.string(),
-    uri: z.string() })])), // Menu for pages
+  menu: z.array(
+    z.union([z.string(), z.object({ title: z.string(), uri: z.string() })]),
+  ), // Menu for pages
 });
 
 /**
@@ -117,44 +118,45 @@ const AppConfig = z.object({
 export type AppConfig = z.infer<typeof AppConfig>;
 
 const defaultConfig: AppConfig = {
-  'port': 3000,
-  'host': 'localhost',
-  'uploads': {
-    'driver': 'local',
-    'local': {
-      'path': './uploads',
+  port: 3000,
+  host: 'localhost',
+  uploads: {
+    driver: 'local',
+    local: {
+      path: './uploads',
     },
   },
-  'frontend': {
-    'title': 'CodeX Docs',
-    'description': 'Free Docs app powered by Editor.js ecosystem',
-    'startPage': '',
-    'carbon': {
-      'serve': '',
-      'placement': '',
+  frontend: {
+    title: 'CodeX Docs',
+    description: 'Free Docs app powered by Editor.js ecosystem',
+    startPage: '',
+    carbon: {
+      serve: '',
+      placement: '',
     },
-    'menu': [],
+    menu: [],
   },
-  'auth': {
-    'secret': 'supersecret',
-    'password': 'secretpassword',
+  auth: {
+    secret: 'supersecret',
+    password: 'secretpassword',
   },
-  'hawk': null,
-  'database': {
-    'driver': 'local',
-    'local': {
-      'path': './db',
+  hawk: null,
+  database: {
+    driver: 'local',
+    local: {
+      path: './db',
     },
   },
 };
 
-const args = arg({ /* eslint-disable @typescript-eslint/naming-convention */
-  '--config': [ String ],
+const args = arg({
+  /* eslint-disable @typescript-eslint/naming-convention */
+  '--config': [String],
   '-c': '--config',
 });
 
 const cwd = process.cwd();
-const paths = (args['--config'] || [ './docs-config.yaml' ]).map((configPath) => {
+const paths = (args['--config'] || ['./docs-config.yaml']).map((configPath) => {
   if (path.isAbsolute(configPath)) {
     return configPath;
   }

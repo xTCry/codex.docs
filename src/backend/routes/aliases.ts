@@ -6,7 +6,6 @@ import verifyToken from './middlewares/token.js';
 import PagesFlatArray from '../models/pagesFlatArray.js';
 import HttpException from '../exceptions/httpException.js';
 
-
 const router = express.Router();
 
 /**

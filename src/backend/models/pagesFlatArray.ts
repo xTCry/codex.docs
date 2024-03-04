@@ -54,7 +54,9 @@ class PagesFlatArray {
    * @param nestingLimit - number of flat array nesting, set null to dismiss the restriction, default nesting 2
    * @returns {Promise<Array<PagesFlatArrayData>>}
    */
-  public static async get(nestingLimit: number | null = 2): Promise<Array<PagesFlatArrayData>> {
+  public static async get(
+    nestingLimit: number | null = 2,
+  ): Promise<Array<PagesFlatArrayData>> {
     // Get flat array from cache
     let arr = cache.get(cacheKey) as Array<PagesFlatArrayData>;
 
@@ -67,7 +69,7 @@ class PagesFlatArray {
       return arr;
     }
 
-    return arr.filter( (item) => item.level < nestingLimit );
+    return arr.filter((item) => item.level < nestingLimit);
   }
 
   /**
@@ -83,7 +85,7 @@ class PagesFlatArray {
     let arr = new Array<PagesFlatArrayData>();
 
     // Get root order
-    const rootOrder = pagesOrders.find( order => order.page == '0' );
+    const rootOrder = pagesOrders.find((order) => order.page == '0');
 
     // Check is root order is not empty
     if (!rootOrder) {
@@ -91,8 +93,9 @@ class PagesFlatArray {
     }
 
     for (const pageId of rootOrder.order) {
-      arr = arr.concat(this.getChildrenFlatArray(pageId, 0, pages,
-        pagesOrders));
+      arr = arr.concat(
+        this.getChildrenFlatArray(pageId, 0, pages, pagesOrders),
+      );
     }
 
     // Save generated flat array to cache
@@ -107,7 +110,9 @@ class PagesFlatArray {
    * @param pageId - page id
    * @returns {Promise<PagesFlatArrayData | undefined>}
    */
-  public static async getPageBefore(pageId: EntityId): Promise<PagesFlatArrayData | undefined> {
+  public static async getPageBefore(
+    pageId: EntityId,
+  ): Promise<PagesFlatArrayData | undefined> {
     const arr = await this.get();
 
     const pageIndex = arr.findIndex((item) => isEqualIds(item.id, pageId));
@@ -127,13 +132,15 @@ class PagesFlatArray {
    * @param pageId - page id
    * @returns {Promise<PagesFlatArrayData | undefined>}
    */
-  public static async getPageAfter(pageId: EntityId): Promise<PagesFlatArrayData | undefined> {
+  public static async getPageAfter(
+    pageId: EntityId,
+  ): Promise<PagesFlatArrayData | undefined> {
     const arr = await this.get();
 
-    const pageIndex = arr.findIndex( (item) => isEqualIds(item.id, pageId));
+    const pageIndex = arr.findIndex((item) => isEqualIds(item.id, pageId));
 
     // Check if index is not the last
-    if (pageIndex < arr.length -1) {
+    if (pageIndex < arr.length - 1) {
       // Return next element from array
       return arr[pageIndex + 1];
     } else {
@@ -150,30 +157,35 @@ class PagesFlatArray {
    * @param orders - all page orders
    * @returns {Promise<Array<PagesFlatArrayData>>}
    */
-  private static getChildrenFlatArray(pageId: EntityId, level: number,
-    pages: Array<Page>, orders: Array<PageOrder>): Array<PagesFlatArrayData> {
+  private static getChildrenFlatArray(
+    pageId: EntityId,
+    level: number,
+    pages: Array<Page>,
+    orders: Array<PageOrder>,
+  ): Array<PagesFlatArrayData> {
     let arr: Array<PagesFlatArrayData> = new Array<PagesFlatArrayData>();
 
-    const page = pages.find(item => isEqualIds(item._id, pageId));
+    const page = pages.find((item) => isEqualIds(item._id, pageId));
 
     // Add element to child array
     if (page) {
-      arr.push( {
+      arr.push({
         id: page._id!,
         level: level,
         parentId: page._parent,
         rootId: '0',
         title: page.title!,
         uri: page.uri,
-      } );
+      });
     }
 
-    const order = orders.find(item => isEqualIds(item.page, pageId));
+    const order = orders.find((item) => isEqualIds(item.page, pageId));
 
     if (order) {
       for (const childPageId of order.order) {
-        arr = arr.concat(this.getChildrenFlatArray(childPageId, level + 1,
-          pages, orders));
+        arr = arr.concat(
+          this.getChildrenFlatArray(childPageId, level + 1, pages, orders),
+        );
       }
     }
 

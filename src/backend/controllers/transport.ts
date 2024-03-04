@@ -17,10 +17,10 @@ interface MulterLocalFile {
  * Represents file data from multer S3 plugin
  */
 interface MulterS3File {
-  originalname: string
-  mimetype: string
-  key: string
-  size: number
+  originalname: string;
+  mimetype: string;
+  key: string;
+  size: number;
 }
 
 /**
@@ -40,7 +40,7 @@ class Transport {
   public static async save(fileData: MulterFile): Promise<FileData> {
     const file = new File({
       name: fileData.originalname,
-      filename: 'filename' in fileData? fileData.filename : fileData.key,
+      filename: 'filename' in fileData ? fileData.filename : fileData.key,
       mimetype: fileData.mimetype,
       size: fileData.size,
     });
@@ -62,7 +62,11 @@ class Transport {
     const fetchedContentType = fetchedFile.headers.get('content-type');
     const fetchedMimeType = fetchedContentType ? fetchedContentType : undefined;
 
-    const fileData = await uploadsDriver.save(buffer, fetchedMimeType, nodePath.extname(url).slice(1));
+    const fileData = await uploadsDriver.save(
+      buffer,
+      fetchedMimeType,
+      nodePath.extname(url).slice(1),
+    );
 
     const file = new File(fileData);
 

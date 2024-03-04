@@ -19,7 +19,10 @@ export interface DatabaseDriver<DocType extends Document> {
    * @param {object} projection - projection object
    * @returns {Promise<Array<object> | Error>} - found docs or Error object
    */
-  find(query: Record<string, unknown>, projection?: DocType): Promise<Array<DocType>>;
+  find(
+    query: Record<string, unknown>,
+    projection?: DocType,
+  ): Promise<Array<DocType>>;
 
   /**
    * Find one document matches passed query
@@ -28,7 +31,10 @@ export interface DatabaseDriver<DocType extends Document> {
    * @param {object} projection - projection object
    * @returns {Promise<object | Error>} - found doc or Error object
    */
-  findOne(query: Record<string, unknown>, projection?: DocType): Promise<DocType>;
+  findOne(
+    query: Record<string, unknown>,
+    projection?: DocType,
+  ): Promise<DocType>;
 
   /**
    * Update document matches query
@@ -38,7 +44,11 @@ export interface DatabaseDriver<DocType extends Document> {
    * @param {Options} options - optional params
    * @returns {Promise<number | object | object[] | Error>} - number of updated rows or affected docs or Error object
    */
-  update(query: Record<string, unknown>, update: DocType, options: Options): Promise<number|boolean|Array<DocType>>
+  update(
+    query: Record<string, unknown>,
+    update: DocType,
+    options: Options,
+  ): Promise<number | boolean | Array<DocType>>;
 
   /**
    * Remove document matches passed query
@@ -47,14 +57,14 @@ export interface DatabaseDriver<DocType extends Document> {
    * @param {Options} options - optional params
    * @returns {Promise<number|Error>} - number of removed rows or Error object
    */
-  remove(query: Record<string, unknown>, options: Options): Promise<number>
+  remove(query: Record<string, unknown>, options: Options): Promise<number>;
 }
 
 /**
  * Represents unique database entity id
  * unique symbol to prevent type widening (read more https://todayilearned.net/2022/07/typescript-primitive-type-aliases-unique-symbols)
  */
-export type EntityId = (string | ObjectId) & {readonly id: unique symbol};
+export type EntityId = (string | ObjectId) & { readonly id: unique symbol };
 
 /**
  * @typedef Options - optional params

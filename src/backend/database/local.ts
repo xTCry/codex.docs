@@ -11,7 +11,8 @@ import appConfig from '../utils/appConfig.js';
  * @returns {Datastore} db - nedb instance
  */
 function initDb(name: string): Datastore {
-  const dbConfig = appConfig.database.driver === 'local' ? appConfig.database.local : null;
+  const dbConfig =
+    appConfig.database.driver === 'local' ? appConfig.database.local : null;
 
   if (!dbConfig) {
     throw new Error('Database config is not initialized');
@@ -37,11 +38,12 @@ export interface RejectFunction {
   (reason?: unknown): void;
 }
 
-
 /**
  * Simple decorator class to work with nedb datastore
  */
-export default class LocalDatabaseDriver<DocType extends Document> implements DatabaseDriver<DocType> {
+export default class LocalDatabaseDriver<DocType extends Document>
+  implements DatabaseDriver<DocType>
+{
   /**
    * nedb Datastore object
    */
@@ -62,13 +64,15 @@ export default class LocalDatabaseDriver<DocType extends Document> implements Da
    * @returns {Promise<object | Error>} - inserted doc or Error object
    */
   public async insert(doc: DocType): Promise<DocType> {
-    return new Promise((resolve, reject) => this.db.insert(doc, (err, newDoc) => {
-      if (err) {
-        reject(err);
-      }
+    return new Promise((resolve, reject) =>
+      this.db.insert(doc, (err, newDoc) => {
+        if (err) {
+          reject(err);
+        }
 
-      resolve(newDoc);
-    }));
+        resolve(newDoc);
+      }),
+    );
   }
 
   /**
@@ -79,14 +83,19 @@ export default class LocalDatabaseDriver<DocType extends Document> implements Da
    * @param {object} projection - projection object
    * @returns {Promise<Array<object> | Error>} - found docs or Error object
    */
-  public async find(query: Record<string, unknown>, projection?: DocType): Promise<Array<DocType>> {
-    const cbk = (resolve: ResolveFunction, reject: RejectFunction) => (err: Error | null, docs: DocType[]) => {
-      if (err) {
-        reject(err);
-      }
+  public async find(
+    query: Record<string, unknown>,
+    projection?: DocType,
+  ): Promise<Array<DocType>> {
+    const cbk =
+      (resolve: ResolveFunction, reject: RejectFunction) =>
+      (err: Error | null, docs: DocType[]) => {
+        if (err) {
+          reject(err);
+        }
 
-      resolve(docs);
-    };
+        resolve(docs);
+      };
 
     return new Promise((resolve, reject) => {
       if (projection) {
@@ -105,14 +114,19 @@ export default class LocalDatabaseDriver<DocType extends Document> implements Da
    * @param {object} projection - projection object
    * @returns {Promise<object | Error>} - found doc or Error object
    */
-  public async findOne(query: Record<string, unknown>, projection?: DocType): Promise<DocType> {
-    const cbk = (resolve: ResolveFunction, reject: RejectFunction) => (err: Error | null, doc: DocType) => {
-      if (err) {
-        reject(err);
-      }
+  public async findOne(
+    query: Record<string, unknown>,
+    projection?: DocType,
+  ): Promise<DocType> {
+    const cbk =
+      (resolve: ResolveFunction, reject: RejectFunction) =>
+      (err: Error | null, doc: DocType) => {
+        if (err) {
+          reject(err);
+        }
 
-      resolve(doc);
-    };
+        resolve(doc);
+      };
 
     return new Promise((resolve, reject) => {
       if (projection) {
@@ -132,26 +146,32 @@ export default class LocalDatabaseDriver<DocType extends Document> implements Da
    * @param {Options} options - optional params
    * @returns {Promise<number | object | object[] | Error>} - number of updated rows or affected docs or Error object
    */
-  public async update(query: Record<string, unknown>, update: DocType, options: Options = {}): Promise<number|boolean|Array<DocType>> {
-    return new Promise((resolve, reject) => this.db.update(query, update, options, (err, result, affectedDocs) => {
-      if (err) {
-        reject(err);
-      }
+  public async update(
+    query: Record<string, unknown>,
+    update: DocType,
+    options: Options = {},
+  ): Promise<number | boolean | Array<DocType>> {
+    return new Promise((resolve, reject) =>
+      this.db.update(query, update, options, (err, result, affectedDocs) => {
+        if (err) {
+          reject(err);
+        }
 
-      switch (true) {
-        case options.returnUpdatedDocs:
-          resolve(affectedDocs);
-          break;
-        case options.upsert:
-          if (affectedDocs) {
+        switch (true) {
+          case options.returnUpdatedDocs:
             resolve(affectedDocs);
-          }
-          resolve(result);
-          break;
-        default:
-          resolve(result);
-      }
-    }));
+            break;
+          case options.upsert:
+            if (affectedDocs) {
+              resolve(affectedDocs);
+            }
+            resolve(result);
+            break;
+          default:
+            resolve(result);
+        }
+      }),
+    );
   }
 
   /**
@@ -162,13 +182,18 @@ export default class LocalDatabaseDriver<DocType extends Document> implements Da
    * @param {Options} options - optional params
    * @returns {Promise<number|Error>} - number of removed rows or Error object
    */
-  public async remove(query: Record<string, unknown>, options: Options = {}): Promise<number> {
-    return new Promise((resolve, reject) => this.db.remove(query, options, (err, result) => {
-      if (err) {
-        reject(err);
-      }
+  public async remove(
+    query: Record<string, unknown>,
+    options: Options = {},
+  ): Promise<number> {
+    return new Promise((resolve, reject) =>
+      this.db.remove(query, options, (err, result) => {
+        if (err) {
+          reject(err);
+        }
 
-      resolve(result);
-    }));
+        resolve(result);
+      }),
+    );
   }
 }

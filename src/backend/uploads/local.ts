@@ -26,7 +26,6 @@ export default class LocalUploadsDriver implements UploadsDriver {
     this.config = config;
   }
 
-
   /**
    * Creates multer storage engine for local uploads
    */
@@ -53,7 +52,11 @@ export default class LocalUploadsDriver implements UploadsDriver {
    * @param mimetype - file mimetype
    * @param possibleExtension
    */
-  public async save(data: Buffer, mimetype?: string, possibleExtension?: string): Promise<FileData> {
+  public async save(
+    data: Buffer,
+    mimetype?: string,
+    possibleExtension?: string,
+  ): Promise<FileData> {
     const filename = await random16();
 
     const type = await fileType.fromBuffer(data);

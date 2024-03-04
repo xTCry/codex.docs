@@ -51,7 +51,13 @@ export default class S3UploadsDriver implements UploadsDriver {
       key: async function (req, file, cb) {
         const filename = await random16();
 
-        cb(null, path.posix.join(config.s3.keyPrefix, `${filename}.${mime.getExtension(file.mimetype)}`));
+        cb(
+          null,
+          path.posix.join(
+            config.s3.keyPrefix,
+            `${filename}.${mime.getExtension(file.mimetype)}`,
+          ),
+        );
       },
     });
   }
@@ -63,7 +69,11 @@ export default class S3UploadsDriver implements UploadsDriver {
    * @param mimetype - file mimetype
    * @param possibleExtension - possible file extension
    */
-  public async save(data: Buffer, mimetype?: string, possibleExtension?: string): Promise<FileData> {
+  public async save(
+    data: Buffer,
+    mimetype?: string,
+    possibleExtension?: string,
+  ): Promise<FileData> {
     const filename = await random16();
 
     const type = await fileType.fromBuffer(data);
@@ -71,12 +81,14 @@ export default class S3UploadsDriver implements UploadsDriver {
     const fullName = `${filename}.${ext}`;
     const fileKey = path.posix.join(this.config.s3.keyPrefix, fullName);
 
-    await this.s3Client.send(new PutObjectCommand({
-      Bucket: this.config.s3.bucket,
-      Key: fileKey,
-      Body: data,
-      ContentType: mimetype,
-    }));
+    await this.s3Client.send(
+      new PutObjectCommand({
+        Bucket: this.config.s3.bucket,
+        Key: fileKey,
+        Body: data,
+        ContentType: mimetype,
+      }),
+    );
 
     return {
       name: fileKey,

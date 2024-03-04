@@ -83,10 +83,12 @@ class File {
    * @param {object} query - input query
    * @returns {Promise<File[]>}
    */
-  public static async getAll(query: Record<string, unknown> = {}): Promise<File[]> {
+  public static async getAll(
+    query: Record<string, unknown> = {},
+  ): Promise<File[]> {
     const docs = await filesDb.find(query);
 
-    return Promise.all(docs.map(doc => new File(doc)));
+    return Promise.all(docs.map((doc) => new File(doc)));
   }
 
   /**
@@ -125,7 +127,9 @@ class File {
    */
   public async save(): Promise<File> {
     if (!this._id) {
-      const insertedRow = await filesDb.insert(this.data) as { _id: EntityId };
+      const insertedRow = (await filesDb.insert(this.data)) as {
+        _id: EntityId;
+      };
 
       this._id = insertedRow._id;
     } else {

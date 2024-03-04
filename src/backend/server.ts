@@ -63,10 +63,11 @@ function createApp(): express.Express {
   // Check if favicon is not empty
   if (favicon) {
     // Upload favicon by url, it's path on server is '/temp/favicon.{format}'
-    downloadFavicon(favicon, downloadedFaviconFolder).then((res) => {
-      app.locals.favicon = res;
-      console.log('Favicon successfully uploaded');
-    })
+    downloadFavicon(favicon, downloadedFaviconFolder)
+      .then((res) => {
+        app.locals.favicon = res;
+        console.log('Favicon successfully uploaded');
+      })
       .catch((err) => {
         console.log(err);
         console.log('Favicon has not uploaded');
@@ -95,9 +96,13 @@ function createApp(): express.Express {
 
   app.use('/', routes);
 
-
   // global error handler
-  app.use(function (err: unknown, req: Request, res: Response, next: NextFunction): void {
+  app.use(function (
+    err: unknown,
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): void {
     // send any type of error to hawk server.
     if (appConfig.hawk?.backendToken && err instanceof Error) {
       HawkCatcher.send(err);
@@ -141,9 +146,8 @@ export default function runHttpServer(): void {
       process.exit(1);
     }
 
-    const bind = typeof addr === 'string'
-      ? 'pipe ' + addr
-      : 'port ' + addr.port;
+    const bind =
+      typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
 
     debug('Listening on ' + bind);
 
@@ -193,9 +197,7 @@ function onError(error: NodeJS.ErrnoException): void {
     throw error;
   }
 
-  const bind = typeof port === 'string'
-    ? 'Pipe ' + port
-    : 'Port ' + port;
+  const bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
 
   // handle specific listen errors with friendly messages
   switch (error.code) {

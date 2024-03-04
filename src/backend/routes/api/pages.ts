@@ -111,17 +111,24 @@ router.post('/page/:id', multer.none(), async (req: Request, res: Response) => {
       await PagesOrder.move(page._parent, parent, id);
     } else {
       if (putAbovePageId && putAbovePageId !== '0') {
-        const unordered = pages.filter(_page => isEqualIds(_page._parent, page._parent)).map(_page => _page._id);
+        const unordered = pages
+          .filter((_page) => isEqualIds(_page._parent, page._parent))
+          .map((_page) => _page._id);
 
         const unOrdered: EntityId[] = [];
 
-        unordered.forEach(item => {
+        unordered.forEach((item) => {
           if (isEntityId(item)) {
             unOrdered.push(item);
           }
         });
 
-        await PagesOrder.update(unOrdered, page._id, page._parent, putAbovePageId);
+        await PagesOrder.update(
+          unOrdered,
+          page._id,
+          page._parent,
+          putAbovePageId,
+        );
       }
     }
 
@@ -172,7 +179,8 @@ router.delete('/page/:id', async (req: Request, res: Response) => {
     } else if (pageAfterId) {
       pageToRedirect = await Pages.get(pageAfterId);
     } else {
-      pageToRedirect = page._parent !== '0' ? await Pages.get(page._parent) : null;
+      pageToRedirect =
+        page._parent !== '0' ? await Pages.get(page._parent) : null;
     }
 
     /**
@@ -192,7 +200,7 @@ router.delete('/page/:id', async (req: Request, res: Response) => {
         order = [];
       }
 
-      order.forEach(async id => {
+      order.forEach(async (id) => {
         await deleteRecursively(id);
       });
 

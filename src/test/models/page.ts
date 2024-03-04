@@ -18,18 +18,25 @@ const pages = database['pages'];
 
 describe('Page model', () => {
   const transformToUri = (text: string): string => {
-    return translateString(text
-      .replace(/&nbsp;/g, ' ')
-      .replace(/[^a-zA-Z0-9А-Яа-яЁё ]/g, ' ')
-      .replace(/  +/g, ' ')
-      .trim()
-      .toLowerCase()
-      .split(' ')
-      .join('-'));
+    return translateString(
+      text
+        .replace(/&nbsp;/g, ' ')
+        .replace(/[^a-zA-Z0-9А-Яа-яЁё ]/g, ' ')
+        .replace(/  +/g, ' ')
+        .trim()
+        .toLowerCase()
+        .split(' ')
+        .join('-'),
+    );
   };
 
   after(() => {
-    const pathToDB = path.resolve(__dirname, '../../../', config.get('database'), './pages.db');
+    const pathToDB = path.resolve(
+      __dirname,
+      '../../../',
+      config.get('database'),
+      './pages.db',
+    );
 
     if (fs.existsSync(pathToDB)) {
       fs.unlinkSync(pathToDB);
@@ -41,7 +48,7 @@ describe('Page model', () => {
 
     expect(page.data).to.be.a('object');
 
-    let {data} = page;
+    let { data } = page;
 
     expect(data._id).to.be.undefined;
     expect(data.title).to.be.empty;
@@ -66,11 +73,11 @@ describe('Page model', () => {
           {
             type: 'header',
             data: {
-              text: 'Page header'
-            }
-          }
-        ]
-      }
+              text: 'Page header',
+            },
+          },
+        ],
+      },
     };
 
     page = new Page(initialData);
@@ -98,11 +105,11 @@ describe('Page model', () => {
           {
             type: 'header',
             data: {
-              text: 'Updated page header'
-            }
-          }
-        ]
-      }
+              text: 'Updated page header',
+            },
+          },
+        ],
+      },
     };
 
     page.data = update;
@@ -123,11 +130,11 @@ describe('Page model', () => {
           {
             type: 'header',
             data: {
-              text: 'New page header'
-            }
-          }
-        ]
-      }
+              text: 'New page header',
+            },
+          },
+        ],
+      },
     };
     const page = new Page(initialData);
 
@@ -135,11 +142,13 @@ describe('Page model', () => {
 
     expect(savedPage._id).not.be.undefined;
     expect(savedPage.title).to.equal(initialData.body.blocks[0].data.text);
-    expect(savedPage.uri).to.equal(transformToUri(initialData.body.blocks[0].data.text));
+    expect(savedPage.uri).to.equal(
+      transformToUri(initialData.body.blocks[0].data.text),
+    );
     expect(savedPage.body).to.equal(initialData.body);
     expect(page._id).not.be.undefined;
 
-    const insertedPage = await pages.findOne({_id: page._id});
+    const insertedPage = await pages.findOne({ _id: page._id });
 
     expect(insertedPage._id).to.equal(page._id);
     expect(insertedPage.title).to.equal(page.title);
@@ -152,12 +161,12 @@ describe('Page model', () => {
           {
             type: 'header',
             data: {
-              text: 'Updated page header'
-            }
-          }
-        ]
+              text: 'Updated page header',
+            },
+          },
+        ],
       },
-      uri: 'updated-uri'
+      uri: 'updated-uri',
     };
 
     page.data = updateData;
@@ -165,7 +174,7 @@ describe('Page model', () => {
 
     expect(page._id).to.equal(insertedPage._id);
 
-    const updatedPage = await pages.findOne({_id: page._id});
+    const updatedPage = await pages.findOne({ _id: page._id });
 
     expect(updatedPage._id).to.equal(savedPage._id);
     expect(updatedPage.title).to.equal(updateData.body.blocks[0].data.text);
@@ -176,7 +185,7 @@ describe('Page model', () => {
 
     expect(page._id).to.be.undefined;
 
-    const removedPage = await pages.findOne({_id: updatedPage._id});
+    const removedPage = await pages.findOne({ _id: updatedPage._id });
 
     expect(removedPage).to.be.null;
   });
@@ -188,22 +197,24 @@ describe('Page model', () => {
           {
             type: 'header',
             data: {
-              text: 'New page header'
-            }
-          }
-        ]
-      }
+              text: 'New page header',
+            },
+          },
+        ],
+      },
     };
     const firstPage = new Page(initialData);
     let firstSavedPage = await firstPage.save();
     const secondPage = new Page(initialData);
     const secondSavedPage = await secondPage.save();
 
-    expect(secondSavedPage.uri).to.equal(transformToUri(initialData.body.blocks[0].data.text) + '-1');
+    expect(secondSavedPage.uri).to.equal(
+      transformToUri(initialData.body.blocks[0].data.text) + '-1',
+    );
 
     const newUri = 'new-uri';
 
-    firstPage.data = {...firstPage.data, uri: newUri};
+    firstPage.data = { ...firstPage.data, uri: newUri };
     firstSavedPage = await firstPage.save();
 
     expect(firstSavedPage.uri).to.equal(newUri);
@@ -211,7 +222,9 @@ describe('Page model', () => {
     const thirdPage = new Page(initialData);
     const thirdSavedPage = await thirdPage.save();
 
-    expect(thirdSavedPage.uri).to.equal(transformToUri(initialData.body.blocks[0].data.text));
+    expect(thirdSavedPage.uri).to.equal(
+      transformToUri(initialData.body.blocks[0].data.text),
+    );
   });
 
   it('Static get method', async () => {
@@ -221,11 +234,11 @@ describe('Page model', () => {
           {
             type: 'header',
             data: {
-              text: 'Test Page header'
-            }
-          }
-        ]
-      }
+              text: 'Test Page header',
+            },
+          },
+        ],
+      },
     };
     const page = new Page(initialData);
 
@@ -239,11 +252,13 @@ describe('Page model', () => {
 
     const foundPage = await Page.get(savedPage._id);
 
-    const {data} = foundPage;
+    const { data } = foundPage;
 
     expect(data._id).to.equal(savedPage._id);
     expect(data.title).to.equal(initialData.body.blocks[0].data.text);
-    expect(data.uri).to.equal(transformToUri(initialData.body.blocks[0].data.text));
+    expect(data.uri).to.equal(
+      transformToUri(initialData.body.blocks[0].data.text),
+    );
     expect(data.body).to.deep.equal(initialData.body);
 
     await page.destroy();
@@ -257,11 +272,11 @@ describe('Page model', () => {
             {
               type: 'header',
               data: {
-                text: 'Page 1 header'
-              }
-            }
-          ]
-        }
+                text: 'Page 1 header',
+              },
+            },
+          ],
+        },
       }),
       new Page({
         body: {
@@ -269,60 +284,62 @@ describe('Page model', () => {
             {
               type: 'header',
               data: {
-                text: 'Page 2 header'
-              }
-            }
-          ]
-        }
-      })
+                text: 'Page 2 header',
+              },
+            },
+          ],
+        },
+      }),
     ];
 
-    const savedPages = await Promise.all(pagesToSave.map(page => page.save()));
+    const savedPages = await Promise.all(
+      pagesToSave.map((page) => page.save()),
+    );
 
-    const foundPages = await Page.getAll({_id: {$in: savedPages.map(page => page._id)}});
+    const foundPages = await Page.getAll({
+      _id: { $in: savedPages.map((page) => page._id) },
+    });
 
     expect(foundPages.length).to.equal(2);
     foundPages.forEach((page, i) => {
       expect(page.title).to.equal(pagesToSave[i].body.blocks[0].data.text);
-      expect(page.uri).to.equal(transformToUri(pagesToSave[i].body.blocks[0].data.text));
+      expect(page.uri).to.equal(
+        transformToUri(pagesToSave[i].body.blocks[0].data.text),
+      );
       expect(page.body).to.deep.equal(pagesToSave[i].body);
     });
   });
 
   it('Parent pages', async () => {
-    const parent = new Page(
-      {
-        body: {
-          blocks: [
-            {
-              type: 'header',
-              data: {
-                text: 'Parent page header'
-              }
-            }
-          ]
-        }
-      }
-    );
-    const {_id: parentId} = await parent.save();
+    const parent = new Page({
+      body: {
+        blocks: [
+          {
+            type: 'header',
+            data: {
+              text: 'Parent page header',
+            },
+          },
+        ],
+      },
+    });
+    const { _id: parentId } = await parent.save();
 
-    const child = new Page(
-      {
-        body: {
-          blocks: [
-            {
-              type: 'header',
-              data: {
-                text: 'Child page header'
-              }
-            }
-          ]
-        },
-        parent: parentId,
-      }
-    );
+    const child = new Page({
+      body: {
+        blocks: [
+          {
+            type: 'header',
+            data: {
+              text: 'Child page header',
+            },
+          },
+        ],
+      },
+      parent: parentId,
+    });
 
-    const {_id: childId} = await child.save();
+    const { _id: childId } = await child.save();
 
     const testedParent = await child.getParent();
 
@@ -330,7 +347,9 @@ describe('Page model', () => {
     if (testedParent) {
       expect(testedParent._id).to.equal(parentId);
       expect(testedParent.title).to.equal(parent.body.blocks[0].data.text);
-      expect(testedParent.uri).to.equal(transformToUri(parent.body.blocks[0].data.text));
+      expect(testedParent.uri).to.equal(
+        transformToUri(parent.body.blocks[0].data.text),
+      );
       expect(testedParent.body).to.deep.equal(parent.body);
     }
 
@@ -338,12 +357,14 @@ describe('Page model', () => {
 
     expect(children.length).to.equal(1);
 
-    const temp: Page|undefined = children.pop();
+    const temp: Page | undefined = children.pop();
     const testedChild: Page = !temp ? new Page({}) : temp;
 
     expect(testedChild._id).to.equal(childId);
     expect(testedChild.title).to.equal(child.body.blocks[0].data.text);
-    expect(testedChild.uri).to.equal(transformToUri(child.body.blocks[0].data.text));
+    expect(testedChild.uri).to.equal(
+      transformToUri(child.body.blocks[0].data.text),
+    );
     expect(testedChild.body).to.deep.equal(child.body);
     expect(testedChild._parent).to.equal(child._parent);
     expect(testedChild._parent).to.equal(parent._id);
@@ -359,11 +380,11 @@ describe('Page model', () => {
           {
             type: 'header',
             data: {
-              text: 'Page header'
-            }
-          }
-        ]
-      }
+              text: 'Page header',
+            },
+          },
+        ],
+      },
     };
 
     const page = new Page(pageData);
@@ -374,10 +395,10 @@ describe('Page model', () => {
   it('test deletion', async () => {
     const pageIndexes = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
     const orders = {
-      '0' : ['1', '2', '3'],
-      '1' : ['4', '5'],
-      '5' : ['6', '7', '8'],
-      '3' : ['9'],
+      '0': ['1', '2', '3'],
+      '1': ['4', '5'],
+      '5': ['6', '7', '8'],
+      '3': ['9'],
     } as { [key: string]: string[] };
 
     function deleteRecursively(startFrom: string): void {
@@ -391,7 +412,7 @@ describe('Page model', () => {
         return;
       }
 
-      order.forEach(id => {
+      order.forEach((id) => {
         deleteRecursively(id);
       });
 

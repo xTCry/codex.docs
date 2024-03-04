@@ -9,7 +9,7 @@ import translateString from './translation.js';
  */
 export default function urlify(string: string): string {
   // strip tags
-  string = string.replace(/(<([^>]+)>)/ig, '');
+  string = string.replace(/(<([^>]+)>)/gi, '');
 
   // remove nbsp
   string = string.replace(/&nbsp;/g, ' ');

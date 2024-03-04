@@ -12,8 +12,16 @@ import { isEqualIds } from '../database/index.js';
  * @param level - max level recursion
  * @param currentLevel - current level of element
  */
-export function createMenuTree(parentPageId: EntityId, pages: Page[], pagesOrder: PageOrder[], level = 1, currentLevel = 1): Page[] {
-  const childrenOrder = pagesOrder.find(order => isEqualIds(order.data.page, parentPageId));
+export function createMenuTree(
+  parentPageId: EntityId,
+  pages: Page[],
+  pagesOrder: PageOrder[],
+  level = 1,
+  currentLevel = 1,
+): Page[] {
+  const childrenOrder = pagesOrder.find((order) =>
+    isEqualIds(order.data.page, parentPageId),
+  );
 
   /**
    * branch is a page children in tree
@@ -24,11 +32,13 @@ export function createMenuTree(parentPageId: EntityId, pages: Page[], pagesOrder
 
   if (childrenOrder) {
     ordered = childrenOrder.order.map((pageId: EntityId) => {
-      return pages.find(page => isEqualIds(page._id, pageId));
+      return pages.find((page) => isEqualIds(page._id, pageId));
     });
   }
 
-  const unordered = pages.filter(page => isEqualIds(page._parent, parentPageId));
+  const unordered = pages.filter((page) =>
+    isEqualIds(page._parent, parentPageId),
+  );
   const branch = Array.from(new Set([...ordered, ...unordered]));
 
   /**
@@ -41,9 +51,20 @@ export function createMenuTree(parentPageId: EntityId, pages: Page[], pagesOrder
   /**
    * Each parents children can have subbranches
    */
-  return branch.filter(page => page && page._id).map(page => {
-    return Object.assign({
-      children: createMenuTree(page._id, pages, pagesOrder, level, currentLevel + 1),
-    }, page.data);
-  });
+  return branch
+    .filter((page) => page && page._id)
+    .map((page) => {
+      return Object.assign(
+        {
+          children: createMenuTree(
+            page._id,
+            pages,
+            pagesOrder,
+            level,
+            currentLevel + 1,
+          ),
+        },
+        page.data,
+      );
+    });
 }

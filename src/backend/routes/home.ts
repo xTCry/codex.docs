@@ -3,7 +3,6 @@ import verifyToken from './middlewares/token.js';
 import PagesOrder from '../controllers/pagesOrder.js';
 import Pages from '../controllers/pages.js';
 
-
 const router = express.Router();
 
 /* GET home page. */

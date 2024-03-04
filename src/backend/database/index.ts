@@ -8,7 +8,10 @@ import MongoDatabaseDriver from './mongodb.js';
 import { EntityId } from './types.js';
 import { ObjectId } from 'mongodb';
 
-const Database = appConfig.database.driver === 'mongodb' ? MongoDatabaseDriver : LocalDatabaseDriver;
+const Database =
+  appConfig.database.driver === 'mongodb'
+    ? MongoDatabaseDriver
+    : LocalDatabaseDriver;
 
 /**
  * Convert a string to an EntityId (string or ObjectId depending on the database driver)
@@ -20,7 +23,9 @@ export function toEntityId(id: string): EntityId {
     return id as EntityId;
   }
 
-  return (appConfig.database.driver === 'mongodb' ? new ObjectId(id) : id) as EntityId;
+  return (
+    appConfig.database.driver === 'mongodb' ? new ObjectId(id) : id
+  ) as EntityId;
 }
 
 /**

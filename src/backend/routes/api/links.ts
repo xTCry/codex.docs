@@ -9,8 +9,8 @@ interface ResponseData {
     title: string | undefined;
     description: string | undefined;
     siteName: string | undefined;
-    image: { url: string | undefined }
-  }
+    image: { url: string | undefined };
+  };
 }
 
 /**

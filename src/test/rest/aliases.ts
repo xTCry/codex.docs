@@ -13,7 +13,7 @@ import { fileURLToPath } from 'url';
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const {expect} = chai;
+const { expect } = chai;
 const app = server.app;
 
 chai.use(chaiHTTP);
@@ -26,13 +26,23 @@ describe('Aliases REST: ', () => {
   });
 
   after(async () => {
-    const pathToDB = path.resolve(__dirname, '../../', config.get('database'), './pages.db');
+    const pathToDB = path.resolve(
+      __dirname,
+      '../../',
+      config.get('database'),
+      './pages.db',
+    );
 
     if (fs.existsSync(pathToDB)) {
       fs.unlinkSync(pathToDB);
     }
 
-    const pathToAliasDB = path.resolve(__dirname, '../../', config.get('database'), './aliases.db');
+    const pathToAliasDB = path.resolve(
+      __dirname,
+      '../../',
+      config.get('database'),
+      './aliases.db',
+    );
 
     if (fs.existsSync(pathToAliasDB)) {
       fs.unlinkSync(pathToAliasDB);
@@ -46,20 +56,20 @@ describe('Aliases REST: ', () => {
         {
           type: 'header',
           data: {
-            text: 'Test header'
-          }
-        }
-      ]
+            text: 'Test header',
+          },
+        },
+      ],
     };
 
-    const put = await agent
-      .put('/api/page')
-      .send({body});
+    const put = await agent.put('/api/page').send({ body });
 
     expect(put).to.have.status(200);
     expect(put).to.be.json;
 
-    const {result: {uri}} = put.body;
+    const {
+      result: { uri },
+    } = put.body;
 
     const get = await agent.get('/' + uri);
 

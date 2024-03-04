@@ -1,14 +1,26 @@
-import { Collection, Document, Filter, MongoClient, OptionalUnlessRequiredId, UpdateFilter } from 'mongodb';
+import {
+  Collection,
+  Document,
+  Filter,
+  MongoClient,
+  OptionalUnlessRequiredId,
+  UpdateFilter,
+} from 'mongodb';
 import { DatabaseDriver, Options } from './types.js';
 import appConfig from '../utils/appConfig.js';
 
-const mongodbUri = appConfig.database.driver === 'mongodb' ? appConfig.database.mongodb.uri : null;
-const mongodbClient = mongodbUri ? await MongoClient.connect(mongodbUri): null;
+const mongodbUri =
+  appConfig.database.driver === 'mongodb'
+    ? appConfig.database.mongodb.uri
+    : null;
+const mongodbClient = mongodbUri ? await MongoClient.connect(mongodbUri) : null;
 
 /**
  * MongoDB driver for working with database
  */
-export default class MongoDatabaseDriver<DocType extends Document> implements DatabaseDriver<DocType> {
+export default class MongoDatabaseDriver<DocType extends Document>
+  implements DatabaseDriver<DocType>
+{
   /**
    * Mongo client instance
    */
@@ -39,7 +51,9 @@ export default class MongoDatabaseDriver<DocType extends Document> implements Da
    * @returns {Promise<object | Error>} - inserted doc or Error object
    */
   public async insert(doc: DocType): Promise<DocType> {
-    const result = await this.collection.insertOne(doc as OptionalUnlessRequiredId<DocType>);
+    const result = await this.collection.insertOne(
+      doc as OptionalUnlessRequiredId<DocType>,
+    );
 
     return {
       ...doc,
@@ -54,7 +68,10 @@ export default class MongoDatabaseDriver<DocType extends Document> implements Da
    * @param {object} projection - projection object
    * @returns {Promise<Array<object> | Error>} - found docs or Error object
    */
-  public async find(query: Record<string, unknown>, projection?: DocType): Promise<Array<DocType>> {
+  public async find(
+    query: Record<string, unknown>,
+    projection?: DocType,
+  ): Promise<Array<DocType>> {
     const cursor = this.collection.find(query as Filter<DocType>);
 
     if (projection) {
@@ -73,8 +90,13 @@ export default class MongoDatabaseDriver<DocType extends Document> implements Da
    * @param {object} projection - projection object
    * @returns {Promise<object | Error>} - found doc or Error object
    */
-  public async findOne(query: Record<string, unknown>, projection?: DocType): Promise<DocType> {
-    const doc = await this.collection.findOne(query as Filter<DocType>, { projection });
+  public async findOne(
+    query: Record<string, unknown>,
+    projection?: DocType,
+  ): Promise<DocType> {
+    const doc = await this.collection.findOne(query as Filter<DocType>, {
+      projection,
+    });
 
     return doc as unknown as DocType;
   }
@@ -87,11 +109,19 @@ export default class MongoDatabaseDriver<DocType extends Document> implements Da
    * @param {Options} options - optional params
    * @returns {Promise<number | object | object[] | Error>} - number of updated rows or affected docs or Error object
    */
-  public async update(query: Record<string, unknown>, update: DocType, options: Options = {}): Promise<number|boolean|Array<DocType>> {
+  public async update(
+    query: Record<string, unknown>,
+    update: DocType,
+    options: Options = {},
+  ): Promise<number | boolean | Array<DocType>> {
     const updateDocument = {
       $set: update,
     } as UpdateFilter<DocType>;
-    const result = await this.collection.updateMany(query as Filter<DocType>, updateDocument, options);
+    const result = await this.collection.updateMany(
+      query as Filter<DocType>,
+      updateDocument,
+      options,
+    );
 
     switch (true) {
       case options.returnUpdatedDocs:
@@ -114,7 +144,10 @@ export default class MongoDatabaseDriver<DocType extends Document> implements Da
    * @param {Options} options - optional params
    * @returns {Promise<number|Error>} - number of removed rows or Error object
    */
-  public async remove(query: Record<string, unknown>, options: Options = {}): Promise<number> {
+  public async remove(
+    query: Record<string, unknown>,
+    options: Options = {},
+  ): Promise<number> {
     const result = await this.collection.deleteMany(query as Filter<DocType>);
 
     return result.deletedCount;

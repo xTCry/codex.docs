@@ -8,7 +8,7 @@ export interface UploadsDriver {
   /**
    * Returns multer storage instance
    */
-  createStorageEngine(): multer.StorageEngine
+  createStorageEngine(): multer.StorageEngine;
 
   /**
    * Saves passed file
@@ -17,5 +17,9 @@ export interface UploadsDriver {
    * @param mimetype - file mimetype
    * @param possibleExtension - possible file extension
    */
-  save(data: Buffer, mimetype?: string, possibleExtension?: string): Promise<FileData>;
+  save(
+    data: Buffer,
+    mimetype?: string,
+    possibleExtension?: string,
+  ): Promise<FileData>;
 }

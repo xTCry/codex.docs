@@ -10,7 +10,7 @@ import { createMenuTree } from './utils/menu.js';
 import { EntityId } from './database/types.js';
 import PagesOrder from './controllers/pagesOrder.js';
 import fse from 'fs-extra';
-import appConfig  from './utils/appConfig.js';
+import appConfig from './utils/appConfig.js';
 import Aliases from './controllers/aliases.js';
 import Pages from './controllers/pages.js';
 
@@ -34,7 +34,10 @@ export default async function buildStatic(): Promise<void> {
    * @param filePath - path to template
    * @param data - data to render template
    */
-  function renderTemplate(filePath: string, data: Record<string, unknown>): Promise<string> {
+  function renderTemplate(
+    filePath: string,
+    data: Record<string, unknown>,
+  ): Promise<string> {
     return new Promise((resolve, reject) => {
       twig.renderFile(path.resolve(dirname, filePath), data, (err, html) => {
         if (err) {
@@ -83,7 +86,8 @@ export default async function buildStatic(): Promise<void> {
       config: appConfig.frontend,
     });
 
-    const filename = (isIndex || page.uri === '') ? 'index.html' : `${page.uri}.html`;
+    const filename =
+      isIndex || page.uri === '' ? 'index.html' : `${page.uri}.html`;
 
     await fs.writeFile(path.resolve(distPath, filename), result);
     console.log(`Page ${page.uri} rendered`);
@@ -134,8 +138,10 @@ export default async function buildStatic(): Promise<void> {
 
   if (appConfig.uploads.driver === 'local') {
     console.log('Copy uploads directory');
-    await fse.copy(path.resolve(cwd, appConfig.uploads.local.path), path.resolve(distPath, 'uploads'));
+    await fse.copy(
+      path.resolve(cwd, appConfig.uploads.local.path),
+      path.resolve(distPath, 'uploads'),
+    );
     console.log('Uploads directory copied');
   }
 }
-

@@ -11,8 +11,7 @@ describe('Express app', () => {
   it('App is available', async () => {
     const agent = chai.request.agent(app);
 
-    const result = await agent
-      .get('/');
+    const result = await agent.get('/');
 
     expect(result).to.have.status(200);
   });

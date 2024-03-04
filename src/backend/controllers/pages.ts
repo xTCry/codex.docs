@@ -20,7 +20,7 @@ class Pages {
    * @returns {['title', 'body']}
    */
   public static get REQUIRED_FIELDS(): Array<PageDataFields> {
-    return [ 'body' ];
+    return ['body'];
   }
 
   /**
@@ -55,11 +55,14 @@ class Pages {
    * @returns {Promise<Page[]>}
    */
   public static async getAllExceptChildren(parent: EntityId): Promise<Page[]> {
-    const pagesAvailable = this.removeChildren(await Pages.getAllPages(), parent);
+    const pagesAvailable = this.removeChildren(
+      await Pages.getAllPages(),
+      parent,
+    );
 
     const nullFilteredPages: Page[] = [];
 
-    pagesAvailable.forEach(async item => {
+    pagesAvailable.forEach(async (item) => {
       if (item instanceof Page) {
         nullFilteredPages.push(item);
       }
@@ -75,7 +78,7 @@ class Pages {
     const pages = await Pages.getAllPages();
     const pagesMap = new Map<string, Page>();
 
-    pages.forEach(page => {
+    pages.forEach((page) => {
       if (page._id) {
         pagesMap.set(page._id.toString(), page);
       } else {
@@ -108,7 +111,9 @@ class Pages {
     const idsOfRootPages = rootPageOrder.order;
 
     const getChildrenOrder = (pageId: EntityId): EntityId[] => {
-      const order = childPageOrder.find((order) => isEqualIds(order.page, pageId))?.order || [];
+      const order =
+        childPageOrder.find((order) => isEqualIds(order.page, pageId))?.order ||
+        [];
 
       if (order.length === 0) {
         return [];
@@ -118,20 +123,23 @@ class Pages {
       return expandedOrder.flat();
     };
 
-    const orderGroupedByParent = idsOfRootPages.reduce((acc, curr) => {
-      const pageOrder = getChildrenOrder(curr);
+    const orderGroupedByParent = idsOfRootPages.reduce(
+      (acc, curr) => {
+        const pageOrder = getChildrenOrder(curr);
 
-      acc[curr.toString()] = [curr, ...pageOrder];
+        acc[curr.toString()] = [curr, ...pageOrder];
 
-      return acc;
-    }, {} as Record<string, EntityId[]>);
+        return acc;
+      },
+      {} as Record<string, EntityId[]>,
+    );
 
     /**
      * It converts grouped pages(object) to array
      */
     const result = Object.values(orderGroupedByParent)
-      .flatMap(ids => [ ...ids ])
-      .map(id => {
+      .flatMap((ids) => [...ids])
+      .map((id) => {
         return pagesMap.get(id.toString()) as Page;
       });
 
@@ -159,7 +167,10 @@ class Pages {
    * @param {string} parent - id of parent page
    * @returns {Array<?Page>}
    */
-  public static removeChildren(pagesAvailable: Array<Page | null>, parent: EntityId | undefined): Array<Page | null> {
+  public static removeChildren(
+    pagesAvailable: Array<Page | null>,
+    parent: EntityId | undefined,
+  ): Array<Page | null> {
     pagesAvailable.forEach(async (item, index) => {
       if (item === null || !isEqualIds(item._parent, parent)) {
         return;
@@ -187,10 +198,13 @@ class Pages {
       const insertedPage = await page.save();
 
       if (insertedPage.uri) {
-        const alias = new Alias({
-          id: insertedPage._id,
-          type: Alias.types.PAGE,
-        }, insertedPage.uri);
+        const alias = new Alias(
+          {
+            id: insertedPage._id,
+            type: Alias.types.PAGE,
+          },
+          insertedPage.uri,
+        );
 
         alias.save();
       }
@@ -226,10 +240,13 @@ class Pages {
 
     if (updatedPage.uri !== previousUri) {
       if (updatedPage.uri) {
-        const alias = new Alias({
-          id: updatedPage._id,
-          type: Alias.types.PAGE,
-        }, updatedPage.uri);
+        const alias = new Alias(
+          {
+            id: updatedPage._id,
+            type: Alias.types.PAGE,
+          },
+          updatedPage.uri,
+        );
 
         alias.save();
       }
@@ -275,13 +292,19 @@ class Pages {
    * @throws {Error} - validation error
    */
   private static validate(data: PageData): void {
-    const allRequiredFields = Pages.REQUIRED_FIELDS.every(field => typeof data[field] !== 'undefined');
+    const allRequiredFields = Pages.REQUIRED_FIELDS.every(
+      (field) => typeof data[field] !== 'undefined',
+    );
 
     if (!allRequiredFields) {
       throw new Error('Some of required fields is missed');
     }
 
-    const hasBlocks = data.body && data.body.blocks && Array.isArray(data.body.blocks) && data.body.blocks.length > 0;
+    const hasBlocks =
+      data.body &&
+      data.body.blocks &&
+      Array.isArray(data.body.blocks) &&
+      data.body.blocks.length > 0;
 
     if (!hasBlocks) {
       throw new Error('Page body is invalid');
@@ -293,7 +316,8 @@ class Pages {
       throw new Error('First page Block must be a Header');
     }
 
-    const headerIsNotEmpty = data.body.blocks[0].data.text.replace('<br>', '').trim() !== '';
+    const headerIsNotEmpty =
+      data.body.blocks[0].data.text.replace('<br>', '').trim() !== '';
 
     if (!headerIsNotEmpty) {
       throw new Error('Please, fill page Header');

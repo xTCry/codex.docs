@@ -16,8 +16,7 @@ import { fileURLToPath } from 'url';
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-
-const {expect} = chai;
+const { expect } = chai;
 const app = server.app;
 
 chai.use(chaiHTTP);
@@ -34,7 +33,12 @@ describe('Transport routes: ', () => {
   });
 
   after(async () => {
-    const pathToDB = path.resolve(__dirname, '../../../', config.get('database'), './files.db');
+    const pathToDB = path.resolve(
+      __dirname,
+      '../../../',
+      config.get('database'),
+      './files.db',
+    );
 
     if (fs.existsSync(pathToDB)) {
       fs.unlinkSync(pathToDB);
@@ -73,8 +77,7 @@ describe('Transport routes: ', () => {
 
       expect(file.path).to.be.not.undefined;
       if (file.path !== undefined) {
-        const getRes = await agent
-          .get(file.path);
+        const getRes = await agent.get(file.path);
 
         expect(getRes).to.have.status(200);
         expect(getRes).to.have.header('content-type', type.mime);
@@ -88,7 +91,15 @@ describe('Transport routes: ', () => {
     const res = await agent
       .post('/api/transport/image')
       .attach('image', image, name)
-      .field('map', JSON.stringify({_id: '_id', path: 'file:url', size: 'file:size', name: 'file:name'}));
+      .field(
+        'map',
+        JSON.stringify({
+          _id: '_id',
+          path: 'file:url',
+          size: 'file:size',
+          name: 'file:name',
+        }),
+      );
 
     expect(res).to.have.status(200);
     expect(res).to.be.json;
@@ -125,12 +136,14 @@ describe('Transport routes: ', () => {
     expect(file.size).to.equal(json.byteLength);
 
     expect(file.path).to.be.not.undefined;
-    if (file.path !== undefined){
-      const getRes = await agent
-        .get(file.path);
+    if (file.path !== undefined) {
+      const getRes = await agent.get(file.path);
 
       expect(getRes).to.have.status(200);
-      expect(getRes).to.have.header('content-type', new RegExp(`^${file.mimetype}`));
+      expect(getRes).to.have.header(
+        'content-type',
+        new RegExp(`^${file.mimetype}`),
+      );
     }
   });
 
@@ -140,7 +153,15 @@ describe('Transport routes: ', () => {
     const res = await agent
       .post('/api/transport/file')
       .attach('file', json, name)
-      .field('map', JSON.stringify({_id: '_id', path: 'file:url', size: 'file:size', name: 'file:name'}));
+      .field(
+        'map',
+        JSON.stringify({
+          _id: '_id',
+          path: 'file:url',
+          size: 'file:size',
+          name: 'file:name',
+        }),
+      );
 
     expect(res).to.have.status(200);
     expect(res).to.be.json;
@@ -157,9 +178,7 @@ describe('Transport routes: ', () => {
 
   it('Send file URL to fetch', async () => {
     const url = 'https://codex.so/public/app/img/codex-logo.svg';
-    const res = await agent
-      .post('/api/transport/fetch')
-      .field('url', url);
+    const res = await agent.post('/api/transport/fetch').field('url', url);
 
     expect(res).to.have.status(200);
     expect(res).to.be.json;
@@ -176,9 +195,8 @@ describe('Transport routes: ', () => {
     expect(file.size).to.equal(body.size);
 
     expect(file.path).to.be.not.undefined;
-    if (file.path !== undefined){
-      const getRes = await agent
-        .get(file.path);
+    if (file.path !== undefined) {
+      const getRes = await agent.get(file.path);
 
       expect(getRes).to.have.status(200);
       expect(getRes).to.have.header('content-type', file.mimetype);
@@ -190,7 +208,15 @@ describe('Transport routes: ', () => {
     const res = await agent
       .post('/api/transport/fetch')
       .field('url', url)
-      .field('map', JSON.stringify({_id: '_id', path: 'file:url', size: 'file:size', name: 'file:name'}));
+      .field(
+        'map',
+        JSON.stringify({
+          _id: '_id',
+          path: 'file:url',
+          size: 'file:size',
+          name: 'file:name',
+        }),
+      );
 
     expect(res).to.have.status(200);
     expect(res).to.be.json;
@@ -206,11 +232,9 @@ describe('Transport routes: ', () => {
   });
 
   it('Negative tests for file uploading', async () => {
-    let res = await agent
-      .post('/api/transport/file')
-      .send();
+    let res = await agent.post('/api/transport/file').send();
 
-    let {body} = res;
+    let { body } = res;
 
     expect(res).to.have.status(400);
     expect(body.success).to.equal(0);
@@ -229,20 +253,16 @@ describe('Transport routes: ', () => {
   });
 
   it('Negative tests for image uploading', async () => {
-    let res = await agent
-      .post('/api/transport/image')
-      .send();
+    let res = await agent.post('/api/transport/image').send();
 
-    let {body} = res;
+    let { body } = res;
 
     expect(res).to.have.status(400);
     expect(body.success).to.equal(0);
 
     let name = 'test_file.json';
     const json = fs.readFileSync(path.resolve(`./src/test/rest/${name}`));
-    res = await agent
-      .post('/api/transport/image')
-      .attach('image', json, name);
+    res = await agent.post('/api/transport/image').attach('image', json, name);
 
     expect(res).to.have.status(400);
 
@@ -260,19 +280,15 @@ describe('Transport routes: ', () => {
   });
 
   it('Negative tests for file fetching', async () => {
-    let res = await agent
-      .post('/api/transport/fetch')
-      .send();
+    let res = await agent.post('/api/transport/fetch').send();
 
-    let {body} = res;
+    let { body } = res;
 
     expect(res).to.have.status(400);
     expect(body.success).to.equal(0);
 
     const url = 'https://invalidurl';
-    res = await agent
-      .post('/api/transport/fetch')
-      .field('url', url);
+    res = await agent.post('/api/transport/fetch').field('url', url);
 
     body = res.body;
 

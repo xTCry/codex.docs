@@ -18,7 +18,12 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 describe('Alias model', () => {
   after(() => {
-    const pathToDB = path.resolve(__dirname, '../../../', config.get('database'), './aliases.db');
+    const pathToDB = path.resolve(
+      __dirname,
+      '../../../',
+      config.get('database'),
+      './aliases.db',
+    );
 
     if (fs.existsSync(pathToDB)) {
       fs.unlinkSync(pathToDB);
@@ -30,7 +35,7 @@ describe('Alias model', () => {
 
     expect(alias.data).to.be.a('object');
 
-    let {data} = alias;
+    let { data } = alias;
 
     expect(data._id).to.be.undefined;
     expect(data.hash).to.be.undefined;
@@ -51,7 +56,7 @@ describe('Alias model', () => {
     const initialData = {
       _id: 'alias_id',
       type: Alias.types.PAGE,
-      id: 'page_id'
+      id: 'page_id',
     };
     const aliasName = 'alias name';
 
@@ -67,7 +72,7 @@ describe('Alias model', () => {
       type: Alias.types.PAGE,
       id: 'page_id',
       hash: binaryMD5('another test hash'),
-      deprecated: true
+      deprecated: true,
     };
 
     alias.data = update;
@@ -83,7 +88,7 @@ describe('Alias model', () => {
   it('Static get method', async () => {
     const initialData = {
       type: Alias.types.PAGE,
-      id: 'page_id'
+      id: 'page_id',
     };
     const aliasName = 'alias name';
 
@@ -93,7 +98,7 @@ describe('Alias model', () => {
 
     const foundAlias = await Alias.get(aliasName);
 
-    const {data} = foundAlias;
+    const { data } = foundAlias;
 
     expect(data._id).to.equal(savedAlias._id);
     expect(data.hash).to.equal(binaryMD5(aliasName));
@@ -104,7 +109,7 @@ describe('Alias model', () => {
   it('Saving, updating and deleting model in the database', async () => {
     const initialData = {
       type: Alias.types.PAGE,
-      id: 'page_id'
+      id: 'page_id',
     };
     const aliasName = 'alias name';
 
@@ -118,7 +123,9 @@ describe('Alias model', () => {
     expect(savedAlias.id).to.equal(initialData.id);
     expect(savedAlias.deprecated).to.equal(false);
 
-    const insertedAlias = await aliases.findOne({_id: savedAlias._id}) as Alias;
+    const insertedAlias = (await aliases.findOne({
+      _id: savedAlias._id,
+    })) as Alias;
 
     expect(insertedAlias._id).to.equal(savedAlias._id);
     expect(insertedAlias.hash).to.equal(savedAlias.hash);
@@ -130,7 +137,7 @@ describe('Alias model', () => {
       type: Alias.types.PAGE,
       id: 'page_id',
       hash: binaryMD5('another test hash'),
-      deprecated: true
+      deprecated: true,
     };
 
     alias.data = updateData;
@@ -138,7 +145,7 @@ describe('Alias model', () => {
 
     expect(alias._id).to.equal(insertedAlias._id);
 
-    const updatedAlias = await aliases.findOne({_id: alias._id}) as Alias;
+    const updatedAlias = (await aliases.findOne({ _id: alias._id })) as Alias;
 
     expect(updatedAlias._id).to.equal(savedAlias._id);
     expect(updatedAlias.hash).to.equal(updateData.hash);

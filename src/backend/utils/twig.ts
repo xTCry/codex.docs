@@ -25,7 +25,10 @@ export default (function () {
    * @returns {string} - svg code
    */
   twig.extendFunction('svg', function (filename: string) {
-    return fs.readFileSync(path.join(__dirname, `./../../frontend/svg/${filename}.svg`), 'utf-8');
+    return fs.readFileSync(
+      path.join(__dirname, `./../../frontend/svg/${filename}.svg`),
+      'utf-8',
+    );
   });
 
   /**
@@ -78,4 +81,4 @@ export default (function () {
   twig.extendFilter('json_stringify', function (data: any): string {
     return JSON.stringify(data);
   });
-}());
+})();

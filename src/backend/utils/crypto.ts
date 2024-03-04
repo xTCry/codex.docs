@@ -7,7 +7,8 @@ import crypto from 'crypto';
  * @returns {string} - binary hash of argument
  */
 export function binaryMD5(stringToHash: string): string {
-  return crypto.createHash('md5')
+  return crypto
+    .createHash('md5')
     .update(stringToHash)
     .digest()
     .toString('binary');

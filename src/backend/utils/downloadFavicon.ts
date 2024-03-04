@@ -34,21 +34,24 @@ function checkIsUrl(str: string): boolean {
  * @param faviconFolder - folder to save favicon
  * @returns { Promise<FaviconData> } - Promise with data about favicon
  */
-export async function downloadFavicon(destination: string, faviconFolder: string): Promise<FaviconData> {
+export async function downloadFavicon(
+  destination: string,
+  faviconFolder: string,
+): Promise<FaviconData> {
   // Check of destination is empty
   if (!destination) {
     throw Error('Favicon destination is empty');
   }
 
   // Get file name by destination
-  const filename = destination.substring(destination.lastIndexOf('/')+1);
+  const filename = destination.substring(destination.lastIndexOf('/') + 1);
 
   // Get file format
   const format = filename.split('.')[1];
 
   // Check if string is url
   if (!checkIsUrl(destination)) {
-    return  {
+    return {
       destination: `/${filename}`,
       type: `image/${format}`,
     } as FaviconData;
@@ -61,7 +64,9 @@ export async function downloadFavicon(destination: string, faviconFolder: string
   }, 5000);
 
   // Make get request to url
-  const res = await fetch(destination, { signal: controller.signal as RequestInit['signal'] });
+  const res = await fetch(destination, {
+    signal: controller.signal as RequestInit['signal'],
+  });
   // Get buffer data from response
   const fileData = await res.buffer();
 

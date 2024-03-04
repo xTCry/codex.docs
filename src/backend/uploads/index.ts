@@ -5,6 +5,7 @@ import LocalUploadsDriver from './local.js';
 /**
  * Initialize the uploads driver based on the configuration
  */
-export const uploadsDriver = appConfig.uploads.driver === 'local'
-  ? new LocalUploadsDriver(appConfig.uploads)
-  : new S3UploadsDriver(appConfig.uploads);
+export const uploadsDriver =
+  appConfig.uploads.driver === 'local'
+    ? new LocalUploadsDriver(appConfig.uploads)
+    : new S3UploadsDriver(appConfig.uploads);

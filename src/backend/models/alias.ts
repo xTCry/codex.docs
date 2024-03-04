@@ -133,7 +133,9 @@ class Alias {
    */
   public async save(): Promise<Alias> {
     if (!this._id) {
-      const insertedRow = await aliasesDb.insert(this.data) as { _id: EntityId };
+      const insertedRow = (await aliasesDb.insert(this.data)) as {
+        _id: EntityId;
+      };
 
       this._id = insertedRow._id;
     } else {

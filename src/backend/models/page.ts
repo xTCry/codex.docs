@@ -1,5 +1,5 @@
 import urlify from '../utils/urlify.js';
-import database, {isEqualIds} from '../database/index.js';
+import database, { isEqualIds } from '../database/index.js';
 import { EntityId } from '../database/types.js';
 
 const pagesDb = database['pages'];
@@ -82,10 +82,12 @@ class Page {
    * @param {object} query - input query
    * @returns {Promise<Page[]>}
    */
-  public static async getAll(query: Record<string, unknown> = {}): Promise<Page[]> {
+  public static async getAll(
+    query: Record<string, unknown> = {},
+  ): Promise<Page[]> {
     const docs = await pagesDb.find(query);
 
-    return docs.map(doc => new Page(doc));
+    return docs.map((doc) => new Page(doc));
   }
 
   /**
@@ -99,7 +101,7 @@ class Page {
     this.body = body || this.body;
     this.title = this.extractTitleFromBody();
     this.uri = uri || '';
-    this._parent = parent || this._parent || '0' as EntityId;
+    this._parent = parent || this._parent || ('0' as EntityId);
   }
 
   /**
@@ -143,10 +145,9 @@ class Page {
    * @returns {Promise<Page[]>}
    */
   public get children(): Promise<Page[]> {
-    return pagesDb.find({ parent: this._id })
-      .then(data => {
-        return data.map(page => new Page(page));
-      });
+    return pagesDb.find({ parent: this._id }).then((data) => {
+      return data.map((page) => new Page(page));
+    });
   }
 
   /**
@@ -160,7 +161,9 @@ class Page {
     }
 
     if (!this._id) {
-      const insertedRow = await pagesDb.insert(this.data) as { _id: EntityId };
+      const insertedRow = (await pagesDb.insert(this.data)) as {
+        _id: EntityId;
+      };
 
       this._id = insertedRow._id;
     } else {
@@ -208,7 +211,10 @@ class Page {
     if (uri) {
       let pageWithSameUri = await Page.getByUri(uri);
 
-      while (pageWithSameUri._id && !isEqualIds(pageWithSameUri._id, this._id)) {
+      while (
+        pageWithSameUri._id &&
+        !isEqualIds(pageWithSameUri._id, this._id)
+      ) {
         pageWithSameUriCount++;
         pageWithSameUri = await Page.getByUri(uri + `-${pageWithSameUriCount}`);
       }
@@ -223,7 +229,11 @@ class Page {
    * @returns {string}
    */
   private extractTitleFromBody(): string {
-    const headerBlock = this.body ? this.body.blocks.find((block: Record<string, unknown>) => block.type === 'header') : '';
+    const headerBlock = this.body
+      ? this.body.blocks.find(
+          (block: Record<string, unknown>) => block.type === 'header',
+        )
+      : '';
 
     return headerBlock ? headerBlock.data.text : '';
   }

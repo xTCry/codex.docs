@@ -12,9 +12,23 @@ yargs(hideBin(process.argv))
   })
   .help('h')
   .alias('h', 'help')
-  .command('$0', 'start the server', () => {/* empty */}, runHttpServer)
-  .command('build-static', 'build files from database', () => {/* empty */}, async () => {
-    await buildStatic();
-    process.exit(0);
-  })
+  .command(
+    '$0',
+    'start the server',
+    () => {
+      /* empty */
+    },
+    runHttpServer,
+  )
+  .command(
+    'build-static',
+    'build files from database',
+    () => {
+      /* empty */
+    },
+    async () => {
+      await buildStatic();
+      process.exit(0);
+    },
+  )
   .parse();

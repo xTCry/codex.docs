@@ -16,9 +16,13 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const files = database['files'];
 
 describe('File model', () => {
-
   after(() => {
-    const pathToDB = path.resolve(__dirname, '../../../', config.get('database'), './files.db');
+    const pathToDB = path.resolve(
+      __dirname,
+      '../../../',
+      config.get('database'),
+      './files.db',
+    );
 
     if (fs.existsSync(pathToDB)) {
       fs.unlinkSync(pathToDB);
@@ -56,7 +60,7 @@ describe('File model', () => {
       filename: 'randomname',
       path: '/uploads/randomname',
       size: 1024,
-      mimetype: 'image/png'
+      mimetype: 'image/png',
     };
 
     file = new File(initialData);
@@ -76,7 +80,7 @@ describe('File model', () => {
       filename: 'updated randomname',
       path: '/uploads/updated randomname',
       size: 2048,
-      mimetype: 'image/jpeg'
+      mimetype: 'image/jpeg',
     };
 
     file.data = update;
@@ -97,7 +101,7 @@ describe('File model', () => {
       filename: 'randomname',
       path: '/uploads/randomname',
       size: 1024,
-      mimetype: 'image/png'
+      mimetype: 'image/png',
     };
 
     const file = new File(initialData);
@@ -126,7 +130,7 @@ describe('File model', () => {
       filename: 'updated randomname',
       path: '/uploads/updated randomname',
       size: 2048,
-      mimetype: 'image/jpeg'
+      mimetype: 'image/jpeg',
     };
 
     file.data = updateData;
@@ -158,14 +162,14 @@ describe('File model', () => {
       filename: 'randomname',
       path: '/uploads/randomname',
       size: 1024,
-      mimetype: 'image/png'
+      mimetype: 'image/png',
     };
 
     const file = new File(initialData);
 
     const savedFile = await file.save();
 
-    if (savedFile._id !== undefined){
+    if (savedFile._id !== undefined) {
       const foundFile = await File.get(savedFile._id);
 
       const { data } = foundFile;
@@ -187,14 +191,14 @@ describe('File model', () => {
       filename: 'randomname',
       path: '/uploads/randomname',
       size: 1024,
-      mimetype: 'image/png'
+      mimetype: 'image/png',
     };
 
     const file = new File(initialData);
 
     const savedFile = await file.save();
 
-    if (savedFile.filename !== undefined){
+    if (savedFile.filename !== undefined) {
       const foundFile = await File.getByFilename(savedFile.filename);
 
       const { data } = foundFile;
@@ -217,20 +221,24 @@ describe('File model', () => {
         filename: 'randomname1',
         path: '/uploads/randomname1',
         size: 1024,
-        mimetype: 'image/png'
+        mimetype: 'image/png',
       }),
       new File({
         name: 'filename2',
         filename: 'randomname2',
         path: '/uploads/randomname2',
         size: 2048,
-        mimetype: 'image/jpeg'
+        mimetype: 'image/jpeg',
       }),
     ];
 
-    const savedFiles = await Promise.all(filesToSave.map(file => file.save()));
+    const savedFiles = await Promise.all(
+      filesToSave.map((file) => file.save()),
+    );
 
-    const foundFiles = await File.getAll({ _id: { $in: savedFiles.map(file => file._id) } });
+    const foundFiles = await File.getAll({
+      _id: { $in: savedFiles.map((file) => file._id) },
+    });
 
     expect(foundFiles.length).to.equal(2);
 

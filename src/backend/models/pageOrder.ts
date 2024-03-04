@@ -27,7 +27,6 @@ class PageOrder {
   public page?: EntityId;
   private _order?: EntityId[];
 
-
   /**
    * @class
    * @param {PageOrderData} data - info about pageOrder
@@ -70,10 +69,12 @@ class PageOrder {
    * @param {object} query - input query
    * @returns {Promise<PageOrder[]>}
    */
-  public static async getAll(query: Record<string, unknown> = {}): Promise<PageOrder[]> {
+  public static async getAll(
+    query: Record<string, unknown> = {},
+  ): Promise<PageOrder[]> {
     const docs = await db.find(query);
 
-    return Promise.all(docs.map(doc => new PageOrder(doc)));
+    return Promise.all(docs.map((doc) => new PageOrder(doc)));
   }
 
   /**
@@ -82,7 +83,7 @@ class PageOrder {
    * @returns {Promise<PageOrder[]>}
    */
   public static async getRootPageOrder(): Promise<PageOrder> {
-    const docs = await db.findOne({ 'page': '0' });
+    const docs = await db.findOne({ page: '0' });
 
     return new PageOrder(docs);
   }
@@ -93,9 +94,9 @@ class PageOrder {
    * @returns {Promise<PageOrder[]>}
    */
   public static async getChildPageOrder(): Promise<PageOrder[]> {
-    const docs = await this.getAll({ 'page': { $ne: '0' } });
+    const docs = await this.getAll({ page: { $ne: '0' } });
 
-    return Promise.all(docs.map(doc => new PageOrder(doc)));
+    return Promise.all(docs.map((doc) => new PageOrder(doc)));
   }
 
   /**
@@ -104,7 +105,7 @@ class PageOrder {
    * @param {PageOrderData} pageOrderData - info about pageOrder
    */
   public set data(pageOrderData: PageOrderData) {
-    this.page = pageOrderData.page || '0' as EntityId;
+    this.page = pageOrderData.page || ('0' as EntityId);
     this.order = pageOrderData.order || [];
   }
 
@@ -147,7 +148,7 @@ class PageOrder {
       return;
     }
 
-    const found = this.order.findIndex(order => isEqualIds(order, pageId));
+    const found = this.order.findIndex((order) => isEqualIds(order, pageId));
 
     if (found >= 0) {
       this.order.splice(found, 1);
@@ -164,8 +165,12 @@ class PageOrder {
       return;
     }
 
-    const found1 = this.order.findIndex(order => isEqualIds(order, putAbovePageId));
-    const found2 = this.order.findIndex(order => isEqualIds(order, currentPageId));
+    const found1 = this.order.findIndex((order) =>
+      isEqualIds(order, putAbovePageId),
+    );
+    const found2 = this.order.findIndex((order) =>
+      isEqualIds(order, currentPageId),
+    );
 
     if (found1 === -1 || found2 === -1) {
       return;
@@ -187,7 +192,9 @@ class PageOrder {
       return null;
     }
 
-    const currentPageInOrder = this.order.findIndex(order => isEqualIds(order, pageId));
+    const currentPageInOrder = this.order.findIndex((order) =>
+      isEqualIds(order, pageId),
+    );
 
     /**
      * If page not found or first return nothing
@@ -209,12 +216,17 @@ class PageOrder {
       return null;
     }
 
-    const currentPageInOrder = this.order.findIndex(order => isEqualIds(order, pageId));
+    const currentPageInOrder = this.order.findIndex((order) =>
+      isEqualIds(order, pageId),
+    );
 
     /**
      * If page not found or is last
      */
-    if (currentPageInOrder === -1 || currentPageInOrder === this.order.length - 1) {
+    if (
+      currentPageInOrder === -1 ||
+      currentPageInOrder === this.order.length - 1
+    ) {
       return null;
     }
 
@@ -244,7 +256,7 @@ class PageOrder {
    */
   public async save(): Promise<PageOrder> {
     if (!this._id) {
-      const insertedRow = await db.insert(this.data) as { _id: EntityId};
+      const insertedRow = (await db.insert(this.data)) as { _id: EntityId };
 
       this._id = insertedRow._id;
     } else {
