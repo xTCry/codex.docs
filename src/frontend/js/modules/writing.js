@@ -56,8 +56,6 @@ export default class Writing {
       this.editor = editor;
     });
 
-    this.checkAutosave();
-
     /**
      * Activate form elements
      */
@@ -97,6 +95,8 @@ export default class Writing {
      * Set minimum margin left for main column to prevent editor controls from overlapping sidebar
      */
     document.documentElement.style.setProperty('--main-col-min-margin-left', '50px');
+
+    this.checkAutosave();
   };
 
   checkAutosave() {
