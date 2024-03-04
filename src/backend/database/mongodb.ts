@@ -1,4 +1,4 @@
-import { Collection, Filter, MongoClient, OptionalUnlessRequiredId, UpdateFilter } from 'mongodb';
+import { Collection, Document, Filter, MongoClient, OptionalUnlessRequiredId, UpdateFilter } from 'mongodb';
 import { DatabaseDriver, Options } from './types.js';
 import appConfig from '../utils/appConfig.js';
 
@@ -8,7 +8,7 @@ const mongodbClient = mongodbUri ? await MongoClient.connect(mongodbUri): null;
 /**
  * MongoDB driver for working with database
  */
-export default class MongoDatabaseDriver<DocType> implements DatabaseDriver<DocType> {
+export default class MongoDatabaseDriver<DocType extends Document> implements DatabaseDriver<DocType> {
   /**
    * Mongo client instance
    */

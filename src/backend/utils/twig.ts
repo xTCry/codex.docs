@@ -63,7 +63,7 @@ export default (function () {
    */
   twig.extendFunction('toString', function (object: object): string {
     if (!object) {
-      return object;
+      return '';
     }
 
     return object.toString();

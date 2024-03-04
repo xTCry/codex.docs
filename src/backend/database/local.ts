@@ -1,6 +1,7 @@
 import Datastore from 'nedb';
 import { DatabaseDriver, Options } from './types.js';
 import path from 'path';
+import { Document } from 'mongodb';
 import appConfig from '../utils/appConfig.js';
 
 /**
@@ -40,7 +41,7 @@ export interface RejectFunction {
 /**
  * Simple decorator class to work with nedb datastore
  */
-export default class LocalDatabaseDriver<DocType> implements DatabaseDriver<DocType> {
+export default class LocalDatabaseDriver<DocType extends Document> implements DatabaseDriver<DocType> {
   /**
    * nedb Datastore object
    */

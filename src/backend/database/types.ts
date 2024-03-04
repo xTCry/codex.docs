@@ -1,9 +1,9 @@
-import { ObjectId } from 'mongodb';
+import { Document, ObjectId } from 'mongodb';
 
 /**
  * Represents database driver functionality
  */
-export interface DatabaseDriver<DocType> {
+export interface DatabaseDriver<DocType extends Document> {
   /**
    * Insert new document into the database
    *

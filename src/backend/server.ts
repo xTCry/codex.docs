@@ -97,7 +97,7 @@ function createApp(): express.Express {
 
 
   // global error handler
-  app.use(function (err: unknown, req: Request, res: Response, next: NextFunction) {
+  app.use(function (err: unknown, req: Request, res: Response, next: NextFunction): void {
     // send any type of error to hawk server.
     if (appConfig.hawk?.backendToken && err instanceof Error) {
       HawkCatcher.send(err);
