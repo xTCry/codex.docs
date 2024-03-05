@@ -19,11 +19,13 @@ export function throttle(func: Function, ms: number) {
   function wrapper() {
     if (isThrottled) {
       savedArgs = arguments;
+      // @ts-ignore
       savedThis = this;
 
       return;
     }
 
+    // @ts-ignore
     func.apply(this, arguments);
 
     isThrottled = true;
@@ -57,6 +59,7 @@ export function debounce(f: any, ms: number) {
       clearTimeout(timeoutId);
     }
 
+    // @ts-ignore
     timeoutId = setTimeout(() => f.apply(this, arguments), ms);
   };
 }
