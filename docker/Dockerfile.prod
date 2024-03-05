@@ -1,5 +1,5 @@
 # Stage 1 - build
-FROM node:16.14.0-alpine3.15 as build
+FROM node:18-alpine as build
 
 ## Install build toolchain, install node deps and compile native add-ons
 RUN apk add --no-cache python3 make g++ git
@@ -19,7 +19,7 @@ COPY . .
 RUN yarn build:all
 
 # Stage 2 - make final image
-FROM node:16.14.0-alpine3.15
+FROM node:18-alpine
 
 WORKDIR /usr/src/app
 
