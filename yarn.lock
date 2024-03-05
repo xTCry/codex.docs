@@ -4226,6 +4226,13 @@ editorjs-drag-drop@^1.1.13:
   resolved "https://registry.yarnpkg.com/editorjs-drag-drop/-/editorjs-drag-drop-1.1.13.tgz#273a5b36084226beb21503b104800ead6eefcc66"
   integrity sha512-/82RIXP8/zix6Y8/Mnonk1z7XljFvKmsIFbCrP6JTbdWztqoApyUCsnouHTZ4tF51/BTszYV3Z9ennQrXrHCzA==
 
+editorjs-toggle-block@^0.3.14:
+  version "0.3.14"
+  resolved "https://registry.yarnpkg.com/editorjs-toggle-block/-/editorjs-toggle-block-0.3.14.tgz#a372d79ea07c6265dda9f4558cecf371f12da091"
+  integrity sha512-TtpKv+bWr0vyLJ/4EdcXbvFeJul/Mx1fq/pycvxZxHxoUzVtK6EVAW6No1EwIc6cI40w9ZPnGUvltg8nkr6LOA==
+  dependencies:
+    uuid "^9.0.0"
+
 editorjs-undo@^2.0.26:
   version "2.0.26"
   resolved "https://registry.yarnpkg.com/editorjs-undo/-/editorjs-undo-2.0.26.tgz#d376fb2ce4a7681b33792783c9314dfb385bc963"
@@ -8165,6 +8172,11 @@ uuid@^8.3.2:
   version "8.3.2"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"
   integrity sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==
+
+uuid@^9.0.0:
+  version "9.0.1"
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-9.0.1.tgz#e188d4c8853cc722220392c424cd637f32293f30"
+  integrity sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==
 
 v8-compile-cache-lib@^3.0.1:
   version "3.0.1"

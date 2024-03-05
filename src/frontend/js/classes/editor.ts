@@ -14,6 +14,7 @@ import Checklist from '@editorjs/checklist';
 import LinkTool from '@editorjs/link';
 import RawTool from '@editorjs/raw';
 import Embed from '@editorjs/embed';
+import ToggleBlock from 'editorjs-toggle-block';
 
 /**
  * Inline Tools for the Editor
@@ -87,20 +88,25 @@ export default class Editor {
           inlineToolbar: true,
         },
 
-        delimiter: Delimiter,
-
         table: {
           class: Table,
           inlineToolbar: true,
         },
 
-        warning: {
-          class: Warning,
+        checklist: {
+          class: Checklist,
           inlineToolbar: true,
         },
 
-        checklist: {
-          class: Checklist,
+        toggle: {
+          class: ToggleBlock,
+          inlineToolbar: true,
+        },
+
+        delimiter: Delimiter,
+
+        warning: {
+          class: Warning,
           inlineToolbar: true,
         },
 

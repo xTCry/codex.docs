@@ -22,6 +22,7 @@ export default class Page {
    * Called by ModuleDispatcher to initialize module from DOM
    */
   init() {
+    this.createToggleableBlock();
     this.createCodeStyling();
     this.createTableOfContent();
 
@@ -35,6 +36,24 @@ export default class Page {
         this.handleCopyButtonClickEvent(event);
       }
     });
+  }
+
+  /**
+   * Init toggleable blocks
+   */
+  async createToggleableBlock() {
+    const { default: ToggleableBlock } = await import(
+      /* webpackChunkName: "toggleable-block" */ './../classes/toggleableBlock'
+    );
+
+    try {
+      // eslint-disable-next-line no-new
+      new ToggleableBlock({
+        selector: '.block-toggle',
+      });
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   /**

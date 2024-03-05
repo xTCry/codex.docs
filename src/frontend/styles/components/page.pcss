@@ -525,3 +525,35 @@
     }
   }
 }
+
+.block-toggle {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+
+  svg {
+    width: 1.5rem;
+    margin-right: 0.2rem;
+    transition: all 0.1s ease 0s;
+    color: var(--color-button-primary) !important;
+
+    &:hover {
+      color: var(--color-button-primary-hover) !important;
+    }
+  }
+
+  &__item {
+    margin-left: 1.5rem;
+
+    @media (--mobile) {
+      margin-left: .75rem;
+    }
+  }
+
+  &--open {
+    svg {
+      transform: rotate(90deg);
+    }
+  }
+}
