@@ -269,7 +269,9 @@ export default class Writing {
         if (response.success) {
           this.lastBlocksJson = JSON.stringify(writingData.body.blocks);
           this.nodes.saveButton!.classList.remove('pulse');
-          this.lastSaveAt!.textContent = new Date().toLocaleString();
+          if (this.lastSaveAt) {
+            this.lastSaveAt.textContent = new Date().toLocaleString();
+          }
 
           if (!this.page || !isAuto) {
             // if first create page, reload with this result
