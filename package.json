@@ -37,6 +37,8 @@
     "cookie-parser": "^1.4.6",
     "csurf": "^1.11.0",
     "debug": "^4.3.4",
+    "editorjs-drag-drop": "^1.1.13",
+    "editorjs-undo": "^2.0.26",
     "express": "^4.17.1",
     "file-type": "^16.5.4",
     "fs-extra": "^10.1.0",

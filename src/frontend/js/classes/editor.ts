@@ -22,6 +22,12 @@ import InlineCode from '@editorjs/inline-code';
 import Marker from '@editorjs/marker';
 
 /**
+ * Plugins
+ */
+import Undo from 'editorjs-undo';
+import DragDrop from 'editorjs-drag-drop';
+
+/**
  * Class for working with Editor.js
  */
 export default class Editor {
@@ -42,6 +48,7 @@ export default class Editor {
     options: { headerPlaceholder?: string } = {},
   ) {
     const defaultConfig = {
+      onReady: () => this.handleReady(),
       tools: {
         header: {
           class: Header,
@@ -128,6 +135,15 @@ export default class Editor {
     };
 
     this.editor = new EditorJS(Object.assign(defaultConfig, editorConfig));
+  }
+
+  /**
+   * Init plugins on ready state
+   */
+  handleReady() {
+    const editor = this.editor;
+    new Undo({ editor });
+    new DragDrop(editor);
   }
 
   /**
