@@ -5,8 +5,9 @@
     border-color: var(--color-link-hover);
   }
 
-  .ce-block--selected {
-    background: rgba(145, 145, 145, 0.575);
+  .ce-block--selected,
+  .ce-block--selected .ce-block__content {
+    background: var(--color-input-primary);
   }
 
   .ce-popover {
@@ -89,11 +90,6 @@
 
   ::selection {
     background-color: #de61614d !important;
-  }
-
-  .ce-block--selected,
-  .ce-block--selected .ce-block__content {
-    background: transparent;
   }
 
   .link-tool__input {
