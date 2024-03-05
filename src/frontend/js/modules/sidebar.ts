@@ -153,8 +153,8 @@ export default class Sidebar {
       return;
     }
 
-    const itemsCount = sectionList.children.length;
-    sectionList.style.maxHeight = `${itemsCount * ITEM_HEIGHT}px`;
+    // const itemsCount = sectionList.children.length;
+    // sectionList.style.maxHeight = `${itemsCount * ITEM_HEIGHT}px`;
   }
 
   /**

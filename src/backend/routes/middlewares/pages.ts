@@ -29,7 +29,7 @@ export default asyncMiddleware(
         parentIdOfRootPages,
         pages,
         pagesOrder,
-        2,
+        7,
       );
     } catch (error) {
       console.log('Can not load menu:', error);
