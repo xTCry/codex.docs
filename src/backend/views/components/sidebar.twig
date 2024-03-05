@@ -9,22 +9,24 @@
     <span class="docs-sidebar__search-wrapper">
 	    <input class="docs-sidebar__search" type="text" placeholder="Search" />
 	  </span>
+
     {% for firstLevelPage in menu %}
       <section class="docs-sidebar__section" data-id="{{firstLevelPage._id}}">
         <a class="docs-sidebar__section-title-wrapper"
-          href="{{config.basePath ~ (firstLevelPage.uri ? '/' ~ firstLevelPage.uri : '/page/' ~ firstLevelPage._id) }}"
+          href="{{ config.basePath ~ (firstLevelPage.uri ? '/' ~ firstLevelPage.uri : '/page/' ~ firstLevelPage._id) }}"
         >
-        <div class="docs-sidebar__section-title {{page is defined and page._id == firstLevelPage._id ? 'docs-sidebar__section-title--active' : ''}}">
-          <span>
-            {{ firstLevelPage.title | striptags }}
-          </span>
-          {% if firstLevelPage.children is not empty %}
-            <button class="docs-sidebar__section-toggler">
-              {{ svg('arrow-up') }}
-            </button>
-          {% endif %}
-        </div>
+          <div class="docs-sidebar__section-title {{page is defined and page._id == firstLevelPage._id ? 'docs-sidebar__section-title--active' : ''}}">
+            <span>
+              {{ firstLevelPage.title | striptags }}
+            </span>
+            {% if firstLevelPage.children is not empty %}
+              <button class="docs-sidebar__section-toggler">
+                {{ svg('arrow-up') }}
+              </button>
+            {% endif %}
+          </div>
         </a>
+
         {% if firstLevelPage.children is not empty %}
           <ul class="docs-sidebar__section-list">
             {% for child in firstLevelPage.children %}
@@ -43,17 +45,20 @@
       </section>
     {% endfor %}
 
-    <div class="docs-sidebar__logo">
-        <a class="docs-sidebar__logo-wrapper" href="https://github.com/codex-team/codex.docs">
-          <div class="docs-sidebar__logo-image">
-            {{ svg('aside-logo') }}
-          </div>
-          <p class="docs-sidebar__logo-caption">
-            Powered by CodeX Docs
-          </p>
-        </a>
-    </div>
-
+    {% if config.hideSidebarLogo is not sameas(true) %}
+      <div class="docs-sidebar__logo">
+          <a class="docs-sidebar__logo-wrapper" href="https://github.com/codex-team/codex.docs">
+            <div class="docs-sidebar__logo-image">
+              {{ svg('aside-logo') }}
+            </div>
+            <p class="docs-sidebar__logo-caption">
+              Powered by CodeX Docs
+            </p>
+          </a>
+      </div>
+    {% else %}
+      <div class="docs-sidebar__bottom" />
+    {% endif %}
   </aside>
 
   <div class="docs-sidebar__slider">

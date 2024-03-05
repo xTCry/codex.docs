@@ -86,6 +86,7 @@ const FrontendConfig = z.object({
   menu: z.array(
     z.union([z.string(), z.object({ title: z.string(), uri: z.string() })]),
   ), // Menu for pages
+  hideSidebarLogo: z.boolean().optional(), // Hide sidebar logo
 });
 
 /**

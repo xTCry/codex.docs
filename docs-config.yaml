@@ -26,6 +26,7 @@ frontend:
     - "Guides"
     - title: "CodeX"
       uri: "https://codex.so"
+  hideSidebarLogo: false
 
 auth:
   password: secretpassword
