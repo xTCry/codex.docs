@@ -1,7 +1,7 @@
 import fetch from 'node-fetch';
 import nodePath from 'path';
-import File, { FileData } from '../models/file.js';
-import { uploadsDriver } from '../uploads/index.js';
+import File, { FileData } from '../models/file';
+import { uploadsDriver } from '../uploads/index';
 
 /**
  * Represents file data from multer

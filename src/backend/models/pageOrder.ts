@@ -1,6 +1,6 @@
-import database, { isEntityId, isEqualIds } from '../database/index.js';
+import database, { isEntityId, isEqualIds } from '../database/index';
 import { ObjectId } from 'mongodb';
-import { EntityId } from '../database/types.js';
+import { EntityId } from '../database/types';
 
 const db = database['pagesOrder'];
 

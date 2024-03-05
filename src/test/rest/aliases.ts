@@ -3,7 +3,7 @@ import path from 'path';
 import config from 'config';
 import chai from 'chai';
 import chaiHTTP from 'chai-http';
-import server from '../../bin/server.js';
+import server from '../../bin/server';
 import { fileURLToPath } from 'url';
 
 /**

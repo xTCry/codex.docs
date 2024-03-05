@@ -2,9 +2,9 @@ import { expect } from 'chai';
 import fs from 'fs';
 import path from 'path';
 import config from 'config';
-import Alias from '../../backend/models/alias.js';
-import { binaryMD5 } from '../../backend/utils/crypto.js';
-import database from '../../backend/database/index.js';
+import Alias from '../../backend/models/alias';
+import { binaryMD5 } from '../../backend/utils/crypto';
+import database from '../../backend/database/index';
 import { fileURLToPath } from 'url';
 
 const aliases = database['aliases'];

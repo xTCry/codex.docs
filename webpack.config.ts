@@ -1,37 +1,12 @@
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import * as webpack from 'webpack';
 
-/**
- * The __dirname CommonJS variables are not available in ES modules.
- * https://nodejs.org/api/esm.html#no-__filename-or-__dirname
- */
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-/**
- * Options for the Babel
- */
-const babelLoader = {
-  loader: 'babel-loader',
-  options: {
-    cacheDirectory: '.cache/babel-loader',
-    presets: [
-      [
-        '@babel/preset-env',
-        {
-          'useBuiltIns': 'usage',
-        },
-      ],
-    ],
-    plugins: [
-      '@babel/plugin-syntax-dynamic-import',
-    ],
-  },
-};
-
-export default () => {
+export default (): webpack.Configuration => {
   return {
-    entry: './src/frontend/js/app.js',
+    entry: './src/frontend/js/app.ts',
     output: {
       filename: '[name].bundle.js',
       path: path.resolve(__dirname, './public/dist'),
@@ -62,7 +37,7 @@ export default () => {
           ],
         },
         {
-          test: /\.js$/,
+          test: /\.(j|t)s$/,
           exclude: /(node_modules|bower_components)/,
           resolve: {
             /**
@@ -72,9 +47,12 @@ export default () => {
              */
             fullySpecified: false,
           },
-          use: [
-            babelLoader,
-          ],
+          use: {
+            loader: 'babel-loader',
+            options: {
+              cacheDirectory: true,
+            },
+          },
         },
       ],
     },
@@ -87,11 +65,12 @@ export default () => {
     optimization: {
       splitChunks: false,
     },
+    resolve: { extensions: ['.ts', '.tsx', '.jsx', '.js', '...'] },
 
     /**
      * Show less logs while building
      * https://webpack.js.org/configuration/stats/
      */
-    stats: 'minimal'
+    stats: 'minimal',
   };
 };

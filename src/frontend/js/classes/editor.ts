@@ -25,6 +25,10 @@ import Marker from '@editorjs/marker';
  * Class for working with Editor.js
  */
 export default class Editor {
+  basePath = window.config.basePath || '';
+
+  editor: EditorJS;
+
   /**
    * Creates Editor instance
    *
@@ -33,9 +37,10 @@ export default class Editor {
    * @param {object} options
    * @param {string} options.headerPlaceholder - placeholder for Header tool
    */
-  constructor(editorConfig = {}, options = {}) {
-    this.basePath = window.config.basePath || '';
-
+  constructor(
+    editorConfig: { data?: { blocks: any[] } } = {},
+    options: { headerPlaceholder?: string } = {},
+  ) {
     const defaultConfig = {
       tools: {
         header: {
@@ -127,8 +132,6 @@ export default class Editor {
 
   /**
    * Return Editor data
-   *
-   * @returns {Promise.<{}>}
    */
   save() {
     return this.editor.saver.save();

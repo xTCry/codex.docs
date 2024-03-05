@@ -6,7 +6,11 @@
  * @param {object} attributes - any properties to add
  * @returns {HTMLElement}
  */
-export function make(tagName, classNames = null, attributes = {}) {
+export function make(
+  tagName: string,
+  classNames: string | string[] | null = null,
+  attributes: any = {},
+) {
   const el = document.createElement(tagName);
 
   if (Array.isArray(classNames)) {
@@ -16,7 +20,7 @@ export function make(tagName, classNames = null, attributes = {}) {
   }
 
   for (const attrName in attributes) {
-    el[attrName] = attributes[attrName];
+    (el as any)[attrName as keyof HTMLElement] = attributes[attrName];
   }
 
   return el;

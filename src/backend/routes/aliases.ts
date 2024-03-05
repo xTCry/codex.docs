@@ -1,11 +1,11 @@
 import express, { Request, Response } from 'express';
-import Aliases from '../controllers/aliases.js';
-import Pages from '../controllers/pages.js';
-import Alias from '../models/alias.js';
-import verifyToken from './middlewares/token.js';
-import PagesFlatArray from '../models/pagesFlatArray.js';
-import HttpException from '../exceptions/httpException.js';
-import appConfig from '../utils/appConfig.js';
+import Aliases from '../controllers/aliases';
+import Pages from '../controllers/pages';
+import Alias from '../models/alias';
+import verifyToken from './middlewares/token';
+import PagesFlatArray from '../models/pagesFlatArray';
+import HttpException from '../exceptions/httpException';
+import appConfig from '../utils/appConfig';
 
 const router = express.Router();
 

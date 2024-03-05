@@ -2,8 +2,8 @@ import { expect } from 'chai';
 import fs from 'fs';
 import path from 'path';
 import config from 'config';
-import PageOrder from '../../backend/models/pageOrder.js';
-import database from '../../backend/database/index.js';
+import PageOrder from '../../backend/models/pageOrder';
+import database from '../../backend/database/index';
 import { fileURLToPath } from 'url';
 
 /**

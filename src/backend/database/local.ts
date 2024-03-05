@@ -1,8 +1,8 @@
 import Datastore from 'nedb';
-import { DatabaseDriver, Options } from './types.js';
+import { DatabaseDriver, Options } from './types';
 import path from 'path';
 import { Document } from 'mongodb';
-import appConfig from '../utils/appConfig.js';
+import appConfig from '../utils/appConfig';
 
 /**
  * Init function for nedb instance

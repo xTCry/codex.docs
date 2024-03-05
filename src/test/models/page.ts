@@ -2,9 +2,9 @@ import { expect } from 'chai';
 import fs from 'fs';
 import path from 'path';
 import config from 'config';
-import Page from '../../backend/models/page.js';
-import translateString from '../../backend/utils/translation.js';
-import database from '../../backend/database/index.js';
+import Page from '../../backend/models/page';
+import translateString from '../../backend/utils/translation';
+import database from '../../backend/database/index';
 import { fileURLToPath } from 'url';
 
 /**

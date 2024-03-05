@@ -1,5 +1,5 @@
 import multer from 'multer';
-import { FileData } from '../models/file.js';
+import { FileData } from '../models/file';
 
 /**
  * Represents common uploads driver functionality

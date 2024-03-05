@@ -5,8 +5,8 @@ import chai from 'chai';
 import chaiHTTP from 'chai-http';
 import rimraf from 'rimraf';
 import config from 'config';
-import server from '../../bin/server.js';
-import model from '../../backend/models/file.js';
+import server from '../../bin/server';
+import model from '../../backend/models/file';
 import { fileURLToPath } from 'url';
 
 /**

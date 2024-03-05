@@ -1,8 +1,8 @@
-import Page from './page.js';
-import PageOrder from './pageOrder.js';
+import Page from './page';
+import PageOrder from './pageOrder';
 import NodeCache from 'node-cache';
-import { EntityId } from '../database/types.js';
-import { isEqualIds } from '../database/index.js';
+import { EntityId } from '../database/types';
+import { isEqualIds } from '../database/index';
 
 // Create cache for flat array
 const cache = new NodeCache({ stdTTL: 120 });

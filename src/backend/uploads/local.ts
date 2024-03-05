@@ -1,12 +1,12 @@
-import { UploadsDriver } from './types.js';
+import { UploadsDriver } from './types';
 import multer from 'multer';
 import mkdirp from 'mkdirp';
-import { random16 } from '../utils/crypto.js';
+import { random16 } from '../utils/crypto';
 import mime from 'mime';
-import appConfig, { LocalUploadsConfig } from '../utils/appConfig.js';
+import appConfig, { LocalUploadsConfig } from '../utils/appConfig';
 import fs from 'fs';
 import fileType from 'file-type';
-import { FileData } from '../models/file.js';
+import { FileData } from '../models/file';
 
 /**
  * Uploads driver for local storage

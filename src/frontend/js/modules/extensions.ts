@@ -5,12 +5,12 @@ import Misprints from '@codexteam/misprints';
  * @classdesc Class for extensions module
  */
 export default class Extensions {
+  misprints = new Misprints({
+    chatId: window.config.misprintsChatId,
+  });
+
   /**
    * Initialize extensions
    */
-  constructor() {
-    this.misprints = new Misprints({
-      chatId: window.config.misprintsChatId,
-    });
-  }
+  constructor() {}
 }

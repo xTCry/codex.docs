@@ -1,9 +1,9 @@
 import express, { Request, Response } from 'express';
 import multerFunc from 'multer';
-import Pages from '../../controllers/pages.js';
-import PagesOrder from '../../controllers/pagesOrder.js';
-import { EntityId } from '../../database/types.js';
-import { isEntityId, isEqualIds, toEntityId } from '../../database/index.js';
+import Pages from '../../controllers/pages';
+import PagesOrder from '../../controllers/pagesOrder';
+import { EntityId } from '../../database/types';
+import { isEntityId, isEqualIds, toEntityId } from '../../database/index';
 
 const router = express.Router();
 const multer = multerFunc();

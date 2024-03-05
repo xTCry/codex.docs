@@ -1,6 +1,6 @@
-import urlify from '../utils/urlify.js';
-import database, { isEqualIds } from '../database/index.js';
-import { EntityId } from '../database/types.js';
+import urlify from '../utils/urlify';
+import database, { isEqualIds } from '../database/index';
+import { EntityId } from '../database/types';
 
 const pagesDb = database['pages'];
 

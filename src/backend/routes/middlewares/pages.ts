@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
-import Pages from '../../controllers/pages.js';
-import PagesOrder from '../../controllers/pagesOrder.js';
-import asyncMiddleware from '../../utils/asyncMiddleware.js';
-import { EntityId } from '../../database/types.js';
-import { createMenuTree } from '../../utils/menu.js';
+import Pages from '../../controllers/pages';
+import PagesOrder from '../../controllers/pagesOrder';
+import asyncMiddleware from '../../utils/asyncMiddleware';
+import { EntityId } from '../../database/types';
+import { createMenuTree } from '../../utils/menu';
 
 /**
  * Middleware for all /page/... routes

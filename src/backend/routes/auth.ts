@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import csrf from 'csurf';
-import appConfig, { AppConfig } from '../utils/appConfig.js';
+import appConfig, { AppConfig } from '../utils/appConfig';
 
 const router = express.Router();
 const csrfProtection = csrf({ cookie: true });

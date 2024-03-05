@@ -1,7 +1,7 @@
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import runHttpServer from './server.js';
-import buildStatic from './build-static.js';
+import runHttpServer from './server';
+import buildStatic from './build-static';
 
 yargs(hideBin(process.argv))
   .option('config', {

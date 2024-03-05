@@ -6,11 +6,12 @@ const ERROR_MESSAGE = 'Unable to copy to clipboard';
  * @param {string} text - text to be copied to clipboard
  * @returns {Promise<void>}
  */
-export default function (text) {
+export default function (text: string) {
   return new Promise((resolve, reject) => {
     if (navigator.clipboard) {
-      navigator.clipboard.writeText(text)
-        .then(() => resolve())
+      navigator.clipboard
+        .writeText(text)
+        .then(() => resolve(1))
         .catch(() => reject(new Error(ERROR_MESSAGE)));
     } else {
       const tmpElement = document.createElement('input');
@@ -28,7 +29,7 @@ export default function (text) {
 
       try {
         document.execCommand('copy');
-        resolve();
+        resolve(1);
       } catch (e) {
         reject(new Error(ERROR_MESSAGE));
       } finally {

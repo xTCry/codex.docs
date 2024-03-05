@@ -6,58 +6,71 @@ import * as $ from '../utils/dom';
  */
 export default class TableOfContent {
   /**
-   * Initialize table of content
-   *
-   * @param {object} options - constructor params
-   * @param {string} options.tagSelector - selector for tags to observe
-   * @param {HTMLElement} options.appendTo - element for appending of the table of content
+   * Array of tags to observe
    */
-  constructor({ tagSelector, appendTo }) {
+  tags: HTMLElement[] = [];
+  tagsSectionsMap: { top: number; tag: HTMLElement }[] = [];
+
+  /**
+   * Selector for tags to observe
+   */
+  tagSelector = '';
+
+  /**
+   * Element to append the Table of Content
+   */
+  tocParentElement: HTMLElement;
+
+  nodes: {
+    wrapper: HTMLElement | null;
+    items: HTMLElement[];
+  } = {
     /**
-     * Array of tags to observe
+     * Main Table of Content element
      */
-    this.tags = [];
-    this.tagsSectionsMap = [];
+    wrapper: null,
 
     /**
-     * Selector for tags to observe
+     * List of Table of Content links
      */
+    items: [],
+  };
+
+  /**
+   * Currently highlighted element of ToC
+   */
+  activeItem: HTMLElement | null = null;
+
+  CSS = {
+    tocContainer: 'table-of-content',
+    tocHeader: 'table-of-content__header',
+    tocElement: 'table-of-content__list',
+    tocElementItem: 'table-of-content__list-item',
+    tocElementItemActive: 'table-of-content__list-item--active',
+    tocElementItemIndent: (number: number | string) =>
+      `table-of-content__list-item--indent-${number}x`,
+  };
+
+  tocElement: HTMLElement | null = null;
+
+  /**
+   * Initialize table of content
+   */
+  constructor(options: {
+    /** selector for tags to observe */
+    tagSelector: string;
+    /** element for appending of the table of content */
+    appendTo: HTMLElement;
+  }) {
+    const { tagSelector, appendTo } = options;
+
     this.tagSelector = tagSelector || 'h2,h3,h4';
 
-    /**
-     * Element to append the Table of Content
-     */
     this.tocParentElement = appendTo;
 
     if (!this.tocParentElement) {
       throw new Error('Table of Content wrapper not found');
     }
-
-    this.nodes = {
-      /**
-       * Main Table of Content element
-       */
-      wrapper: null,
-
-      /**
-       * List of Table of Content links
-       */
-      items: [],
-    };
-
-    /**
-     * Currently highlighted element of ToC
-     */
-    this.activeItem = null;
-
-    this.CSS = {
-      tocContainer: 'table-of-content',
-      tocHeader: 'table-of-content__header',
-      tocElement: 'table-of-content__list',
-      tocElementItem: 'table-of-content__list-item',
-      tocElementItemActive: 'table-of-content__list-item--active',
-      tocElementItemIndent: number => `table-of-content__list-item--indent-${number}x`,
-    };
 
     this.init();
   }
@@ -90,11 +103,11 @@ export default class TableOfContent {
 
   /**
    * Find all section tags on the page
-   *
-   * @returns {HTMLElement[]}
    */
   getSectionTagsOnThePage() {
-    return Array.from(document.querySelectorAll(this.tagSelector));
+    return Array.from(
+      document.querySelectorAll(this.tagSelector),
+    ) as HTMLElement[];
   }
 
   /**
@@ -105,10 +118,7 @@ export default class TableOfContent {
       const rect = tag.getBoundingClientRect();
       const top = Math.floor(rect.top + window.scrollY);
 
-      return {
-        top,
-        tag,
-      };
+      return { top, tag };
     });
   }
 
@@ -135,20 +145,23 @@ export default class TableOfContent {
        *
        * @todo research how not to use magic number
        */
-      const scrollPosition = contentTopOffset + window.scrollY + activationOffset;
+      const scrollPosition =
+        contentTopOffset + window.scrollY + activationOffset;
 
       /**
        * Find the nearest section above the scroll position
        */
-      const section = this.tagsSectionsMap.filter((tag) => {
-        return tag.top <= scrollPosition;
-      }).pop();
+      const section = this.tagsSectionsMap
+        .filter((tag) => {
+          return tag.top <= scrollPosition;
+        })
+        .pop();
 
       /**
        * If section found then set it as active
        */
       if (section) {
-        const targetLink = section.tag.querySelector('a').getAttribute('href');
+        const targetLink = section.tag.querySelector('a')!.getAttribute('href');
 
         this.setActiveItem(targetLink);
       } else {
@@ -189,7 +202,7 @@ export default class TableOfContent {
     this.tocElement = $.make('section', this.CSS.tocElement);
 
     this.tags.forEach((tag) => {
-      const linkTarget = tag.querySelector('a').getAttribute('href');
+      const linkTarget = tag.querySelector('a')!.getAttribute('href');
 
       const linkWrapper = $.make('li', this.CSS.tocElementItem);
       const linkBlock = $.make('a', null, {
@@ -216,7 +229,7 @@ export default class TableOfContent {
       }
 
       linkWrapper.appendChild(linkBlock);
-      this.tocElement.appendChild(linkWrapper);
+      this.tocElement!.appendChild(linkWrapper);
 
       this.nodes.items.push(linkWrapper);
     });
@@ -233,7 +246,7 @@ export default class TableOfContent {
     });
 
     this.nodes.wrapper.appendChild(header);
-    this.nodes.wrapper.appendChild(this.tocElement);
+    this.nodes.wrapper.appendChild(this.tocElement!);
 
     this.tocParentElement.appendChild(this.nodes.wrapper);
   }
@@ -243,7 +256,7 @@ export default class TableOfContent {
    *
    * @param {string|null} targetLink - href of the link. Null if we need to clear all highlights
    */
-  setActiveItem(targetLink) {
+  setActiveItem(targetLink: string | null) {
     /**
      * Clear current highlight
      */
@@ -265,12 +278,14 @@ export default class TableOfContent {
      *
      * @todo do not fire DOM search, use saved map instead
      */
-    const targetElement = this.tocElement.querySelector(`a[href="${targetLink}"]`);
+    const targetElement = this.tocElement!.querySelector(
+      `a[href="${targetLink}"]`,
+    );
 
     /**
      * Getting link's wrapper
      */
-    const listItem = targetElement.parentNode;
+    const listItem = targetElement!.parentNode as HTMLElement;
 
     /**
      * Highlight and save current item
@@ -295,12 +310,12 @@ export default class TableOfContent {
      *
      * @todo compute it once
      */
-    const hasScroll = this.nodes.wrapper.scrollHeight > this.nodes.wrapper.clientHeight;
+    const hasScroll =
+      this.nodes.wrapper!.scrollHeight > this.nodes.wrapper!.clientHeight;
 
     if (!hasScroll) {
       return;
     }
-
 
     /**
      * If some item is highlighted, check whether we need to scroll to it or not
@@ -320,24 +335,26 @@ export default class TableOfContent {
       const itemBottomCoordWithPadding = itemBottomCoord + scrollPadding;
       const itemTopCoordWithPadding = itemOffsetTop - scrollPadding;
 
-      const scrollableParentHeight = this.nodes.wrapper.offsetHeight; // @todo compute it once
-      const scrollableParentScrolledDistance = this.nodes.wrapper.scrollTop;
+      const scrollableParentHeight = this.nodes.wrapper!.offsetHeight; // @todo compute it once
+      const scrollableParentScrolledDistance = this.nodes.wrapper!.scrollTop;
 
       /**
        * Scroll bottom required if item ends below the parent bottom boundary
        */
-      const isScrollDownRequired = itemBottomCoordWithPadding > scrollableParentHeight + scrollableParentScrolledDistance;
+      const isScrollDownRequired =
+        itemBottomCoordWithPadding >
+        scrollableParentHeight + scrollableParentScrolledDistance;
 
       /**
        * Scroll upward required when item starts above the visible parent zone
        */
-      const isScrollUpRequired = itemTopCoordWithPadding < scrollableParentScrolledDistance;
+      const isScrollUpRequired =
+        itemTopCoordWithPadding < scrollableParentScrolledDistance;
 
       /**
        * If item is fully visible, scroll is not required
        */
       const isScrollRequired = isScrollDownRequired || isScrollUpRequired;
-
 
       if (isScrollRequired === false) {
         /**
@@ -349,12 +366,13 @@ export default class TableOfContent {
       /**
        * Now compute the scroll distance to make item visible
        */
-      let distanceToMakeItemFullyVisible;
-
+      let distanceToMakeItemFullyVisible: number;
 
       if (isScrollDownRequired) {
-        distanceToMakeItemFullyVisible = itemBottomCoordWithPadding - scrollableParentHeight;
-      } else { // scrollUpRequired=true
+        distanceToMakeItemFullyVisible =
+          itemBottomCoordWithPadding - scrollableParentHeight;
+      } else {
+        // scrollUpRequired=true
         distanceToMakeItemFullyVisible = itemTopCoordWithPadding;
       }
 
@@ -363,7 +381,7 @@ export default class TableOfContent {
        * Using RAF to prevent overloading of regular scroll animation FPS
        */
       window.requestAnimationFrame(() => {
-        this.nodes.wrapper.scrollTop = distanceToMakeItemFullyVisible;
+        this.nodes.wrapper!.scrollTop = distanceToMakeItemFullyVisible;
       });
     }
   }
@@ -388,7 +406,8 @@ export default class TableOfContent {
       /**
        * Getting css scroll padding value
        */
-      const scrollPaddingTopValue = window.getComputedStyle(htmlElement)
+      const scrollPaddingTopValue = window
+        .getComputedStyle(htmlElement)
         .getPropertyValue('scroll-padding-top');
 
       /**

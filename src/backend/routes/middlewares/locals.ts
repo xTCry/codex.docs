@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { AppConfig } from '../../utils/appConfig.js';
+import { AppConfig } from '../../utils/appConfig';
 
 /**
  * Middleware for checking locals.isAuthorized property, which allows to edit/create pages

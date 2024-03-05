@@ -1,11 +1,11 @@
-import { AliasData } from '../models/alias.js';
-import { FileData } from '../models/file.js';
-import { PageData } from '../models/page.js';
-import { PageOrderData } from '../models/pageOrder.js';
-import appConfig from '../utils/appConfig.js';
-import LocalDatabaseDriver from './local.js';
-import MongoDatabaseDriver from './mongodb.js';
-import { EntityId } from './types.js';
+import { AliasData } from '../models/alias';
+import { FileData } from '../models/file';
+import { PageData } from '../models/page';
+import { PageOrderData } from '../models/pageOrder';
+import appConfig from '../utils/appConfig';
+import LocalDatabaseDriver from './local';
+import MongoDatabaseDriver from './mongodb';
+import { EntityId } from './types';
 import { ObjectId } from 'mongodb';
 
 const Database =

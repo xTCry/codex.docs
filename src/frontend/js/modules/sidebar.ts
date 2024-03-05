@@ -1,5 +1,6 @@
-import { Storage } from '../utils/storage';
 import Shortcut from '@codexteam/shortcuts';
+
+import { Storage } from '../utils/storage';
 import SidebarFilter from '../classes/sidebar-filter';
 /**
  * Local storage key
@@ -12,10 +13,49 @@ const SIDEBAR_VISIBILITY_KEY = 'docs_sidebar_visibility';
  */
 const ITEM_HEIGHT = 31;
 
+type ENodes = 'sidebar' | 'sidebarContent' | 'toggler' | 'slider' | 'search';
+
 /**
  * Sidebar module
  */
 export default class Sidebar {
+  sidebarStorage = new Storage(LOCAL_STORAGE_KEY);
+  sectionsState: Record<string, any> = {};
+
+  // Sidebar filter module
+  filter = new SidebarFilter();
+
+  // Initialize localStorage that contains sidebar visibility
+  sidebarVisibilityStorage = new Storage(SIDEBAR_VISIBILITY_KEY);
+
+  // Sidebar visibility
+  isVisible: boolean = false;
+
+  /**
+   * Stores refs to HTML elements needed for correct sidebar work
+   */
+  nodes: Record<ENodes, HTMLElement | null> = {
+    sidebar: null,
+    sidebarContent: null,
+    toggler: null,
+    slider: null,
+    search: null,
+  };
+
+  nodeSections: HTMLElement[] = [];
+
+  /**
+   * Creates base properties
+   */
+  constructor() {
+    const storedState = this.sidebarStorage.get();
+    this.sectionsState = storedState ? JSON.parse(storedState) : {};
+
+    // Get current sidebar visibility from storage
+    const storedVisibility = this.sidebarVisibilityStorage.get();
+    this.isVisible = storedVisibility !== 'false';
+  }
+
   /**
    * CSS classes
    *
@@ -43,74 +83,56 @@ export default class Sidebar {
   }
 
   /**
-   * Creates base properties
-   */
-  constructor() {
-    /**
-     * Stores refs to HTML elements needed for correct sidebar work
-     */
-    this.nodes = {
-      sidebar: null,
-      sections: [],
-      sidebarContent: null,
-      toggler: null,
-      slider: null,
-      search: null,
-    };
-    this.sidebarStorage = new Storage(LOCAL_STORAGE_KEY);
-    const storedState = this.sidebarStorage.get();
-
-    this.sectionsState = storedState ? JSON.parse(storedState) : {};
-
-    // Initialize localStorage that contains sidebar visibility
-    this.sidebarVisibilityStorage = new Storage(SIDEBAR_VISIBILITY_KEY);
-    // Get current sidebar visibility from storage
-    const storedVisibility = this.sidebarVisibilityStorage.get();
-
-    // Sidebar visibility
-    this.isVisible = storedVisibility !== 'false';
-    // Sidebar filter module
-    this.filter = new SidebarFilter();
-  }
-
-  /**
    * Called by ModuleDispatcher to initialize module from DOM
    *
-   * @param {writingSettings} settings - module settings
+   * @param {object} settings - module settings
    * @param {HTMLElement} moduleEl - module element
    */
-  init(settings, moduleEl) {
+  init(settings: any, moduleEl: HTMLElement) {
     this.nodes.sidebar = moduleEl;
-    this.nodes.sections = Array.from(moduleEl.querySelectorAll('.' + Sidebar.CSS.section));
-    this.nodes.sections.forEach(section => this.initSection(section));
-    this.nodes.sidebarContent = moduleEl.querySelector('.' + Sidebar.CSS.sidebarContent);
-    this.nodes.toggler = moduleEl.querySelector('.' + Sidebar.CSS.sidebarToggler);
-    this.nodes.toggler.addEventListener('click', () => this.toggleSidebar());
+    this.nodeSections = Array.from(
+      moduleEl.querySelectorAll('.' + Sidebar.CSS.section),
+    );
+    this.nodeSections.forEach((section) => this.initSection(section));
+    this.nodes.sidebarContent = moduleEl.querySelector(
+      '.' + Sidebar.CSS.sidebarContent,
+    );
+
+    this.nodes.toggler = moduleEl.querySelector(
+      '.' + Sidebar.CSS.sidebarToggler,
+    );
+    this.nodes.toggler!.addEventListener('click', () => this.toggleSidebar());
+
     this.nodes.slider = moduleEl.querySelector('.' + Sidebar.CSS.sidebarSlider);
-    this.nodes.slider.addEventListener('click', () => this.handleSliderClick());
+    this.nodes.slider!.addEventListener('click', () =>
+      this.handleSliderClick(),
+    );
 
     this.nodes.search = moduleEl.querySelector('.' + Sidebar.CSS.sidebarSearch);
-    this.filter.init(this.nodes.sections, this.nodes.sidebarContent,
-      this.nodes.search, this.setSectionCollapsed);
+    this.filter.init(
+      this.nodeSections,
+      this.nodes.sidebarContent,
+      this.nodes.search,
+      this.setSectionCollapsed,
+    );
 
     this.ready();
   }
 
   /**
    * Initializes sidebar sections: applies stored state and adds event listeners
-   *
-   * @param {HTMLElement} section
-   * @returns {void}
    */
-  initSection(section) {
+  initSection(section: HTMLElement) {
     const id = section.dataset.id;
     const togglerEl = section.querySelector('.' + Sidebar.CSS.toggler);
 
-    if (!togglerEl) {
+    if (!togglerEl || !id) {
       return;
     }
 
-    togglerEl.addEventListener('click', e => this.handleSectionTogglerClick(id, section, e));
+    togglerEl.addEventListener('click', (e) =>
+      this.handleSectionTogglerClick(id, section, e as MouseEvent),
+    );
 
     if (typeof this.sectionsState[id] === 'undefined') {
       this.sectionsState[id] = false;
@@ -122,14 +144,15 @@ export default class Sidebar {
     /**
      * Calculate and set sections list max height for smooth animation
      */
-    const sectionList = section.querySelector('.' + Sidebar.CSS.sectionList);
+    const sectionList = section.querySelector(
+      '.' + Sidebar.CSS.sectionList,
+    ) as HTMLElement;
 
     if (!sectionList) {
       return;
     }
 
     const itemsCount = sectionList.children.length;
-
     sectionList.style.maxHeight = `${itemsCount * ITEM_HEIGHT}px`;
   }
 
@@ -141,7 +164,11 @@ export default class Sidebar {
    * @param {MouseEvent} event - click event
    * @returns {void}
    */
-  handleSectionTogglerClick(sectionId, sectionEl, event) {
+  handleSectionTogglerClick(
+    sectionId: string,
+    sectionEl: HTMLElement,
+    event: MouseEvent,
+  ) {
     event.preventDefault();
     this.sectionsState[sectionId] = !this.sectionsState[sectionId];
     this.sidebarStorage.set(JSON.stringify(this.sectionsState));
@@ -155,7 +182,11 @@ export default class Sidebar {
    * @param {boolean} collapsed - new collapsed state
    * @param {boolean} [animated] - true if state should change with animation
    */
-  setSectionCollapsed(sectionEl, collapsed, animated = true) {
+  setSectionCollapsed(
+    sectionEl: HTMLElement,
+    collapsed: boolean,
+    animated: boolean = true,
+  ) {
     const sectionList = sectionEl.querySelector('.' + Sidebar.CSS.sectionList);
 
     if (!sectionList) {
@@ -167,8 +198,12 @@ export default class Sidebar {
     /**
      * Highlight section item as active if active child item is collapsed.
      */
-    const activeSectionListItem = sectionList.querySelector('.' + Sidebar.CSS.sectionListItemActive);
-    const sectionTitle = sectionEl.querySelector('.' + Sidebar.CSS.sectionTitle);
+    const activeSectionListItem = sectionList.querySelector(
+      '.' + Sidebar.CSS.sectionListItemActive,
+    );
+    const sectionTitle = sectionEl.querySelector(
+      '.' + Sidebar.CSS.sectionTitle,
+    );
 
     if (!activeSectionListItem) {
       return;
@@ -178,10 +213,13 @@ export default class Sidebar {
        * Highlights section title as active with a delay to let section collapse animation finish first
        */
       setTimeout(() => {
-        sectionTitle.classList.toggle(Sidebar.CSS.sectionTitleActive, collapsed);
+        sectionTitle!.classList.toggle(
+          Sidebar.CSS.sectionTitleActive,
+          collapsed,
+        );
       }, 200);
     } else {
-      sectionTitle.classList.toggle(Sidebar.CSS.sectionTitleActive, collapsed);
+      sectionTitle!.classList.toggle(Sidebar.CSS.sectionTitleActive, collapsed);
     }
   }
 
@@ -191,7 +229,9 @@ export default class Sidebar {
    * @returns {void}
    */
   toggleSidebar() {
-    this.nodes.sidebarContent.classList.toggle(Sidebar.CSS.sidebarContentVisible);
+    this.nodes.sidebarContent!.classList.toggle(
+      Sidebar.CSS.sidebarContentVisible,
+    );
   }
 
   /**
@@ -201,7 +241,7 @@ export default class Sidebar {
    */
   initSidebar() {
     if (!this.isVisible) {
-      this.nodes.sidebar.classList.add(Sidebar.CSS.sidebarCollapsed);
+      this.nodes.sidebar!.classList.add(Sidebar.CSS.sidebarCollapsed);
     }
 
     /**
@@ -210,7 +250,7 @@ export default class Sidebar {
      * To prevent awkward animation when visibility is set to false, we need to remove animated class
      */
     setTimeout(() => {
-      this.nodes.sidebar.classList.add(Sidebar.CSS.sidebarAnimated);
+      this.nodes.sidebar!.classList.add(Sidebar.CSS.sidebarAnimated);
     }, 200);
 
     // add event listener to execute keyboard shortcut
@@ -226,14 +266,14 @@ export default class Sidebar {
     new Shortcut({
       name: 'CMD+P',
       on: document.body,
-      callback: (e) => {
+      callback: (e: Event) => {
         // If sidebar is not visible.
         if (!this.isVisible) {
           // make sidebar visible.
           this.handleSliderClick();
         }
         // focus search input.
-        this.nodes.search.focus();
+        this.nodes.search!.focus();
         // Stop propagation of event.
         e.stopPropagation();
         e.preventDefault();
@@ -248,8 +288,8 @@ export default class Sidebar {
    */
   handleSliderClick() {
     this.isVisible = !this.isVisible;
-    this.sidebarVisibilityStorage.set(this.isVisible);
-    this.nodes.sidebar.classList.toggle(Sidebar.CSS.sidebarCollapsed);
+    this.sidebarVisibilityStorage.set(String(this.isVisible));
+    this.nodes.sidebar!.classList.toggle(Sidebar.CSS.sidebarCollapsed);
   }
 
   /**
@@ -259,6 +299,8 @@ export default class Sidebar {
    */
   ready() {
     this.initSidebar();
-    this.nodes.sidebarContent.classList.remove(Sidebar.CSS.sidebarContentInvisible);
+    this.nodes.sidebarContent!.classList.remove(
+      Sidebar.CSS.sidebarContentInvisible,
+    );
   }
 }

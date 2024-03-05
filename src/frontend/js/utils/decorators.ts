@@ -10,10 +10,10 @@
  *
  * @returns {Function}
  */
-export function throttle(func, ms) {
-  let isThrottled = false,
-      savedArgs,
-      savedThis;
+export function throttle(func: Function, ms: number) {
+  let isThrottled = false;
+  let savedArgs: any | null = null;
+  let savedThis: any;
 
   // eslint-disable-next-line jsdoc/require-jsdoc
   function wrapper() {
@@ -49,8 +49,8 @@ export function throttle(func, ms) {
  *
  * @returns {(function(): void)|*}
  */
-export function debounce(f, ms) {
-  let timeoutId = null;
+export function debounce(f: any, ms: number) {
+  let timeoutId: NodeJS.Timeout | null = null;
 
   return function () {
     if (timeoutId) {

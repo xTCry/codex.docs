@@ -1,11 +1,11 @@
-import { UploadsDriver } from './types.js';
+import { UploadsDriver } from './types';
 import multerS3 from 'multer-s3';
-import { random16 } from '../utils/crypto.js';
+import { random16 } from '../utils/crypto';
 import path from 'path';
 import mime from 'mime';
 import multer from 'multer';
-import { S3UploadsConfig } from '../utils/appConfig.js';
-import { FileData } from '../models/file.js';
+import { S3UploadsConfig } from '../utils/appConfig';
+import { FileData } from '../models/file';
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import fileType from 'file-type';
 

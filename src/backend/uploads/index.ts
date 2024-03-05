@@ -1,6 +1,6 @@
-import appConfig from '../utils/appConfig.js';
-import S3UploadsDriver from './s3.js';
-import LocalUploadsDriver from './local.js';
+import appConfig from '../utils/appConfig';
+import S3UploadsDriver from './s3';
+import LocalUploadsDriver from './local';
 
 /**
  * Initialize the uploads driver based on the configuration

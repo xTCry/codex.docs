@@ -1,8 +1,8 @@
 import express, { Request, Response } from 'express';
-import verifyToken from './middlewares/token.js';
-import { AppConfig } from '../utils/appConfig.js';
-import PagesOrder from '../controllers/pagesOrder.js';
-import Pages from '../controllers/pages.js';
+import verifyToken from './middlewares/token';
+import { AppConfig } from '../utils/appConfig';
+import PagesOrder from '../controllers/pagesOrder';
+import Pages from '../controllers/pages';
 
 const router = express.Router();
 

@@ -3,7 +3,7 @@
  */
 import twig from 'twig';
 import fs from 'fs';
-import urlify from './urlify.js';
+import urlify from './urlify';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -12,7 +12,7 @@ import { fileURLToPath } from 'url';
  * https://nodejs.org/api/esm.html#no-__filename-or-__dirname
  */
 // eslint-disable-next-line @typescript-eslint/naming-convention
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+// const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default (function () {
   'use strict';

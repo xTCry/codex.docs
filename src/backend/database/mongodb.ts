@@ -6,14 +6,8 @@ import {
   OptionalUnlessRequiredId,
   UpdateFilter,
 } from 'mongodb';
-import { DatabaseDriver, Options } from './types.js';
-import appConfig from '../utils/appConfig.js';
-
-const mongodbUri =
-  appConfig.database.driver === 'mongodb'
-    ? appConfig.database.mongodb.uri
-    : null;
-const mongodbClient = mongodbUri ? await MongoClient.connect(mongodbUri) : null;
+import { DatabaseDriver, Options } from './types';
+import appConfig from '../utils/appConfig';
 
 /**
  * MongoDB driver for working with database
@@ -21,27 +15,39 @@ const mongodbClient = mongodbUri ? await MongoClient.connect(mongodbUri) : null;
 export default class MongoDatabaseDriver<DocType extends Document>
   implements DatabaseDriver<DocType>
 {
-  /**
-   * Mongo client instance
-   */
-  private db: MongoClient;
+  // /**
+  //  * Mongo client instance
+  //  */
+  // private db: MongoClient;
 
   /**
    * Collection instance
    */
-  private collection: Collection<DocType>;
+  private collection: Collection<DocType> | null = null;
 
   /**
    * Creates driver instance
    *
    * @param collectionName - collection to work with
    */
-  constructor(collectionName: string) {
+  constructor(public readonly collectionName: string) {
+    this.initConnection().then();
+  }
+
+  public async initConnection() {
+    const mongodbUri =
+      appConfig.database.driver === 'mongodb'
+        ? appConfig.database.mongodb.uri
+        : null;
+    const mongodbClient = mongodbUri
+      ? await MongoClient.connect(mongodbUri)
+      : null;
+
     if (!mongodbClient) {
       throw new Error('MongoDB client is not initialized');
     }
-    this.db = mongodbClient;
-    this.collection = mongodbClient.db().collection(collectionName);
+    // this.db = mongodbClient;
+    this.collection = mongodbClient.db().collection(this.collectionName);
   }
 
   /**
@@ -51,7 +57,7 @@ export default class MongoDatabaseDriver<DocType extends Document>
    * @returns {Promise<object | Error>} - inserted doc or Error object
    */
   public async insert(doc: DocType): Promise<DocType> {
-    const result = await this.collection.insertOne(
+    const result = await this.collection!.insertOne(
       doc as OptionalUnlessRequiredId<DocType>,
     );
 
@@ -72,7 +78,7 @@ export default class MongoDatabaseDriver<DocType extends Document>
     query: Record<string, unknown>,
     projection?: DocType,
   ): Promise<Array<DocType>> {
-    const cursor = this.collection.find(query as Filter<DocType>);
+    const cursor = this.collection!.find(query as Filter<DocType>);
 
     if (projection) {
       cursor.project(projection);
@@ -94,7 +100,7 @@ export default class MongoDatabaseDriver<DocType extends Document>
     query: Record<string, unknown>,
     projection?: DocType,
   ): Promise<DocType> {
-    const doc = await this.collection.findOne(query as Filter<DocType>, {
+    const doc = await this.collection!.findOne(query as Filter<DocType>, {
       projection,
     });
 
@@ -117,7 +123,7 @@ export default class MongoDatabaseDriver<DocType extends Document>
     const updateDocument = {
       $set: update,
     } as UpdateFilter<DocType>;
-    const result = await this.collection.updateMany(
+    const result = await this.collection!.updateMany(
       query as Filter<DocType>,
       updateDocument,
       options,
@@ -148,7 +154,7 @@ export default class MongoDatabaseDriver<DocType extends Document>
     query: Record<string, unknown>,
     options: Options = {},
   ): Promise<number> {
-    const result = await this.collection.deleteMany(query as Filter<DocType>);
+    const result = await this.collection!.deleteMany(query as Filter<DocType>);
 
     return result.deletedCount;
   }

@@ -1,9 +1,9 @@
 import { Request, Response, Router } from 'express';
 import multer from 'multer';
-import Transport from '../../controllers/transport.js';
-import appConfig from '../../utils/appConfig.js';
-import { FileData } from '../../models/file.js';
-import { uploadsDriver } from '../../uploads/index.js';
+import Transport from '../../controllers/transport';
+import appConfig from '../../utils/appConfig';
+import { FileData } from '../../models/file';
+import { uploadsDriver } from '../../uploads/index';
 
 const router = Router();
 

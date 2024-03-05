@@ -6,14 +6,6 @@ import copyToClipboard from '../utils/copyToClipboard';
  */
 export default class Page {
   /**
-   * Creates base properties
-   */
-  constructor() {
-    this.codeStyler = null;
-    this.tableOfContent = null;
-  }
-
-  /**
    * CSS classes used in the codes
    *
    * @returns {Record<string, string>}
@@ -30,15 +22,15 @@ export default class Page {
    * Called by ModuleDispatcher to initialize module from DOM
    */
   init() {
-    this.codeStyler = this.createCodeStyling();
-    this.tableOfContent = this.createTableOfContent();
+    this.createCodeStyling();
+    this.createTableOfContent();
 
     /**
      * Add click event listener
      */
     const page = document.querySelector(`.${Page.CSS.page}`);
 
-    page.addEventListener('click', (event) => {
+    page!.addEventListener('click', (event: any) => {
       if (event.target.classList.contains(Page.CSS.copyButton)) {
         this.handleCopyButtonClickEvent(event);
       }
@@ -49,7 +41,9 @@ export default class Page {
    * Init code highlighting
    */
   async createCodeStyling() {
-    const { default: CodeStyler } = await import(/* webpackChunkName: "code-styling" */ './../classes/codeStyler');
+    const { default: CodeStyler } = await import(
+      /* webpackChunkName: "code-styling" */ '../classes/codeStyler'
+    );
 
     try {
       // eslint-disable-next-line no-new
@@ -67,13 +61,15 @@ export default class Page {
    * @returns {Promise<TableOfContent>}
    */
   async createTableOfContent() {
-    const { default: TableOfContent } = await import(/* webpackChunkName: "table-of-content" */ '../classes/table-of-content');
+    const { default: TableOfContent } = await import(
+      /* webpackChunkName: "table-of-content" */ '../classes/table-of-content'
+    );
 
     try {
       // eslint-disable-next-line no-new
       new TableOfContent({
         tagSelector: '.block-header',
-        appendTo: document.getElementById('layout-sidebar-right'),
+        appendTo: document.getElementById('layout-sidebar-right')!,
       });
     } catch (error) {
       console.error(error); // @todo send to Hawk
@@ -86,7 +82,7 @@ export default class Page {
    * @param {Event} e - Event Object.
    * @returns {Promise<void>}
    */
-  async handleCopyButtonClickEvent({ target }) {
+  async handleCopyButtonClickEvent({ target }: { target: HTMLElement }) {
     if (target.classList.contains(Page.CSS.copyButtonCopied)) return;
 
     let textToCopy = target.getAttribute('data-text-to-copy');
@@ -94,16 +90,23 @@ export default class Page {
 
     // Check if text to copy is an anchor link
     if (/^#\S*$/.test(textToCopy))
-      textToCopy = window.location.origin + window.location.pathname + textToCopy;
+      textToCopy =
+        window.location.origin + window.location.pathname + textToCopy;
 
     try {
       await copyToClipboard(textToCopy);
 
       target.classList.add(Page.CSS.copyButtonCopied);
-      target.addEventListener('mouseleave', () => {
-        setTimeout(() => target.classList.remove(Page.CSS.copyButtonCopied), 5e2);
-      }, { once: true });
-
+      target.addEventListener(
+        'mouseleave',
+        () => {
+          setTimeout(
+            () => target.classList.remove(Page.CSS.copyButtonCopied),
+            5e2,
+          );
+        },
+        { once: true },
+      );
     } catch (error) {
       console.error(error); // @todo send to Hawk
     }

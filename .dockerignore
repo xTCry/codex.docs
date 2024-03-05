@@ -4,6 +4,6 @@
 src/test
 !package.json
 !yarn.lock
-!webpack.config.js
+!webpack.config.*
 !tsconfig.json
 !.postcssrc

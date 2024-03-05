@@ -9,6 +9,7 @@ import '../styles/main.pcss';
  * @author CodeX
  */
 import ModuleDispatcher from 'module-dispatcher';
+import HawkCatcher from '@hawk.so/javascript';
 
 /**
  * Import modules
@@ -17,20 +18,23 @@ import Writing from './modules/writing';
 import Page from './modules/page';
 import Extensions from './modules/extensions';
 import Sidebar from './modules/sidebar';
-import HawkCatcher from '@hawk.so/javascript';
 
 /**
  * Main app class
  */
 class Docs {
+  writing = new Writing();
+  page = new Page();
+  extensions = new Extensions();
+  sidebar = new Sidebar();
+
+  hawk: HawkCatcher | null = null;
+  moduleDispatcher: ModuleDispatcher | null = null;
+
   /**
    * @class
    */
   constructor() {
-    this.writing = new Writing();
-    this.page = new Page();
-    this.extensions = new Extensions();
-    this.sidebar = new Sidebar();
     if (window.config.hawkClientToken) {
       this.hawk = new HawkCatcher(window.config.hawkClientToken);
     }
@@ -39,16 +43,14 @@ class Docs {
       this.docReady();
     });
 
-    console.log('CodeX Docs initialized');
+    console.log('CodeX Docs initialized', new Date().toLocaleString());
   }
 
   /**
    * Document is ready
    */
   docReady() {
-    this.moduleDispatcher = new ModuleDispatcher({
-      Library: this,
-    });
+    this.moduleDispatcher = new ModuleDispatcher({ Library: this });
   }
 }
 

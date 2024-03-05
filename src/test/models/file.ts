@@ -2,8 +2,8 @@ import { expect } from 'chai';
 import fs from 'fs';
 import path from 'path';
 import config from 'config';
-import File from '../../backend/models/file.js';
-import database from '../../backend/database/index.js';
+import File from '../../backend/models/file';
+import database from '../../backend/database/index';
 import { fileURLToPath } from 'url';
 
 /**

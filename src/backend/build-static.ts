@@ -1,18 +1,17 @@
 import twig from 'twig';
-import Page from './models/page.js';
-import PagesFlatArray from './models/pagesFlatArray.js';
 import path from 'path';
-import { fileURLToPath } from 'url';
-import('./utils/twig.js');
-import fs from 'fs/promises';
 import mkdirp from 'mkdirp';
-import { createMenuTree } from './utils/menu.js';
-import { EntityId } from './database/types.js';
-import PagesOrder from './controllers/pagesOrder.js';
-import fse from 'fs-extra';
-import appConfig from './utils/appConfig.js';
-import Aliases from './controllers/aliases.js';
-import Pages from './controllers/pages.js';
+import fs from 'fs-extra';
+
+import './utils/twig';
+import Page from './models/page';
+import PagesFlatArray from './models/pagesFlatArray';
+import { createMenuTree } from './utils/menu';
+import { EntityId } from './database/types';
+import PagesOrder from './controllers/pagesOrder';
+import appConfig from './utils/appConfig';
+import Aliases from './controllers/aliases';
+import Pages from './controllers/pages';
 
 /**
  * Build static pages from database
@@ -24,7 +23,6 @@ export default async function buildStatic(): Promise<void> {
     throw new Error('Static build config not found');
   }
 
-  const dirname = path.dirname(fileURLToPath(import.meta.url));
   const cwd = process.cwd();
   const distPath = path.resolve(cwd, config.outputDir);
 
@@ -39,7 +37,7 @@ export default async function buildStatic(): Promise<void> {
     data: Record<string, unknown>,
   ): Promise<string> {
     return new Promise((resolve, reject) => {
-      twig.renderFile(path.resolve(dirname, filePath), data, (err, html) => {
+      twig.renderFile(path.resolve(__dirname, filePath), data, (err, html) => {
         if (err) {
           reject(err);
         }
@@ -50,7 +48,7 @@ export default async function buildStatic(): Promise<void> {
 
   if (config.overwrite) {
     console.log('Removing old static files');
-    await fse.remove(distPath);
+    await fs.remove(distPath);
   }
 
   console.log('Building static files');
@@ -124,12 +122,12 @@ export default async function buildStatic(): Promise<void> {
   console.log('Static files built');
 
   console.log('Copy public directory');
-  const publicDir = path.resolve(dirname, '../../public');
+  const publicDir = path.resolve(__dirname, '../../public');
 
   console.log(`Copy from ${publicDir} to ${distPath}`);
 
   try {
-    await fse.copy(publicDir, distPath);
+    await fs.copy(publicDir, distPath);
     console.log('Public directory copied');
   } catch (e) {
     console.log('Error while copying public directory');
@@ -138,7 +136,7 @@ export default async function buildStatic(): Promise<void> {
 
   if (appConfig.uploads.driver === 'local') {
     console.log('Copy uploads directory');
-    await fse.copy(
+    await fs.copy(
       path.resolve(cwd, appConfig.uploads.local.path),
       path.resolve(distPath, 'uploads'),
     );

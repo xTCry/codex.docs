@@ -1,7 +1,7 @@
-import { EntityId } from '../database/types.js';
-import Page from '../models/page.js';
-import PageOrder from '../models/pageOrder.js';
-import { isEqualIds } from '../database/index.js';
+import { EntityId } from '../database/types';
+import Page from '../models/page';
+import PageOrder from '../models/pageOrder';
+import { isEqualIds } from '../database/index';
 
 /**
  * Process one-level pages list to parent-children list

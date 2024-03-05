@@ -3,7 +3,7 @@ import config from 'config';
 import { expect } from 'chai';
 import Datastore from 'nedb';
 
-import { Database } from '../backend/database/index.js';
+import { Database } from '../backend/database/index';
 
 interface Document {
   data?: any;

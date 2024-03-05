@@ -4,18 +4,18 @@
  */
 import http from 'http';
 import Debug from 'debug';
-import appConfig from './utils/appConfig.js';
-import { drawBanner } from './utils/banner.js';
+import appConfig from './utils/appConfig';
+import { drawBanner } from './utils/banner';
 import express, { NextFunction, Request, Response } from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import HawkCatcher from '@hawk.so/nodejs';
 import os from 'os';
-import { downloadFavicon, FaviconData } from './utils/downloadFavicon.js';
+import { downloadFavicon, FaviconData } from './utils/downloadFavicon';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
-import routes from './routes/index.js';
-import HttpException from './exceptions/httpException.js';
+import routes from './routes/index';
+import HttpException from './exceptions/httpException';
 
 const debug = Debug.debug('codex.docs:server');
 
@@ -33,7 +33,7 @@ function createApp(): express.Express {
    * https://nodejs.org/api/esm.html#no-__filename-or-__dirname
    */
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  const __dirname = path.dirname(fileURLToPath(import.meta.url));
+  // const __dirname = path.dirname(fileURLToPath(import.meta.url));
   const cwd = process.cwd();
 
   const app = express();
@@ -56,7 +56,7 @@ function createApp(): express.Express {
   // view engine setup
   app.set('views', path.join(__dirname, './', 'views'));
   app.set('view engine', 'twig');
-  import('./utils/twig.js');
+  import('./utils/twig');
 
   const downloadedFaviconFolder = os.tmpdir();
 

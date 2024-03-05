@@ -8,8 +8,5 @@
   "watch": [
     "**/*"
   ],
-  "ext": "ts,js,twig",
-  "execMap": {
-      "ts": "tsc --noEmit && node --no-warnings=ExperimentalWarning --loader ts-node/esm"
-  }
+  "ext": "ts,js,twig"
 }

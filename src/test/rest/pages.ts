@@ -3,11 +3,11 @@ import path from 'path';
 import config from 'config';
 import chai from 'chai';
 import chaiHTTP from 'chai-http';
-import server from '../../bin/server.js';
-import model from '../../backend/models/page.js';
-import Page from '../../backend/models/page.js';
-import PageOrder from '../../backend/models/pageOrder.js';
-import translateString from '../../backend/utils/translation.js';
+import server from '../../bin/server';
+import model from '../../backend/models/page';
+import Page from '../../backend/models/page';
+import PageOrder from '../../backend/models/pageOrder';
+import translateString from '../../backend/utils/translation';
 import { fileURLToPath } from 'url';
 
 /**

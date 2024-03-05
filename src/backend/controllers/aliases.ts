@@ -1,4 +1,4 @@
-import Alias from '../models/alias.js';
+import Alias from '../models/alias';
 
 /**
  * @class Aliases
