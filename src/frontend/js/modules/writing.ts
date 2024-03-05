@@ -13,9 +13,28 @@ type ENodes =
   | 'putAboveIdSelector'
   | 'uriInput';
 
+type PageType = {
+  parent: string;
+  _id: string;
+  title: string;
+  uri: string;
+  body: {
+    /** saving time */
+    time: number;
+    /** used Editor version  */
+    version: string;
+    /** array of Blocks */
+    blocks: {
+      id: string;
+      type: string;
+      data: any;
+    }[];
+  };
+};
+
 type WritingSettings = {
   /** page data for editing */
-  page?: any;
+  page?: PageType;
 };
 
 /**
@@ -27,19 +46,7 @@ export default class Writing {
   editor: Editor | null = null;
 
   // stores Page on editing
-  page: {
-    _id: any;
-    _parent: any;
-    title: any;
-    body: {
-      /** saving time */
-      time: number;
-      /** used Editor version  */
-      version: string;
-      /** array of Blocks */
-      blocks: { type: string; data: any }[];
-    };
-  } | null = null;
+  page: PageType | null = null;
 
   editorWrapper: HTMLElement | null = null;
   lastSaveAt: HTMLElement | null = null;
@@ -71,6 +78,7 @@ export default class Writing {
     this.editorWrapper = document.getElementById('codex-editor');
     if (settings.page) {
       this.page = settings.page;
+      this.lastBlocksJson = JSON.stringify(settings.page.body?.blocks);
     }
 
     this.loadEditor().then((editor) => {
