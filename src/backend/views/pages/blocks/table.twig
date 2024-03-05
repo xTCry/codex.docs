@@ -1,4 +1,10 @@
-<table class="block-table">
+{% set classes = ['block-table'] %}
+
+{% if withHeadings %}
+  {% set classes = classes|merge(['block-table--with-headings']) %}
+{% endif %}
+
+<table class="{{ classes.join(' ') }}">
   {% for row in content %}
     <tr>
       {% for cell in row %}
