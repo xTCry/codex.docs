@@ -73,13 +73,13 @@
       <div class="writing-auto-save">
         {% if toString(page._id) is not empty %}
           <label>
-            <input type="checkbox" id="js-auto-save" name="js-auto-save" checked />
+            <input type="checkbox" id="js-auto-save" name="js-auto-save" />
             Auto save (every 5 seconds)
           </label>
         {% endif %}
         <time id="last-save-at" class="writing-time">
           {% if toString(page._id) is not empty %}
-            Last save at {{ (page.body.time / 1000)  | date("d.m.Y, H:i:s") }}
+            Last save at <span>{{ (page.body.time / 1000)  | date("d.m.Y, H:i:s") }}</span>
           {% endif %}
         </time>
       </div>

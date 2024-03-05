@@ -2,6 +2,7 @@
  * Module for pages create/edit
  */
 import Editor from '../classes/editor';
+import { Storage } from '../utils/storage';
 
 type ENodes =
   | 'saveButton'
@@ -22,6 +23,7 @@ type WritingSettings = {
  * @classdesc Class for create/edit pages
  */
 export default class Writing {
+  basePath = window.config.basePath || '';
   editor: Editor | null = null;
 
   // stores Page on editing
@@ -42,7 +44,7 @@ export default class Writing {
   editorWrapper: HTMLElement | null = null;
   lastSaveAt: HTMLElement | null = null;
 
-  nodes: Record<ENodes, /*  | */ HTMLInputElement | null> = {
+  nodes: Record<ENodes, HTMLInputElement | null> = {
     saveButton: null,
     autoSaveCheckbox: null,
     removeButton: null,
@@ -52,16 +54,10 @@ export default class Writing {
     uriInput: null,
   };
 
-  hasChanges = false;
+  lastBlocksJson: string | null = null;
+  autoSaveStorage = new Storage('autoSave');
   autoSaveInterval: NodeJS.Timer | null = null;
-  basePath = (window as any).config.basePath || '';
-
-  /**
-   * Creates base properties
-   */
-  constructor() {
-    //
-  }
+  autoSaveLoop = false;
 
   /**
    * Called by ModuleDispatcher to initialize module from DOM
@@ -84,14 +80,16 @@ export default class Writing {
     /**
      * Activate form elements
      */
-    this.lastSaveAt = moduleEl.querySelector('#last-save-at');
+    this.lastSaveAt = moduleEl.querySelector('#last-save-at > span');
 
     this.nodes.autoSaveCheckbox = moduleEl.querySelector(
       '[name="js-auto-save"]',
     );
     if (this.nodes.autoSaveCheckbox) {
+      this.nodes.autoSaveCheckbox.checked =
+        this.autoSaveStorage.get() === 'true';
       this.nodes.autoSaveCheckbox.addEventListener('change', () => {
-        this.checkAutosave();
+        this.autoSaveStorage.set(String(this.nodes.autoSaveCheckbox!.checked));
       });
     }
 
@@ -112,6 +110,7 @@ export default class Writing {
           return;
         }
         window.onbeforeunload = null;
+        this.autoSaveLoop = false;
         this.removeButtonClicked();
       });
     }
@@ -137,30 +136,53 @@ export default class Writing {
       '50px',
     );
 
-    this.checkAutosave();
+    this.initAutosave();
   }
 
-  checkAutosave() {
-    // if create mode
-    if (this.nodes.autoSaveCheckbox && this.nodes.autoSaveCheckbox.checked) {
-      window.onbeforeunload = null;
-      if (this.page) {
-        this.autoSaveInterval = setInterval(
-          () => this.saveButtonClicked(),
-          5e3,
+  destroy() {
+    if (this.autoSaveInterval) {
+      clearInterval(this.autoSaveInterval);
+      this.autoSaveLoop = false;
+    }
+  }
+
+  initAutosave() {
+    if (this.autoSaveLoop) return;
+    this.autoSaveLoop = true;
+    // this.autoSaveInterval = setInterval(fn, 5e3);
+
+    const loop = async () => {
+      while (this.autoSaveLoop) {
+        try {
+          if (this.editor) {
+            if (!(await this.compareData())) {
+              this.nodes.saveButton!.classList.add('pulse');
+              window.onbeforeunload = () => '';
+
+              if (this.nodes.autoSaveCheckbox?.checked) {
+                window.onbeforeunload = null;
+                if (this.page) {
+                  this.saveButtonClicked(true);
+                }
+              }
+            }
+          }
+        } catch (err) {
+          console.error(err);
+        }
+
+        await new Promise(
+          (resolve) => (this.autoSaveInterval = setTimeout(resolve, 5e3)),
         );
       }
-    } else {
-      // if create mode
-      if (!this.page) {
-        window.onbeforeunload = (e) => {
-          return '';
-        };
-      }
-      if (this.autoSaveInterval) {
-        clearInterval(this.autoSaveInterval);
-      }
-    }
+    };
+    loop();
+  }
+
+  async compareData() {
+    return (
+      this.lastBlocksJson === JSON.stringify((await this.editor!.save()).blocks)
+    );
   }
 
   /**
@@ -171,11 +193,7 @@ export default class Writing {
       /* webpackChunkName: "editor" */ '../classes/editor'
     );
 
-    const editorConfig = this.page
-      ? {
-          data: this.page.body,
-        }
-      : {};
+    const editorConfig = this.page ? { data: this.page.body } : {};
 
     return new Editor(editorConfig, {
       headerPlaceholder: 'Enter a title',
@@ -185,15 +203,15 @@ export default class Writing {
   /**
    * Returns all writing form data
    * @throws {Error} - validation error
-   * @return {Promise.<{parent: string, body: {editorData}}>}
    */
   async getData() {
     const editorData = await this.editor!.save();
+
     const firstBlock = editorData.blocks.length ? editorData.blocks[0] : null;
     const title =
       firstBlock && firstBlock.type === 'header' ? firstBlock.data.text : null;
-    let uri = '';
 
+    let uri = '';
     if (this.nodes.uriInput && this.nodes.uriInput.value) {
       if (this.nodes.uriInput.value.match(/^[a-z0-9'-]+$/i)) {
         uri = this.nodes.uriInput.value;
@@ -208,15 +226,14 @@ export default class Writing {
 
     /** get ordering selector value */
     let putAbovePageId: string | null = null;
-
     if (this.nodes.putAboveIdSelector) {
       putAbovePageId = this.nodes.putAboveIdSelector.value;
     }
 
     return {
       parent: this.nodes.parentIdSelector!.value,
-      putAbovePageId: putAbovePageId,
-      uri: uri,
+      putAbovePageId,
+      uri,
       body: editorData,
     };
   }
@@ -227,11 +244,6 @@ export default class Writing {
   async saveButtonClicked(isAuto = false) {
     try {
       const writingData = await this.getData();
-
-      if (isAuto) {
-        if (writingData) {
-        }
-      }
 
       const endpoint = this.page
         ? `${this.basePath}/api/page/` + this.page._id
@@ -247,9 +259,11 @@ export default class Writing {
         }).then((res) => res.json());
 
         if (response.success) {
-          this.hasChanges = false;
-          this.lastSaveAt!.textContent = `Last save at ${new Date().toLocaleString()}`;
-          if (!this.page) {
+          this.lastBlocksJson = JSON.stringify(writingData.body.blocks);
+          this.nodes.saveButton!.classList.remove('pulse');
+          this.lastSaveAt!.textContent = new Date().toLocaleString();
+
+          if (!this.page || !isAuto) {
             // if first create page, reload with this result
             window.location.pathname = response.result.uri
               ? `${this.basePath}/${response.result.uri}`
