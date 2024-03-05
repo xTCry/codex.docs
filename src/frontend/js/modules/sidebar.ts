@@ -13,7 +13,7 @@ const SIDEBAR_VISIBILITY_KEY = 'docs_sidebar_visibility';
  */
 const ITEM_HEIGHT = 31;
 
-type ENodes = 'sidebar' | 'sidebarContent' | 'toggler' | 'slider' | 'search';
+type ENodes = 'sidebar' | 'sidebarContent' | 'toggler' | 'slider';
 
 /**
  * Sidebar module
@@ -31,6 +31,8 @@ export default class Sidebar {
   // Sidebar visibility
   isVisible: boolean = false;
 
+  nodeSearch: HTMLInputElement | null = null;
+
   /**
    * Stores refs to HTML elements needed for correct sidebar work
    */
@@ -39,7 +41,6 @@ export default class Sidebar {
     sidebarContent: null,
     toggler: null,
     slider: null,
-    search: null,
   };
 
   nodeSections: HTMLElement[] = [];
@@ -108,11 +109,11 @@ export default class Sidebar {
       this.handleSliderClick(),
     );
 
-    this.nodes.search = moduleEl.querySelector('.' + Sidebar.CSS.sidebarSearch);
+    this.nodeSearch = moduleEl.querySelector('.' + Sidebar.CSS.sidebarSearch);
     this.filter.init(
       this.nodeSections,
-      this.nodes.sidebarContent,
-      this.nodes.search,
+      this.nodes.sidebarContent!,
+      this.nodeSearch!,
       this.setSectionCollapsed,
     );
 
@@ -273,7 +274,7 @@ export default class Sidebar {
           this.handleSliderClick();
         }
         // focus search input.
-        this.nodes.search!.focus();
+        this.nodeSearch!.focus();
         // Stop propagation of event.
         e.stopPropagation();
         e.preventDefault();
