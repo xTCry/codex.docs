@@ -16,7 +16,8 @@ RUN apk add --no-cache python3 make g++ git
 
 WORKDIR /usr/src/app
 
-COPY --from=prePackage package.json yarn.lock ./
+COPY --from=prePackage /tmp/prepare-package.json ./package.json
+COPY yarn.lock ./
 
 RUN yarn install --production --pure-lockfile
 
