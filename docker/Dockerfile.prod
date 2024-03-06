@@ -1,3 +1,13 @@
+##
+# [container] prepare package.json
+##
+FROM endeveit/docker-jq AS prePackage
+
+COPY package.json /tmp
+
+RUN jq '{ dependencies, devDependencies, peerDependencies, resolutions, license, scripts: (.scripts | { postinstall }) }' < /tmp/package.json > /tmp/prepare-package.json
+# Keep `postinstall` script
+
 # Stage 1 - build
 FROM node:18-alpine as build
 
@@ -6,13 +16,14 @@ RUN apk add --no-cache python3 make g++ git
 
 WORKDIR /usr/src/app
 
-COPY package.json yarn.lock ./
+COPY --from=prePackage package.json yarn.lock ./
 
-RUN yarn install --production
+RUN yarn install --production --pure-lockfile
 
 RUN cp -R node_modules prod_node_modules
 
-RUN yarn install
+RUN yarn install --pure-lockfile; \
+    yarn cache clean
 
 COPY . .
 
@@ -27,6 +38,7 @@ COPY package.json yarn.lock ./
 COPY --from=build /usr/src/app/prod_node_modules ./node_modules
 COPY --from=build /usr/src/app/dist ./dist
 COPY --from=build /usr/src/app/public ./public
+COPY --from=build /usr/src/app/locales ./locales
 
 ENV NODE_ENV=production
 
