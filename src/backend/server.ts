@@ -43,7 +43,7 @@ function createApp(): express.Express {
 
   i18n.configure({
     locales: localConfig.availableLocales,
-    directory: __dirname + '/locales',
+    directory: path.join(cwd, appConfig.localesPath),
     defaultLocale: localConfig.availableLocales[0] || 'en',
     cookie: `${localConfig.appName}Locale`,
     extension: '.yml',

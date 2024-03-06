@@ -1,5 +1,6 @@
 *
 !public
+!locales
 !src
 src/test
 !package.json

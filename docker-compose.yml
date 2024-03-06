@@ -5,6 +5,7 @@ services:
     ports:
       - "3000:3000"
     volumes:
+      # - ./locales:/usr/src/app/locales
       - ./uploads:/usr/src/app/uploads
       - ./db:/usr/src/app/db
       - ./docs-config.local.yaml:/usr/src/app/docs-config.yaml

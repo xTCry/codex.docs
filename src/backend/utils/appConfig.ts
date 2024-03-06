@@ -111,6 +111,7 @@ const AppConfig = z.object({
   port: z.number(), // Port to listen on
   host: z.string(), // Host to listen on
   favicon: z.string().optional(), // Path or URL to favicon
+  localesPath: z.string(), // path to the locales directory
   uploads: z.union([LocalUploadsConfig, S3UploadsConfig]), // Uploads configuration
   hawk: HawkConfig.optional().nullable(), // Hawk configuration
   frontend: FrontendConfig, // Frontend configuration
@@ -124,6 +125,7 @@ export type AppConfig = z.infer<typeof AppConfig>;
 const defaultConfig: AppConfig = {
   port: 3000,
   host: 'localhost',
+  localesPath: './locales',
   uploads: {
     driver: 'local',
     local: {

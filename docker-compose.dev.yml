@@ -14,6 +14,7 @@ services:
       - -c
       - docs-config.local.yaml
     volumes:
+      - ./locales:/usr/src/app/locales
       - ./uploads:/usr/src/app/uploads
       - ./db:/usr/src/app/db
       - ./docs-config.yaml:/usr/src/app/docs-config.yaml
