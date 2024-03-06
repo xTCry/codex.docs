@@ -7,5 +7,5 @@ src/test
 !yarn.lock
 !babel.config.*
 !webpack.config.*
-!tsconfig.json
+!tsconfig*.json
 !.postcssrc
