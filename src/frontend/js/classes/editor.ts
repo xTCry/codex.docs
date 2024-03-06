@@ -1,4 +1,4 @@
-import EditorJS from '@editorjs/editorjs';
+import EditorJS, { I18nDictionary } from '@editorjs/editorjs';
 
 /**
  * Block Tools for the Editor
@@ -28,6 +28,13 @@ import Marker from '@editorjs/marker';
 import Undo from 'editorjs-undo';
 import DragDrop from 'editorjs-drag-drop';
 
+type OptionsType = {
+  headerPlaceholder?: string;
+  i18n?: {
+    messages: I18nDictionary;
+  } | null;
+};
+
 /**
  * Class for working with Editor.js
  */
@@ -46,7 +53,7 @@ export default class Editor {
    */
   constructor(
     editorConfig: { data?: { blocks: any[] } } = {},
-    options: { headerPlaceholder?: string } = {},
+    options: OptionsType = {},
   ) {
     const defaultConfig = {
       onReady: () => this.handleReady(),
@@ -138,6 +145,7 @@ export default class Editor {
           },
         ],
       },
+      ...(options.i18n ? { i18n: options.i18n } : {}),
     };
 
     this.editor = new EditorJS(Object.assign(defaultConfig, editorConfig));

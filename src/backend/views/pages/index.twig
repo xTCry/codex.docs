@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html style="height: 100%">
+<html lang="{{ locale }}" style="height: 100%">
 <head>
   <title>{{ config.title }}</title>
   <link rel="stylesheet" href="{{ config.basePath ~ '/dist/main.css' }}" />
@@ -14,6 +14,7 @@
       misprintsChatId: "{{ config.misprintsChatId }}",
       hawkClientToken:"{{ config.hawkClientToken }}",
       basePath: "{{ config.basePath }}",
+      availableLocales: {{ config.availableLocales | json_encode }},
     };
   </script>
 </head>
@@ -23,25 +24,12 @@
   <div class="greeting-content">
     {{ svg('frog') }}
     <p class="greeting-content__message">
-      It’s time to create the first page!
+      {{ __('index.create_first_page') }}
     </p>
-    {% include '../components/button.twig' with {label: 'Add page', icon: 'plus', size: 'small', url: config.basePath ~ '/page/new'} %}
+    {% include '../components/button.twig' with {label: __('index.add_page'), icon: 'plus', size: 'small', url: config.basePath ~ '/page/new'} %}
   </div>
 
-  {% if config.yandexMetrikaId is not empty %}
-    <script type="text/javascript" >
-      (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-        m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
-      (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
-
-      ym({{ config.yandexMetrikaId }}, "init", {
-        clickmap:true,
-        trackLinks:true,
-        accurateTrackBounce:true
-      });
-    </script>
-    <noscript><div><img src="https://mc.yandex.ru/watch/{{ config.yandexMetrikaId }}" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-  {% endif %}
+  {% include "components/footer.twig" with res.locals.isAuthorized %}
 </body>
 </html>
 

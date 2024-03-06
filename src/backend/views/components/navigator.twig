@@ -24,7 +24,7 @@ Usage example:
       href="{{ config.basePath ~ '/' ~ previousPage.uri }}"
       >
       <div class="{{ mainClass }}-direction">
-       previous
+       {{ __('navigator.previous') }}
       </div>
       <div class="{{ mainClass }}-label">
        {{ previousPage.title }}
@@ -39,7 +39,7 @@ Usage example:
       href="{{ config.basePath ~ '/' ~ nextPage.uri }}"
       >
       <div class="{{ mainClass }}-direction">
-        next
+        {{ __('navigator.next') }}
       </div>
       <div class="{{ mainClass }}-label">
        {{ nextPage.title }}

@@ -1,6 +1,7 @@
 /**
  * Module for pages create/edit
  */
+import { I18nDictionary } from '@editorjs/editorjs';
 import Editor from '../classes/editor';
 import { Storage } from '../utils/storage';
 
@@ -34,7 +35,8 @@ type PageType = {
 
 type WritingSettings = {
   /** page data for editing */
-  page?: PageType;
+  page: PageType;
+  editorjs_i18n: { messages: I18nDictionary } | string;
 };
 
 /**
@@ -43,10 +45,13 @@ type WritingSettings = {
  */
 export default class Writing {
   basePath = window.config.basePath || '';
+  locales: Record<string, any> = window.config.locales.writing || {};
+
   editor: Editor | null = null;
 
   // stores Page on editing
   page: PageType | null = null;
+  editorjs_i18n: { messages: I18nDictionary } | null = null;
 
   editorWrapper: HTMLElement | null = null;
   lastSaveAt: HTMLElement | null = null;
@@ -71,7 +76,7 @@ export default class Writing {
    * @param {WritingSettings} settings - module settings
    * @param {HTMLElement} moduleEl - module element
    */
-  init(settings: WritingSettings = {}, moduleEl: HTMLElement) {
+  init(settings: WritingSettings, moduleEl: HTMLElement) {
     /**
      * Create Editor
      */
@@ -79,6 +84,10 @@ export default class Writing {
     if (settings.page) {
       this.page = settings.page;
       this.lastBlocksJson = JSON.stringify(settings.page.body?.blocks);
+    }
+
+    if (typeof settings.editorjs_i18n === 'object' /*  !== 'editorjs_i18n' */) {
+      this.editorjs_i18n = settings.editorjs_i18n;
     }
 
     this.loadEditor().then((editor) => {
@@ -112,7 +121,7 @@ export default class Writing {
     );
     if (this.nodes.removeButton) {
       this.nodes.removeButton.addEventListener('click', () => {
-        const isUserAgree = window.confirm('Are you sure?');
+        const isUserAgree = window.confirm(this.locales.confirm_remove);
 
         if (!isUserAgree) {
           return;
@@ -204,7 +213,8 @@ export default class Writing {
     const editorConfig = this.page ? { data: this.page.body } : {};
 
     return new Editor(editorConfig, {
-      headerPlaceholder: 'Enter a title',
+      headerPlaceholder: this.locales.enter_title,
+      i18n: this.editorjs_i18n,
     });
   }
 
@@ -224,12 +234,12 @@ export default class Writing {
       if (this.nodes.uriInput.value.match(/^[a-z0-9'-]+$/i)) {
         uri = this.nodes.uriInput.value;
       } else {
-        throw new Error('Uri has unexpected characters');
+        throw new Error(this.locales.wrong_uri);
       }
     }
 
     if (!title) {
-      throw new Error('Entry should start with Header');
+      throw new Error(this.locales.wrong_title_block);
     }
 
     /** get ordering selector value */

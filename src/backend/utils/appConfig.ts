@@ -74,6 +74,7 @@ const AuthConfig = z.object({
 const FrontendConfig = z.object({
   basePath: z.string(), // Base path for routing
   appName: z.string(), // Prefix for authToken
+  availableLocales: z.array(z.string()).transform((arr) => [...new Set(arr)]), // Available locales
   title: z.string(), // Title for pages
   description: z.string(), // Description for pages
   startPage: z.string(), // Start page
@@ -132,6 +133,7 @@ const defaultConfig: AppConfig = {
   frontend: {
     basePath: '',
     appName: 'docs',
+    availableLocales: ['en', 'ru'],
     title: 'CodeX Docs',
     description: 'Free Docs app powered by Editor.js ecosystem',
     startPage: '',

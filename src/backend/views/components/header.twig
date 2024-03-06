@@ -5,20 +5,35 @@
   <ul class="docs-header__menu">
     {% if isAuthorized == true %}
       <li class="docs-header__menu-add docs-header__menu-add--desktop">
-        {% include 'components/button.twig' with {label: 'Add page', icon: 'plus', size: 'small', url: config.basePath ~ '/page/new'} %}
+        {% include 'components/button.twig' with {label: __('index.add_page'), icon: 'plus', size: 'small', url: config.basePath ~ '/page/new'} %}
+        <div class="vr-divider"></div>
       </li>
       <li class="docs-header__menu-add docs-header__menu-add--mobile">
         {% include 'components/button.twig' with {icon: 'plus', size: 'small', url: config.basePath ~ '/page/new'} %}
+        <div class="vr-divider"></div>
       </li>
     {% endif %}
+
+    {% if config.availableLocales|length > 1 %}
+      {% for lang in config.availableLocales %}
+        <li>
+            <a class="docs-header__menu-link{% if lang == locale %} docs-header__menu-link--active {% endif %}" href="{{ config.basePath ~ '/set-lang/' ~ lang }}">
+              {{ lang | striptags | upper }}
+            </a>
+        </li>
+      {% endfor %}
+
+      {% if config.menu is iterable %}
+        <div class="vr-divider"></div>
+      {% endif %}
+    {% endif %}
+
     {% for option in config.menu %}
       <li>
         {% if option is iterable %}
           <a class="docs-header__menu-link"
-            {% if option.uri %}
-              href="{{ option.uri }}"
-            {% else %}
-              href="{{ config.basePath ~ '/page/' ~ option._id }}"
+            {% if option.uri %} href="{{ option.uri }}"
+            {% else %} href="{{ config.basePath ~ '/page/' ~ option._id }}"
             {% endif %}>
             {{ option.title | striptags }}
           </a>

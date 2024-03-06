@@ -1,0 +1,40 @@
+index:
+  create_first_page: It’s time to create the first page!
+  add_page: Add page
+auth:
+  enter_password: Enter a password to access pages editing
+  label_password: Password
+
+sidebar:
+  search: Search
+
+navigator:
+  next: Next
+  previous: Previous
+
+form:
+  parent_page: Parent Page
+  new_page_at: New Page at the
+  root: Root
+  put_above: Put Above
+  alias: Alias
+  alias_placeholder: URI (Optional)
+  buttons:
+    save_page: Save Changes
+    view_page: View
+    delete_page: Delete Page
+  auto_save: Auto save (every 5 seconds)
+  last_save_at: Last save at
+
+page:
+  last_edit: Last edit
+  edit: Edit
+
+js:
+  writing:
+    confirm_remove: Are you sure?
+    enter_title: Enter a title
+    wrong_uri: Uri has unexpected characters
+    wrong_title_block: Entry should start with Header
+
+editorjs_i18n:

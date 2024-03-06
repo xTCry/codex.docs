@@ -15,6 +15,10 @@ frontend:
   basePath: "" # Example: /docs
   appName: "docs"
   title: "CodeX Docs"
+  # First item will be defaultLocale (if one item, then no change language)
+  availableLocales:
+    - "en"
+    - "ru"
   description: "Free Docs app powered by Editor.js ecosystemt"
   startPage: ""
   misprintsChatId: "12344564"

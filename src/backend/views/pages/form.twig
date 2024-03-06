@@ -9,7 +9,8 @@
   <section data-module="writing">
     <textarea name="module-settings" hidden>
       {
-        "page": {{ page | json_stringify | escape }}
+        "page": {{ page | json_stringify | escape }},
+        "editorjs_i18n": {{ __('editorjs_i18n') | json_stringify | escape }}
       }
     </textarea>
     <header class="writing-header">
@@ -19,13 +20,13 @@
           {% set currentPageId = page._id %}
         {% endif %}
         <div class="select-wrapper">
-          {% if parentsChildrenOrdered is not empty %}
-            <label for="parent">Parent Page</label>
+          {% if page is not empty %}
+            <label for="parent">{{ __('form.parent_page') }}</label>
           {% else %}
-            <label for="parent">New Page at the</label>
+            <label for="parent">{{ __('form.new_page_at') }}</label>
           {% endif %}
           <select id="parent" name="parent">
-            <option value="0">Root</option>
+            <option value="0">{{ __('form.root') }}</option>
             {# {% for _page in pagesAvailableGrouped %} #}
             {% for _page in menu %}
               {% if toString(_page._id) != toString(currentPageId) %}
@@ -162,7 +163,7 @@
         </div>
         {% if parentsChildrenOrdered is not empty %}
           <div class="select-wrapper">
-            <label for="above">Put Above</label>
+            <label for="above">{{ __('form.put_above') }}</label>
             <select id="above" name="above">
               <option value="0">—</option>
               {% for _page in parentsChildrenOrdered %}
@@ -173,8 +174,8 @@
         {% endif %}
         {% if page is not empty %}
           <div class="uri-input-wrapper">
-            <label for="uri-input">Alias</label>
-            <input type="text" id="uri-input" class="uri-input" name="uri-input" placeholder="URI (Optional)" value="{{ page.uri }}">
+            <label for="uri-input">{{ __('form.alias') }}</label>
+            <input type="text" id="uri-input" class="uri-input" name="uri-input" placeholder="{{ __('form.alias_placeholder') }}" value="{{ page.uri }}">
           </div>
         {% endif %}
       </div>
@@ -185,22 +186,22 @@
     </div>
 
     <div class="writing-buttons">
-      {% include 'components/button.twig' with {label: 'Save changes', name: 'js-submit-save', icon: 'check'} %}
+      {% include 'components/button.twig' with {label: __('form.buttons.save_page'), name: 'js-submit-save', icon: 'check'} %}
       {% if toString(page._id) is not empty %}
-        {% include 'components/button.twig' with {label: 'View', name: 'js-go-view', icon: 'view'} %}
-        {% include 'components/button.twig' with {label: 'Delete doc', name: 'js-submit-remove', icon: 'trash', style: 'warning'} %}
+        {% include 'components/button.twig' with {label: __('form.buttons.view_page'), name: 'js-go-view', icon: 'view'} %}
+        {% include 'components/button.twig' with {label: __('form.buttons.delete_page'), name: 'js-submit-remove', icon: 'trash', style: 'warning'} %}
       {% endif %}
 
       <div class="writing-auto-save">
         {% if toString(page._id) is not empty %}
           <label>
             <input type="checkbox" id="js-auto-save" name="js-auto-save" />
-            Auto save (every 5 seconds)
+            {{ __('form.auto_save') }}
           </label>
         {% endif %}
         <time id="last-save-at" class="writing-time">
           {% if toString(page._id) is not empty %}
-            Last save at <span>{{ (page.body.time / 1000)  | date("d.m.Y, H:i:s") }}</span>
+            {{ __('form.last_save_at') }} <span>{{ (page.body.time / 1000)  | date("d.m.Y, H:i:s") }}</span>
           {% endif %}
         </time>
       </div>

@@ -1,5 +1,5 @@
 html {
-    scroll-padding-top: calc(var(--layout-height-header) + 50px);
+  scroll-padding-top: calc(var(--layout-height-header) + 50px);
 }
 
 .docs-header {
@@ -16,7 +16,7 @@ html {
   background: var(--color-bg-header);
   z-index: 10;
 
-  @media (--not-mobile){
+  @media (--not-mobile) {
     height: var(--layout-height-header);
   }
 
@@ -37,6 +37,10 @@ html {
   &__menu-link {
     font-weight: 500;
     transition: background-color .13s;
+
+    &--active {
+      background-color: var(--color-link-active);
+    }
 
     @media (--not-mobile) {
       padding: 4px 10px;
@@ -92,6 +96,12 @@ html {
           line-height: 1em;
         }
       }
+    }
+
+    .vr-divider {
+      border-left: 1px solid var(--color-line-gray);
+      height: 100%;
+      margin: 0 10px;
     }
   }
 }

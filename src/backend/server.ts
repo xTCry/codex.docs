@@ -2,18 +2,20 @@
 /**
  * Module dependencies.
  */
-import http from 'http';
 import Debug from 'debug';
+import path from 'path';
+import os from 'os';
+import http from 'http';
+import express, { NextFunction, Request, Response } from 'express';
+import cookieParser from 'cookie-parser';
+import morgan from 'morgan';
+import i18n from 'i18n';
+import yaml from 'yaml';
+import HawkCatcher from '@hawk.so/nodejs';
+
 import appConfig from './utils/appConfig';
 import { drawBanner } from './utils/banner';
-import express, { NextFunction, Request, Response } from 'express';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import HawkCatcher from '@hawk.so/nodejs';
-import os from 'os';
 import { downloadFavicon, FaviconData } from './utils/downloadFavicon';
-import morgan from 'morgan';
-import cookieParser from 'cookie-parser';
 import routes from './routes/index';
 import HttpException from './exceptions/httpException';
 
@@ -38,6 +40,18 @@ function createApp(): express.Express {
 
   const app = express();
   const localConfig = appConfig.frontend;
+
+  i18n.configure({
+    locales: localConfig.availableLocales,
+    directory: __dirname + '/locales',
+    defaultLocale: localConfig.availableLocales[0] || 'en',
+    cookie: `${localConfig.appName}Locale`,
+    extension: '.yml',
+    parser: yaml,
+    objectNotation: true,
+    autoReload: true, // defaults to false
+    updateFiles: false, // defaults to true
+  });
 
   // Initialize the backend error tracking catcher.
   if (appConfig.hawk?.backendToken) {
@@ -75,7 +89,7 @@ function createApp(): express.Express {
   } else {
     console.log('Favicon is empty, using default path');
     app.locals.favicon = {
-      destination: appConfig.frontend.basePath + '/favicon.png',
+      destination: localConfig.basePath + '/favicon.png',
       type: 'image/png',
     } as FaviconData;
   }
@@ -85,6 +99,26 @@ function createApp(): express.Express {
   app.use(express.urlencoded({ extended: true }));
   app.use(cookieParser());
 
+  app.use(i18n.init);
+  app.use((req, res, next) => {
+    if (!req.cookies[`${localConfig.appName}Locale`]) {
+      const languages = req.headers['accept-language'];
+      const lang = languages
+        ? languages.split(',')[0]
+        : localConfig.availableLocales[0];
+
+      if (localConfig.availableLocales.includes(lang)) {
+        res.cookie(`${localConfig.appName}Locale`, lang, {
+          maxAge: 2 * 365 * 24 * 3600e3,
+          httpOnly: true,
+        });
+        req.setLocale(lang);
+      }
+    }
+
+    next();
+  });
+
   const baseRouter = express.Router();
   baseRouter.use(express.static(path.join(__dirname, '../../public')));
   baseRouter.use('/favicon', express.static(downloadedFaviconFolder));
@@ -92,8 +126,24 @@ function createApp(): express.Express {
     const uploadsPath = path.join(cwd, appConfig.uploads.local.path);
     baseRouter.use('/uploads', express.static(uploadsPath));
   }
+
+  baseRouter.get('/set-lang/:lang', (req, res) => {
+    // ? Check CORS
+    // if (!req.headers.referer) {
+    //   return res.end('No referer');
+    // }
+    const { lang } = req.params;
+    if (localConfig.availableLocales.includes(lang)) {
+      res.cookie(`${localConfig.appName}Locale`, lang, {
+        maxAge: 2 * 365 * 24 * 3600e3,
+        httpOnly: true,
+      });
+    }
+    res.redirect(req.headers.referer || localConfig.basePath || '/');
+  });
+
   baseRouter.use(routes);
-  app.use(appConfig.frontend.basePath || '/', baseRouter);
+  app.use(localConfig.basePath || '/', baseRouter);
 
   // global error handler
   app.use(function (
