@@ -44,6 +44,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  align-content: center;
+  flex-wrap: wrap;
 
   z-index: 900;
   position: fixed;
@@ -52,13 +54,24 @@
   transform: translate(-50%, 0);
   padding: 0.75rem 1.5rem;
   background-color: var(--color-bg-light);
-  max-height: 40px;
+  max-height: 160px;
+  max-width: 98vw;
+  /* min-width: 80vw; */
 
   border-top-left-radius: 1rem;
   border-top-right-radius: 1rem;
 
-  button:not(:last-child) {
-    margin-right: 20px;
+  >* {
+    margin: 0 .5rem;
+    margin-bottom: 0.25rem;
+  }
+
+  @media (--mobile) {
+    min-width: 100vw;
+
+    >button {
+      --height: 30px;
+    }
   }
 }
 
