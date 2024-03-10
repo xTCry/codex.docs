@@ -6,11 +6,10 @@
     {% if isAuthorized == true %}
       <li class="docs-header__menu-add docs-header__menu-add--desktop">
         {% include 'components/button.twig' with {label: __('index.add_page'), icon: 'plus', size: 'small', url: config.basePath ~ '/page/new'} %}
-        <div class="vr-divider"></div>
       </li>
+      <li class="vr-divider docs-header__menu-add--desktop"></li>
       <li class="docs-header__menu-add docs-header__menu-add--mobile">
         {% include 'components/button.twig' with {icon: 'plus', size: 'small', url: config.basePath ~ '/page/new'} %}
-        <div class="vr-divider"></div>
       </li>
     {% endif %}
 
@@ -24,7 +23,7 @@
       {% endfor %}
 
       {% if config.menu is iterable %}
-        <div class="vr-divider"></div>
+        <li class="vr-divider"></li>
       {% endif %}
     {% endif %}
 

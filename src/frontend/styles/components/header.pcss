@@ -42,10 +42,10 @@ html {
       background-color: var(--color-link-active);
     }
 
-    @media (--not-mobile) {
-      padding: 4px 10px;
-      @apply --squircle;
-    }
+    padding: .15rem 0.25rem;
+    @apply --squircle;
+    /* @media (--not-mobile) {
+    } */
 
     &:hover {
       background-color: var(--color-link-hover);
@@ -55,9 +55,9 @@ html {
   &__menu {
     display: flex;
     margin: 0;
-    gap: 10px;
+    gap: .625rem;
     padding-left: 0;
-    font-size: 16px;
+    font-size: 1rem;
 
     @media (--mobile) {
       margin-top: 6px;
@@ -72,7 +72,7 @@ html {
 
       @media (--mobile) {
         margin-left: 0;
-        margin-right: 15px;
+        margin-right: .5rem;
       }
     }
 
@@ -101,7 +101,7 @@ html {
     .vr-divider {
       border-left: 1px solid var(--color-line-gray);
       height: 100%;
-      margin: 0 10px;
+      margin: 0 .5rem;
     }
   }
 }
