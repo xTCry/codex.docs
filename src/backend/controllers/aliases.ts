@@ -12,7 +12,7 @@ class Aliases {
    * @returns {Promise<Alias>}
    */
   public static async get(aliasName: string): Promise<Alias> {
-    const alias = await Alias.get(aliasName);
+    const alias = await Alias.getByAliasName(aliasName);
 
     return alias;
   }

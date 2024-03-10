@@ -98,18 +98,32 @@ class Alias {
    * @param {string} aliasName - alias of entity
    * @returns {Promise<Alias>}
    */
-  public static async get(aliasName: string): Promise<Alias> {
+  public static async getByAliasName(aliasName: string): Promise<Alias> {
     const hash = binaryMD5(aliasName);
     let data = await aliasesDb.findOne({
-      hash: hash,
+      hash,
       deprecated: false,
     });
 
     if (!data) {
-      data = await aliasesDb.findOne({ hash: hash });
+      data = await aliasesDb.findOne({ hash });
     }
 
     return new Alias(data);
+  }
+
+  /**
+   * Find all Aliases which match passed query object
+   *
+   * @param {object} query - input query
+   * @returns {Promise<Alias[]>}
+   */
+  public static async getAll(
+    query: Record<string, unknown> = {},
+  ): Promise<Alias[]> {
+    const docs = await aliasesDb.find(query);
+
+    return docs.map((doc) => new Alias(doc));
   }
 
   /**
@@ -119,7 +133,7 @@ class Alias {
    * @returns {Promise<Alias>}
    */
   public static async markAsDeprecated(aliasName: string): Promise<Alias> {
-    const alias = await Alias.get(aliasName);
+    const alias = await Alias.getByAliasName(aliasName);
 
     alias.deprecated = true;
 

@@ -274,9 +274,10 @@ class Pages {
     }
 
     if (page.uri) {
-      const alias = await Alias.get(page.uri);
-
-      await alias.destroy();
+      const aliases = await Alias.getAll({ id: page._id });
+      for (const alias of aliases) {
+        await alias.destroy();
+      }
     }
     const removedPage = page.destroy();
 
