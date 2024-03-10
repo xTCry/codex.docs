@@ -22,7 +22,9 @@ export default class Extensions {
    * Initialize extensions
    */
   constructor() {
-    this.initTheme();
+    if (window.config.allowChangeTheme) {
+      this.initTheme();
+    }
   }
 
   initTheme() {

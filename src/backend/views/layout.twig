@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ locale }}" data-theme="dark">
+<html lang="{{ locale }}" data-theme="{{ config.defaultTheme }}">
 <head>
   <title>{{ (page.title ?: config.title) | striptags }}</title>
   <link rel="stylesheet" href="{{ config.basePath ~ '/dist/main.css' }}" />
@@ -15,6 +15,7 @@
       hawkClientToken:"{{ config.hawkClientToken }}",
       basePath: "{{ config.basePath }}",
       availableLocales: {{ config.availableLocales | json_encode }},
+      allowChangeTheme: {{ config.allowChangeTheme | json_encode }},
       locale: "{{ locale }}",
       locales: {
         writing: {{ __('js.writing') | json_encode }},

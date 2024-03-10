@@ -9,13 +9,15 @@
         {% include 'components/button.twig' with {icon: 'plus', size: 'small', url: config.basePath ~ '/page/new'} %}
       </li>
     {% endif %}
-    <li>
-      <button name="theme-toggle" class="docs-button docs-button--primary docs-button--small docs-button--with-icon color-theme" aria-label="Change theme">
-        <div class="docs-button__icon">
-          {{ svg('theme-mode') }}
-        </div>
-      </button>
-    </li>
+    {% if config.allowChangeTheme %}
+      <li>
+        <button name="theme-toggle" class="docs-button docs-button--primary docs-button--small docs-button--with-icon color-theme" aria-label="Change theme">
+          <div class="docs-button__icon">
+            {{ svg('theme-mode') }}
+          </div>
+        </button>
+      </li>
+    {% endif %}
   </ul>
 
   <ul class="docs-header__menu">
@@ -24,19 +26,21 @@
         {% include 'components/button.twig' with {label: __('index.add_page'), icon: 'plus', size: 'small', url: config.basePath ~ '/page/new'} %}
       </li>
     {% endif %}
-    <li class="docs-header__menu-desktop">
-      <button name="theme-toggle" class="docs-button docs-button--primary docs-button--small docs-button--with-icon color-theme" aria-label="Change theme">
-        <div class="docs-button__icon">
-          {{ svg('theme-mode') }}
-        </div>
-        {# <div class="docs-button__icon d-none-dark">
-          {{ svg('theme-mode') }}
-        </div>
-        <div class="docs-button__icon d-none-light">
-          {{ svg('theme-mode') }}
-        </div> #}
-      </button>
-    </li>
+    {% if config.allowChangeTheme %}
+      <li class="docs-header__menu-desktop">
+        <button name="theme-toggle" class="docs-button docs-button--primary docs-button--small docs-button--with-icon color-theme" aria-label="Change theme">
+          <div class="docs-button__icon">
+            {{ svg('theme-mode') }}
+          </div>
+          {# <div class="docs-button__icon d-none-dark">
+            {{ svg('theme-mode') }}
+          </div>
+          <div class="docs-button__icon d-none-light">
+            {{ svg('theme-mode') }}
+          </div> #}
+        </button>
+      </li>
+    {% endif %}
     <li class="vr-divider docs-header__menu-desktop"></li>
 
     {% if config.availableLocales|length > 1 %}

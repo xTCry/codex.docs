@@ -19,6 +19,8 @@ frontend:
     - "en"
     - "ru"
   pageUriLocaleMode: "prefix" # "none", "suffix" or "prefix"
+  defaultTheme: "light" # "light" or "dark"
+  allowChangeTheme: true # Default: false
   title: "CodeX Docs"
   description: "Free Docs app powered by Editor.js ecosystemt"
   startPage: ""

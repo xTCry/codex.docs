@@ -76,6 +76,8 @@ const FrontendConfig = z.object({
   appName: z.string(), // Prefix for authToken
   availableLocales: z.array(z.string()).transform((arr) => [...new Set(arr)]), // Available locales
   pageUriLocaleMode: z.enum(['none', 'prefix', 'suffix']).optional(), // Page locale mode
+  defaultTheme: z.enum(['light', 'dark']).optional(), // Default theme
+  allowChangeTheme: z.boolean().optional(), // Allow changing theme
   title: z.string(), // Title for pages
   description: z.string(), // Description for pages
   startPage: z.string(), // Start page
@@ -139,6 +141,8 @@ const defaultConfig: AppConfig = {
     appName: 'docs',
     availableLocales: ['en', 'ru'],
     pageUriLocaleMode: 'prefix',
+    defaultTheme: 'light',
+    allowChangeTheme: false,
     title: 'CodeX Docs',
     description: 'Free Docs app powered by Editor.js ecosystem',
     startPage: '',

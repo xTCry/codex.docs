@@ -4,6 +4,7 @@ interface Window {
     misprintsChatId: string;
     basePath: string;
     availableLocales: string[];
+    allowChangeTheme: boolean;
     locale: string;
     locales: Record<string, any>;
   };

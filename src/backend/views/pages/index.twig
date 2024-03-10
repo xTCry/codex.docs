@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ locale }}" data-theme="dark" style="height: 100%">
+<html lang="{{ locale }}" data-theme="{{ config.defaultTheme }}" style="height: 100%">
 <head>
   <title>{{ config.title }}</title>
   <link rel="stylesheet" href="{{ config.basePath ~ '/dist/main.css' }}" />
@@ -15,6 +15,7 @@
       hawkClientToken:"{{ config.hawkClientToken }}",
       basePath: "{{ config.basePath }}",
       availableLocales: {{ config.availableLocales | json_encode }},
+      allowChangeTheme: {{ config.allowChangeTheme | json_encode }},
     };
   </script>
 </head>
