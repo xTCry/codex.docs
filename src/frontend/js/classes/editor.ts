@@ -25,7 +25,7 @@ import Marker from '@editorjs/marker';
 /**
  * Plugins
  */
-import Undo from 'editorjs-undo';
+// import Undo from 'editorjs-undo';
 import DragDrop from 'editorjs-drag-drop';
 
 type OptionsType = {
@@ -156,7 +156,7 @@ export default class Editor {
    */
   handleReady() {
     const editor = this.editor;
-    new Undo({ editor });
+    // new Undo({ editor });
     new DragDrop(editor);
   }
 
