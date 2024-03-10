@@ -82,7 +82,7 @@ router.get(
     try {
       const page = await Pages.get(pageId);
 
-      const pageParent = await page.parent;
+      const pageParent = await page.getParent();
 
       const previousPage = await PagesFlatArray.getPageBefore(pageId);
       const nextPage = await PagesFlatArray.getPageAfter(pageId);
@@ -90,9 +90,9 @@ router.get(
       res.render('pages/page', {
         page,
         pageParent,
-        config: req.app.locals.config,
         previousPage,
         nextPage,
+        config: req.app.locals.config,
       });
     } catch (error) {
       res.status(404);
