@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import Pages from '../../controllers/pages';
 import PagesOrder from '../../controllers/pagesOrder';
+import appConfig from '../../utils/appConfig';
 import asyncMiddleware from '../../utils/asyncMiddleware';
 import { EntityId } from '../../database/types';
 import { createMenuTree } from '../../utils/menu';
@@ -29,7 +30,7 @@ export default asyncMiddleware(
         parentIdOfRootPages,
         pages,
         pagesOrder,
-        7,
+        appConfig.frontend.maxMenuLevel,
       );
     } catch (error) {
       console.log('Can not load menu:', error);

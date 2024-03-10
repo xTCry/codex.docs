@@ -78,6 +78,7 @@ const FrontendConfig = z.object({
   title: z.string(), // Title for pages
   description: z.string(), // Description for pages
   startPage: z.string(), // Start page
+  maxMenuLevel: z.number().int().min(1).max(7).optional(), // Max menu level depth
   misprintsChatId: z.string().optional(), // Telegram chat id for misprints
   yandexMetrikaId: z.string().optional(), // Yandex metrika id
   carbon: z.object({
@@ -139,6 +140,7 @@ const defaultConfig: AppConfig = {
     title: 'CodeX Docs',
     description: 'Free Docs app powered by Editor.js ecosystem',
     startPage: '',
+    maxMenuLevel: 7,
     carbon: {
       serve: '',
       placement: '',

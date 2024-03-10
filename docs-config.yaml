@@ -21,6 +21,7 @@ frontend:
     - "ru"
   description: "Free Docs app powered by Editor.js ecosystemt"
   startPage: ""
+  # maxMenuLevel: 3 # Between 1 and 7
   misprintsChatId: "12344564"
   yandexMetrikaId: ""
   carbon:

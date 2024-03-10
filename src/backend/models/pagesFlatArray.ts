@@ -3,6 +3,7 @@ import PageOrder from './pageOrder';
 import NodeCache from 'node-cache';
 import { EntityId } from '../database/types';
 import { isEqualIds } from '../database/index';
+import appConfig from '../utils/appConfig';
 
 // Create cache for flat array
 const cache = new NodeCache({ stdTTL: 120 });
@@ -113,16 +114,14 @@ class PagesFlatArray {
   public static async getPageBefore(
     pageId: EntityId,
   ): Promise<PagesFlatArrayData | undefined> {
-    const arr = await this.get();
+    const arr = await this.get(appConfig.frontend.maxMenuLevel);
 
     const pageIndex = arr.findIndex((item) => isEqualIds(item.id, pageId));
 
     // Check if index is not the first
-    if (pageIndex && pageIndex > 0) {
+    if (pageIndex > 0) {
       // Return previous element from array
       return arr[pageIndex - 1];
-    } else {
-      return;
     }
   }
 
@@ -135,7 +134,7 @@ class PagesFlatArray {
   public static async getPageAfter(
     pageId: EntityId,
   ): Promise<PagesFlatArrayData | undefined> {
-    const arr = await this.get();
+    const arr = await this.get(appConfig.frontend.maxMenuLevel);
 
     const pageIndex = arr.findIndex((item) => isEqualIds(item.id, pageId));
 
@@ -143,8 +142,6 @@ class PagesFlatArray {
     if (pageIndex < arr.length - 1) {
       // Return next element from array
       return arr[pageIndex + 1];
-    } else {
-      return;
     }
   }
 
