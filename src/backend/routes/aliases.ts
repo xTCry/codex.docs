@@ -1,9 +1,11 @@
 import express, { Request, Response } from 'express';
 import Aliases from '../controllers/aliases';
 import Pages from '../controllers/pages';
-import Alias from '../models/alias';
 import verifyToken from './middlewares/token';
+import { loadMenu } from './middlewares/pages';
+import Alias from '../models/alias';
 import PagesFlatArray from '../models/pagesFlatArray';
+import Page from '../models/page';
 import HttpException from '../exceptions/httpException';
 import appConfig from '../utils/appConfig';
 
@@ -28,15 +30,24 @@ router.get('*', verifyToken, async (req: Request, res: Response) => {
     if (alias.id === undefined) {
       throw new HttpException(404, 'Alias not found');
     }
-
     switch (alias.type) {
       case Alias.types.PAGE: {
+        const menu = res.locals.menu as Page[];
         const page = await Pages.get(alias.id);
+        if (!menu.find((m) => m._id === page._id)) {
+          await loadMenu(req, res, page);
+        }
 
         const pageParent = await page.getParent();
 
-        const previousPage = await PagesFlatArray.getPageBefore(alias.id);
-        const nextPage = await PagesFlatArray.getPageAfter(alias.id);
+        const previousPage = await PagesFlatArray.getPageBefore(
+          alias.id,
+          req.locale,
+        );
+        const nextPage = await PagesFlatArray.getPageAfter(
+          alias.id,
+          req.locale,
+        );
 
         res.render('pages/page', {
           page,

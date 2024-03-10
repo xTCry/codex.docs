@@ -8,6 +8,7 @@ import { Storage } from '../utils/storage';
 type ENodes =
   | 'saveButton'
   | 'autoSaveCheckbox'
+  | 'multiLocaleCheckbox'
   | 'removeButton'
   | 'goViewButton'
   | 'parentIdSelector'
@@ -18,6 +19,7 @@ type PageType = {
   parent: string;
   _id: string;
   title: string;
+  locale: string;
   uri: string;
   body: {
     /** saving time */
@@ -59,6 +61,7 @@ export default class Writing {
   nodes: Record<ENodes, HTMLInputElement | null> = {
     saveButton: null,
     autoSaveCheckbox: null,
+    multiLocaleCheckbox: null,
     removeButton: null,
     goViewButton: null,
     parentIdSelector: null,
@@ -109,6 +112,10 @@ export default class Writing {
         this.autoSaveStorage.set(String(this.nodes.autoSaveCheckbox!.checked));
       });
     }
+
+    this.nodes.multiLocaleCheckbox = moduleEl.querySelector(
+      '[name="multi-locale"]',
+    );
 
     this.nodes.saveButton = moduleEl.querySelector('[name="js-submit-save"]');
     this.nodes.saveButton!.addEventListener('click', () => {
@@ -231,11 +238,10 @@ export default class Writing {
 
     let uri = '';
     if (this.nodes.uriInput && this.nodes.uriInput.value) {
-      if (this.nodes.uriInput.value.match(/^[a-z0-9'-]+$/i)) {
-        uri = this.nodes.uriInput.value;
-      } else {
+      if (!this.nodes.uriInput.value.match(/^[a-z0-9'\-\/]+$/i)) {
         throw new Error(this.locales.wrong_uri);
       }
+      uri = this.nodes.uriInput.value;
     }
 
     if (!title) {
@@ -253,6 +259,9 @@ export default class Writing {
       putAbovePageId,
       uri,
       body: editorData,
+      isMultiLocale:
+        window.config.availableLocales?.length < 2 ||
+        this.nodes.multiLocaleCheckbox?.checked,
     };
   }
 

@@ -1,11 +1,9 @@
-import Page, { PageData } from '../models/page';
-import Alias from '../models/alias';
 import PagesOrder from './pagesOrder';
-import PageOrder from '../models/pageOrder';
-import HttpException from '../exceptions/httpException';
-import PagesFlatArray from '../models/pagesFlatArray';
 import { EntityId } from '../database/types';
 import { isEqualIds } from '../database/index';
+import Alias from '../models/alias';
+import PagesFlatArray from '../models/pagesFlatArray';
+import Page, { PageData } from '../models/page';
 
 type PageDataFields = keyof PageData;
 
@@ -44,8 +42,22 @@ class Pages {
    *
    * @returns {Promise<Page[]>}
    */
-  public static async getAllPages(): Promise<Page[]> {
-    return Page.getAll();
+  public static async getAllPages(
+    locale?: string,
+    reqIds: EntityId[] = [],
+  ): Promise<Page[]> {
+    return Page.getAll(
+      locale
+        ? {
+            $or: [
+              { locale },
+              { isMultiLocale: true },
+              { locale: { $exists: false }, isMultiLocale: { $exists: false } },
+              ...(reqIds.length > 0 ? [{ _id: { $in: reqIds } }] : []),
+            ],
+          }
+        : {},
+    );
   }
 
   /**
@@ -54,9 +66,12 @@ class Pages {
    * @param {string} parent - id of current page
    * @returns {Promise<Page[]>}
    */
-  public static async getAllExceptChildren(parent: EntityId): Promise<Page[]> {
+  public static async getAllExceptChildren(
+    parent: EntityId,
+    locale?: string,
+  ): Promise<Page[]> {
     const pagesAvailable = this.removeChildren(
-      await Pages.getAllPages(),
+      await Pages.getAllPages(locale),
       parent,
     );
 
@@ -231,7 +246,7 @@ class Pages {
       throw new Error('Page with given id does not exist');
     }
 
-    if (data.uri && !data.uri.match(/^[a-z0-9'-]+$/i)) {
+    if (data.uri && !data.uri.match(/^[a-z0-9'\-\/]+$/i)) {
       throw new Error('Uri has unexpected characters');
     }
 

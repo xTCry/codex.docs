@@ -1,6 +1,6 @@
+import NodeCache from 'node-cache';
 import Page from './page';
 import PageOrder from './pageOrder';
-import NodeCache from 'node-cache';
 import { EntityId } from '../database/types';
 import { isEqualIds } from '../database/index';
 import appConfig from '../utils/appConfig';
@@ -14,6 +14,10 @@ const cacheKey = 'pagesFlatArray';
  * Element for pagesFlatArray
  */
 export interface PagesFlatArrayData {
+  /**
+   * Page id
+   */
+  _id: EntityId;
   /**
    * Page id
    */
@@ -40,10 +44,38 @@ export interface PagesFlatArrayData {
   title: string;
 
   /**
+   * Page locale
+   */
+  locale: string;
+
+  /**
+   * Is page multi-locale
+   */
+  isMultiLocale: boolean;
+
+  /**
    * Page uri
    */
   uri?: string;
 }
+
+const checkPage = <
+  T extends {
+    _id?: EntityId;
+    locale?: string;
+    isMultiLocale?: boolean;
+  },
+>(
+  page: T,
+  id: EntityId,
+  locale?: string,
+) =>
+  isEqualIds(page._id, id) &&
+  (!locale ||
+    (locale &&
+      (page.locale === locale ||
+        page.isMultiLocale ||
+        (!page.locale && !page.isMultiLocale))));
 
 /**
  * @class PagesFlatArray model - flat array of pages, which are ordered like in sidebar
@@ -57,13 +89,14 @@ class PagesFlatArray {
    */
   public static async get(
     nestingLimit: number | null = 2,
+    locale?: string,
   ): Promise<Array<PagesFlatArrayData>> {
     // Get flat array from cache
-    let arr = cache.get(cacheKey) as Array<PagesFlatArrayData>;
+    let arr = cache.get(cacheKey + locale) as Array<PagesFlatArrayData>;
 
     // Check is flat array consists in cache
     if (!arr) {
-      arr = await this.regenerate();
+      arr = await this.regenerate(locale);
     }
 
     if (!nestingLimit) {
@@ -79,8 +112,27 @@ class PagesFlatArray {
    *
    * @returns {Promise<Array<PagesFlatArrayData>>}
    */
-  public static async regenerate(): Promise<Array<PagesFlatArrayData>> {
-    const pages = await Page.getAll();
+  public static async regenerate(
+    locale?: string,
+  ): Promise<Array<PagesFlatArrayData>> {
+    if (!locale && appConfig.frontend.availableLocales.length > 1) {
+      for (const locale of appConfig.frontend.availableLocales) {
+        await this.regenerate(locale);
+      }
+      return [];
+    }
+
+    const pages = await Page.getAll(
+      locale
+        ? {
+            $or: [
+              { locale },
+              { isMultiLocale: true },
+              { locale: { $exists: false }, isMultiLocale: { $exists: false } },
+            ],
+          }
+        : {},
+    );
     const pagesOrders = await PageOrder.getAll();
 
     let arr = new Array<PagesFlatArrayData>();
@@ -95,12 +147,12 @@ class PagesFlatArray {
 
     for (const pageId of rootOrder.order) {
       arr = arr.concat(
-        this.getChildrenFlatArray(pageId, 0, pages, pagesOrders),
+        this.getChildrenFlatArray(pageId, 0, pages, pagesOrders, locale),
       );
     }
 
     // Save generated flat array to cache
-    cache.set(cacheKey, arr);
+    cache.set(cacheKey + locale, arr);
 
     return arr;
   }
@@ -113,10 +165,11 @@ class PagesFlatArray {
    */
   public static async getPageBefore(
     pageId: EntityId,
+    locale?: string,
   ): Promise<PagesFlatArrayData | undefined> {
-    const arr = await this.get(appConfig.frontend.maxMenuLevel);
+    const arr = await this.get(appConfig.frontend.maxMenuLevel, locale);
 
-    const pageIndex = arr.findIndex((item) => isEqualIds(item.id, pageId));
+    const pageIndex = arr.findIndex((item) => checkPage(item, pageId, locale));
 
     // Check if index is not the first
     if (pageIndex > 0) {
@@ -133,10 +186,11 @@ class PagesFlatArray {
    */
   public static async getPageAfter(
     pageId: EntityId,
+    locale?: string,
   ): Promise<PagesFlatArrayData | undefined> {
-    const arr = await this.get(appConfig.frontend.maxMenuLevel);
+    const arr = await this.get(appConfig.frontend.maxMenuLevel, locale);
 
-    const pageIndex = arr.findIndex((item) => isEqualIds(item.id, pageId));
+    const pageIndex = arr.findIndex((item) => checkPage(item, pageId, locale));
 
     // Check if index is not the last
     if (pageIndex < arr.length - 1) {
@@ -159,19 +213,23 @@ class PagesFlatArray {
     level: number,
     pages: Array<Page>,
     orders: Array<PageOrder>,
+    locale?: string,
   ): Array<PagesFlatArrayData> {
     let arr: Array<PagesFlatArrayData> = new Array<PagesFlatArrayData>();
 
-    const page = pages.find((item) => isEqualIds(item._id, pageId));
+    const page = pages.find((item) => checkPage(item, pageId, locale));
 
     // Add element to child array
     if (page) {
       arr.push({
+        _id: page._id!,
         id: page._id!,
         level: level,
         parentId: page._parent,
         rootId: '0',
         title: page.title!,
+        locale: page.locale!,
+        isMultiLocale: page.isMultiLocale || false,
         uri: page.uri,
       });
     }
@@ -181,7 +239,13 @@ class PagesFlatArray {
     if (order) {
       for (const childPageId of order.order) {
         arr = arr.concat(
-          this.getChildrenFlatArray(childPageId, level + 1, pages, orders),
+          this.getChildrenFlatArray(
+            childPageId,
+            level + 1,
+            pages,
+            orders,
+            locale,
+          ),
         );
       }
     }

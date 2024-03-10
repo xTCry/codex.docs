@@ -178,6 +178,12 @@
             <input type="text" id="uri-input" class="uri-input" name="uri-input" placeholder="{{ __('form.alias_placeholder') }}" value="{{ page.uri }}">
           </div>
         {% endif %}
+        {% if config.availableLocales|length > 1 %}
+          <div class="checkbox-wrapper">
+            <label for="multi-locale">{{ __('form.multi_locale') }}</label>
+            <input type="checkbox" id="multi-locale" name="multi-locale" {{ page is not empty ? (page.isMultiLocale ? 'checked' : '') : '' }} />
+          </div>
+        {% endif %}
       </div>
     </header>
 

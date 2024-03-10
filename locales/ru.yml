@@ -25,6 +25,7 @@ form:
     view_page: Просмотреть
     delete_page: Удалить страницу
   auto_save: Автосохранение (каждые 5 секунд)
+  multi_locale: Мультиязычная страница
   last_save_at: Последнее сохранение в
 
 page:

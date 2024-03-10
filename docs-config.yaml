@@ -14,11 +14,12 @@ uploads:
 frontend:
   basePath: "" # Example: /docs
   appName: "docs"
-  title: "CodeX Docs"
   # First item will be defaultLocale (if one item, then no change language)
   availableLocales:
     - "en"
     - "ru"
+  pageUriLocaleMode: "prefix" # "none", "suffix" or "prefix"
+  title: "CodeX Docs"
   description: "Free Docs app powered by Editor.js ecosystemt"
   startPage: ""
   # maxMenuLevel: 3 # Between 1 and 7

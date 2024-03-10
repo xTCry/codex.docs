@@ -3,7 +3,9 @@ import Pages from '../controllers/pages';
 import PagesOrder from '../controllers/pagesOrder';
 import verifyToken from './middlewares/token';
 import allowEdit from './middlewares/locals';
+import { loadMenu } from './middlewares/pages';
 import PagesFlatArray from '../models/pagesFlatArray';
+import Page from '../models/page';
 import { toEntityId } from '../database/index';
 
 const router = express.Router();
@@ -18,8 +20,6 @@ router.get(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const pagesAvailableGrouped = await Pages.groupByParent();
-
-      console.log(pagesAvailableGrouped);
 
       res.render('pages/form', {
         pagesAvailableGrouped,
@@ -43,8 +43,16 @@ router.get(
     const pageId = toEntityId(req.params.id);
 
     try {
+      const menu = res.locals.menu as Page[];
       const page = await Pages.get(pageId);
-      const pagesAvailable = await Pages.getAllExceptChildren(pageId);
+      if (!menu.find((m) => m._id === page._id)) {
+        await loadMenu(req, res, page);
+      }
+
+      const pagesAvailable = await Pages.getAllExceptChildren(
+        pageId,
+        req.locale,
+      );
       const pagesAvailableGrouped = await Pages.groupByParent(pageId);
 
       if (!page._parent) {
@@ -56,6 +64,7 @@ router.get(
         pageId,
         page._parent,
         true,
+        req.locale,
       );
 
       res.render('pages/form', {
@@ -80,12 +89,19 @@ router.get(
     const pageId = toEntityId(req.params.id);
 
     try {
+      const menu = res.locals.menu as Page[];
       const page = await Pages.get(pageId);
+      if (!menu.find((m) => m._id === page._id)) {
+        await loadMenu(req, res, page);
+      }
 
       const pageParent = await page.getParent();
 
-      const previousPage = await PagesFlatArray.getPageBefore(pageId);
-      const nextPage = await PagesFlatArray.getPageAfter(pageId);
+      const previousPage = await PagesFlatArray.getPageBefore(
+        pageId,
+        req.locale,
+      );
+      const nextPage = await PagesFlatArray.getPageAfter(pageId, req.locale);
 
       res.render('pages/page', {
         page,

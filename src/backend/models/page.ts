@@ -1,6 +1,7 @@
-import urlify from '../utils/urlify';
 import database, { isEqualIds } from '../database/index';
 import { EntityId } from '../database/types';
+import urlify from '../utils/urlify';
+import appConfig from '../utils/appConfig';
 
 const pagesDb = database['pages'];
 
@@ -8,6 +9,8 @@ const pagesDb = database['pages'];
  * @typedef {object} PageData
  * @property {string} _id - page id
  * @property {string} title - page title
+ * @property {string} locale - page locale
+ * @property {boolean} isMultiLocale - is page multi-locale
  * @property {string} uri - page uri
  * @property {*} body - page body
  * @property {string} parent - id of parent page
@@ -15,6 +18,8 @@ const pagesDb = database['pages'];
 export interface PageData {
   _id?: EntityId;
   title?: string;
+  locale?: string;
+  isMultiLocale?: boolean;
   uri?: string;
   body?: any;
   parent?: EntityId;
@@ -25,6 +30,8 @@ export interface PageData {
  * @class Page model
  * @property {string} _id - page id
  * @property {string} title - page title
+ * @property {string} locale - page locale
+ * @property {boolean} isMultiLocale - is page multi-locale
  * @property {string} uri - page uri
  * @property {*} body - page body
  * @property {string} _parent - id of parent page
@@ -33,6 +40,8 @@ class Page {
   public _id?: EntityId;
   public body?: any;
   public title?: string;
+  public locale?: string;
+  public isMultiLocale?: boolean;
   public uri?: string;
   public _parent?: EntityId;
 
@@ -96,10 +105,12 @@ class Page {
    * @param {PageData} pageData - page's data
    */
   public set data(pageData: PageData) {
-    const { body, parent, uri } = pageData;
+    const { body, locale, isMultiLocale, parent, uri } = pageData;
 
     this.body = body || this.body;
     this.title = this.extractTitleFromBody();
+    this.locale = locale || this.locale;
+    this.isMultiLocale = isMultiLocale ?? this.isMultiLocale;
     this.uri = uri || '';
     this._parent = parent || this._parent || ('0' as EntityId);
   }
@@ -113,6 +124,8 @@ class Page {
     return {
       _id: this._id,
       title: this.title,
+      locale: this.locale,
+      isMultiLocale: this.isMultiLocale,
       uri: this.uri,
       body: this.body,
       parent: this._parent,
@@ -206,6 +219,25 @@ class Page {
 
     if (!this._id) {
       uri = this.transformTitleToUri();
+      const { pageUriLocaleMode } = appConfig.frontend;
+      if (
+        pageUriLocaleMode !== 'none' &&
+        !this.isMultiLocale &&
+        this.locale &&
+        appConfig.frontend.availableLocales.length > 1
+      ) {
+        if (
+          pageUriLocaleMode === 'prefix' &&
+          !uri.startsWith(`${this.locale}/`)
+        ) {
+          uri = `${this.locale}/${uri}`;
+        } else if (
+          pageUriLocaleMode === 'suffix' &&
+          !uri.endsWith(`-${this.locale}`)
+        ) {
+          uri += `-${this.locale}`;
+        }
+      }
     }
 
     if (uri) {

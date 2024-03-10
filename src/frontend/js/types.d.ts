@@ -3,6 +3,8 @@ interface Window {
     hawkClientToken: string;
     misprintsChatId: string;
     basePath: string;
+    availableLocales: string[];
+    locale: string;
     locales: Record<string, any>;
   };
 }

@@ -110,6 +110,7 @@ class PagesOrder {
     currentPageId: EntityId,
     parentPageId: EntityId,
     ignoreSelf = false,
+    locale?: string,
   ): Promise<Page[]> {
     const children = await PageOrder.get(parentPageId);
     const unordered = pages
@@ -129,7 +130,12 @@ class PagesOrder {
       pages.forEach((page) => {
         if (
           isEqualIds(page._id, id) &&
-          (!isEqualIds(id, currentPageId) || !ignoreSelf)
+          (!isEqualIds(id, currentPageId) || !ignoreSelf) &&
+          (!locale ||
+            (locale &&
+              (page.locale === locale ||
+                page.isMultiLocale ||
+                (!page.locale && !page.isMultiLocale))))
         ) {
           result.push(page);
         }

@@ -75,10 +75,11 @@ const FrontendConfig = z.object({
   basePath: z.string(), // Base path for routing
   appName: z.string(), // Prefix for authToken
   availableLocales: z.array(z.string()).transform((arr) => [...new Set(arr)]), // Available locales
+  pageUriLocaleMode: z.enum(['none', 'prefix', 'suffix']).optional(), // Page locale mode
   title: z.string(), // Title for pages
   description: z.string(), // Description for pages
   startPage: z.string(), // Start page
-  maxMenuLevel: z.number().int().min(1).max(7).optional(), // Max menu level depth
+  maxMenuLevel: z.number().int().min(1).max(7), // Max menu level depth
   misprintsChatId: z.string().optional(), // Telegram chat id for misprints
   yandexMetrikaId: z.string().optional(), // Yandex metrika id
   carbon: z.object({
@@ -137,6 +138,7 @@ const defaultConfig: AppConfig = {
     basePath: '',
     appName: 'docs',
     availableLocales: ['en', 'ru'],
+    pageUriLocaleMode: 'prefix',
     title: 'CodeX Docs',
     description: 'Free Docs app powered by Editor.js ecosystem',
     startPage: '',

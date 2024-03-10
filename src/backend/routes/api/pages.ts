@@ -58,10 +58,12 @@ router.get('/pages', async (req: Request, res: Response) => {
  */
 router.put('/page', multer.none(), async (req: Request, res: Response) => {
   try {
-    const { title, body } = req.body;
+    const { title, body, isMultiLocale } = req.body;
     const parent = toEntityId(req.body.parent);
     const page = await Pages.insert({
       title,
+      locale: req.locale,
+      isMultiLocale,
       body,
       parent,
     });
@@ -94,7 +96,7 @@ router.post('/page/:id', multer.none(), async (req: Request, res: Response) => {
   const id = toEntityId(req.params.id);
 
   try {
-    const { title, body, putAbovePageId, uri } = req.body;
+    const { title, body, isMultiLocale, putAbovePageId, uri } = req.body;
     const parent = toEntityId(req.body.parent);
     const pages = await Pages.getAllPages();
     let page = await Pages.get(id);
@@ -134,6 +136,8 @@ router.post('/page/:id', multer.none(), async (req: Request, res: Response) => {
 
     page = await Pages.update(id, {
       title,
+      locale: req.locale,
+      isMultiLocale,
       body,
       parent,
       uri,
