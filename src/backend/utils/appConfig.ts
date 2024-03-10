@@ -84,6 +84,7 @@ const FrontendConfig = z.object({
   maxMenuLevel: z.number().int().min(1).max(7), // Max menu level depth
   misprintsChatId: z.string().optional(), // Telegram chat id for misprints
   yandexMetrikaId: z.string().optional(), // Yandex metrika id
+  yandexMetrikaWebvisor: z.boolean().optional(), // Yandex metrika webvisor
   carbon: z.object({
     serve: z.string().optional(), // Carbon serve url
     placement: z.string().optional(), // Carbon placement
@@ -147,6 +148,7 @@ const defaultConfig: AppConfig = {
     description: 'Free Docs app powered by Editor.js ecosystem',
     startPage: '',
     maxMenuLevel: 7,
+    yandexMetrikaWebvisor: false,
     carbon: {
       serve: '',
       placement: '',

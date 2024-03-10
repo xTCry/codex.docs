@@ -27,6 +27,7 @@ frontend:
   # maxMenuLevel: 3 # Between 1 and 7
   misprintsChatId: "12344564"
   yandexMetrikaId: ""
+  # yandexMetrikaWebvisor: true
   carbon:
     serve: ""
     placement: ""
