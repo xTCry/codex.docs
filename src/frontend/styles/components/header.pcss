@@ -39,7 +39,7 @@ html {
     transition: background-color .13s;
 
     &--active {
-      background-color: var(--color-link-active);
+      background-color: var(--color-link-active) !important;
     }
 
     padding: .15rem 0.25rem;
@@ -76,25 +76,22 @@ html {
       }
     }
 
-    li&-add {
-      flex-shrink: 0;
-
-      &--desktop {
-        @media (--mobile) {
-          display: none;
-        }
-      }
-
-      &--mobile {
+    li&-desktop {
+      @media (--mobile) {
         display: none;
+      }
+    }
 
-        @media (--mobile) {
-          display: block;
-          position: absolute;
-          right: 0;
-          top: 13px;
-          line-height: 1em;
-        }
+    &-mobile {
+      display: none;
+
+      @media (--mobile) {
+        display: block;
+        position: absolute;
+        right: 0;
+        top: var(--layout-padding-vertical);
+        margin-top: 0;
+        line-height: 1em;
       }
     }
 

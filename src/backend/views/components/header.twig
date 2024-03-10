@@ -2,21 +2,47 @@
   <a href="{{ config.basePath ?: '/' }}" class="docs-header__logo">
     {{ config.title | striptags }}
   </a>
-  <ul class="docs-header__menu">
+
+  <ul class="docs-header__menu docs-header__menu-mobile">
     {% if isAuthorized == true %}
-      <li class="docs-header__menu-add docs-header__menu-add--desktop">
-        {% include 'components/button.twig' with {label: __('index.add_page'), icon: 'plus', size: 'small', url: config.basePath ~ '/page/new'} %}
-      </li>
-      <li class="vr-divider docs-header__menu-add--desktop"></li>
-      <li class="docs-header__menu-add docs-header__menu-add--mobile">
+      <li>
         {% include 'components/button.twig' with {icon: 'plus', size: 'small', url: config.basePath ~ '/page/new'} %}
       </li>
     {% endif %}
+    <li>
+      <button name="theme-toggle" class="docs-button docs-button--primary docs-button--small docs-button--with-icon color-theme" aria-label="Change theme">
+        <div class="docs-button__icon">
+          {{ svg('theme-mode') }}
+        </div>
+      </button>
+    </li>
+  </ul>
+
+  <ul class="docs-header__menu">
+    {% if isAuthorized == true %}
+      <li class="docs-header__menu-desktop">
+        {% include 'components/button.twig' with {label: __('index.add_page'), icon: 'plus', size: 'small', url: config.basePath ~ '/page/new'} %}
+      </li>
+    {% endif %}
+    <li class="docs-header__menu-desktop">
+      <button name="theme-toggle" class="docs-button docs-button--primary docs-button--small docs-button--with-icon color-theme" aria-label="Change theme">
+        <div class="docs-button__icon">
+          {{ svg('theme-mode') }}
+        </div>
+        {# <div class="docs-button__icon d-none-dark">
+          {{ svg('theme-mode') }}
+        </div>
+        <div class="docs-button__icon d-none-light">
+          {{ svg('theme-mode') }}
+        </div> #}
+      </button>
+    </li>
+    <li class="vr-divider docs-header__menu-desktop"></li>
 
     {% if config.availableLocales|length > 1 %}
       {% for lang in config.availableLocales %}
         <li>
-            <a class="docs-header__menu-link{% if lang == locale %} docs-header__menu-link--active {% endif %}" href="{{ config.basePath ~ '/set-lang/' ~ lang }}">
+            <a class="docs-button docs-button--secondary docs-header__menu-link{% if lang == locale %} docs-header__menu-link--active {% endif %}" href="{{ config.basePath ~ '/set-lang/' ~ lang }}">
               {{ lang | striptags | upper }}
             </a>
         </li>
