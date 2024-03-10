@@ -2,12 +2,12 @@
 <html lang="{{ locale }}" data-theme="{{ config.defaultTheme }}" style="height: 100%">
 <head>
   <title>{{ config.title }}</title>
-  <link rel="stylesheet" href="{{ config.basePath ~ '/dist/main.css' }}" />
+  <link rel="stylesheet" href="{{ config.basePath }}/dist/main.css?v={{ bundleRevisionCss }}" />
   <link rel="icon" type="{{ favicon.type }}" href="{{ favicon.destination }}">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="description" property="og:description" content="{{ config.description }}">
   <meta property="og:title" content="{{ config.title }}" />
   <meta property="og:site_name" content="{{ config.title }}" />
-  <meta name="description" property="og:description" content="{{ config.description }}">
 
   <script>
     window.config = {
@@ -30,7 +30,6 @@
     {% include '../components/button.twig' with {label: __('index.add_page'), icon: 'plus', size: 'small', url: config.basePath ~ '/page/new'} %}
   </div>
 
-  {% include "components/footer.twig" with res.locals.isAuthorized %}
+  {% include "components/footer.twig" %}
 </body>
 </html>
-

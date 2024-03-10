@@ -5,6 +5,8 @@
 import Debug from 'debug';
 import path from 'path';
 import os from 'os';
+import fs from 'fs';
+import crypto from 'crypto';
 import http from 'http';
 import express, { NextFunction, Request, Response } from 'express';
 import cookieParser from 'cookie-parser';
@@ -40,6 +42,27 @@ function createApp(): express.Express {
 
   const app = express();
   const localConfig = appConfig.frontend;
+
+  let bundleRevisionJs: string = '0';
+  let bundleRevisionCss: string = '0';
+  try {
+    bundleRevisionJs = crypto
+      .createHash('md5')
+      .update(
+        fs.readFileSync(
+          path.join(__dirname, '../../public/dist/main.bundle.js'),
+        ),
+      )
+      .digest('hex');
+    bundleRevisionCss = crypto
+      .createHash('md5')
+      .update(
+        fs.readFileSync(path.join(__dirname, '../../public/dist/main.css')),
+      )
+      .digest('hex');
+  } catch (err) {
+    console.error(err);
+  }
 
   i18n.configure({
     locales: localConfig.availableLocales,
@@ -140,6 +163,15 @@ function createApp(): express.Express {
       });
     }
     res.redirect(req.headers.referer || localConfig.basePath || '/');
+  });
+
+  /**
+   * Set current static bundle revision and pass it to the templates
+   */
+  baseRouter.use(function (req, res, next) {
+    res.locals.bundleRevisionJs = bundleRevisionJs;
+    res.locals.bundleRevisionCss = bundleRevisionCss;
+    next();
   });
 
   baseRouter.use(routes);

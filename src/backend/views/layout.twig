@@ -2,10 +2,12 @@
 <html lang="{{ locale }}" data-theme="{{ config.defaultTheme }}">
 <head>
   <title>{{ (page.title ?: config.title) | striptags }}</title>
-  <link rel="stylesheet" href="{{ config.basePath ~ '/dist/main.css' }}" />
+  <link rel="stylesheet" href="{{ config.basePath }}/dist/main.css?v={{ bundleRevisionCss }}" />
   <link rel="icon" type="{{ favicon.type }}" href="{{ favicon.destination }}">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="description" property="og:description" content="{{ config.description }}">
   <meta property="og:title" content="{{ page.title | striptags }}" />
+  <meta property="og:site_name" content="{{ config.title }}" />
   <meta property="og:type" content="article" />
   <meta property="article:modified_time" content="{{ (page.body.time / 1000) | date("c") }}" />
 
@@ -24,7 +26,7 @@
   </script>
 </head>
 <body>
-  {% include "components/header.twig" with res.locals.isAuthorized %}
+  {% include "components/header.twig" %}
 
   <div class="docs">
     {% include "components/sidebar.twig" %}
@@ -38,8 +40,8 @@
     </div>
   </div>
 
-  <script src="{{ config.basePath ~ '/dist/main.bundle.js' }}"></script>
+  <script src="{{ config.basePath }}/dist/main.bundle.js?v={{ bundleRevisionJs }}"></script>
 
-  {% include "components/footer.twig" with res.locals.isAuthorized %}
+  {% include "components/footer.twig" %}
 </body>
 </html>
