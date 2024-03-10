@@ -6,6 +6,7 @@ auth:
   label_password: Пароль
 
 sidebar:
+  menu: Содержание
   search: Поиск
 
 navigator:

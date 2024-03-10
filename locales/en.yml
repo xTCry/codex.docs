@@ -6,6 +6,7 @@ auth:
   label_password: Password
 
 sidebar:
+  menu: Table of contents
   search: Search
 
 navigator:
