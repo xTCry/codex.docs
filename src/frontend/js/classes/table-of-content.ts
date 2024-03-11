@@ -66,7 +66,7 @@ export default class TableOfContent {
   }) {
     const { tagSelector, appendTo } = options;
 
-    this.tagSelector = tagSelector || 'h2,h3,h4';
+    this.tagSelector = tagSelector || 'h2,h3,h4,h5,h6';
 
     this.tocParentElement = appendTo;
 
@@ -216,17 +216,20 @@ export default class TableOfContent {
        * Additional indent for h3-h6 headers
        */
       switch (tag.tagName.toLowerCase()) {
-        case 'h3':
+        case 'h2':
           linkWrapper.classList.add(this.CSS.tocElementItemIndent(1));
           break;
-        case 'h4':
+        case 'h3':
           linkWrapper.classList.add(this.CSS.tocElementItemIndent(2));
           break;
-        case 'h5':
+        case 'h4':
           linkWrapper.classList.add(this.CSS.tocElementItemIndent(3));
           break;
-        case 'h6':
+        case 'h5':
           linkWrapper.classList.add(this.CSS.tocElementItemIndent(4));
+          break;
+        case 'h6':
+          linkWrapper.classList.add(this.CSS.tocElementItemIndent(5));
           break;
       }
 
