@@ -10,13 +10,15 @@
 
 <figure class="block-image">
   <div class="{{ classes.join(' ') }}">
-    {% if file.mime and file.mime == 'video/mp4' %}
-      <video autoplay loop muted playsinline>
-        <source src="{{ file.url }}" type="video/mp4">
-      </video>
-    {% else %}
-      <img src="{{ file.url }}" alt="{{ caption ? caption | striptags : '' }}">
-    {% endif %}
+    <a data-fancybox data-src="{{ file.url }}" data-caption="{{ caption ? caption | striptags : '' }}">
+      {% if file.mime and file.mime == 'video/mp4' %}
+        <video autoplay loop muted playsinline>
+          <source src="{{ file.url }}" type="video/mp4">
+        </video>
+      {% else %}
+        <img src="{{ file.url }}" alt="{{ caption ? caption | striptags : '' }}" />
+      {% endif %}
+    </a>
   </div>
 
   {% if caption %}

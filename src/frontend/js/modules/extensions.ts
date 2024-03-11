@@ -1,4 +1,5 @@
 import Misprints from '@codexteam/misprints';
+import { Fancybox } from '@fancyapps/ui';
 
 import { Storage } from '../utils/storage';
 
@@ -25,6 +26,10 @@ export default class Extensions {
     if (window.config.allowChangeTheme) {
       this.initTheme();
     }
+
+    Fancybox.bind('[data-fancybox]', {
+      // options...
+    });
   }
 
   initTheme() {

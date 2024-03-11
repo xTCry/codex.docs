@@ -2258,6 +2258,11 @@
   resolved "https://registry.yarnpkg.com/@eslint/js/-/js-8.57.0.tgz#a5417ae8427873f1dd08b70b3574b453e67b5f7f"
   integrity sha512-Ys+3g2TaW7gADOJzPt83SJtCDhMjndcDMFVQ/Tj9iA1BfJzFKD9mAUXT3OenpuPHbI6P/myECxRJrofUsDx/5g==
 
+"@fancyapps/ui@^5.0.33":
+  version "5.0.33"
+  resolved "https://registry.yarnpkg.com/@fancyapps/ui/-/ui-5.0.33.tgz#ec51c190e65097bfcf45a85c7a97678974bf6d01"
+  integrity sha512-nYW7ntjhrpqoLz/vA9KpJ2zJ5gXRB7rpFKXWjW4GC1f2st/IoI1Oy2TEEz0xABIlvPTCuoMXaT1X3UC7bP97rA==
+
 "@hawk.so/javascript@^3.0.2":
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/@hawk.so/javascript/-/javascript-3.0.2.tgz#d10306b1b8314c31b439d645c097e9fda7b4df22"

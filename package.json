@@ -85,6 +85,7 @@
     "@editorjs/raw": "^2.5.0",
     "@editorjs/table": "^2.3.0",
     "@editorjs/warning": "^1.4.0",
+    "@fancyapps/ui": "^5.0.33",
     "@types/bcrypt": "^5.0.0",
     "@types/chai": "^4.2.21",
     "@types/config": "^0.0.39",
