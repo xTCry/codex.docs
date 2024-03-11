@@ -11,6 +11,9 @@ uploads:
     keyPrefix: "/"
     accessKeyId: "my-access-key"
     secretAccessKey: "my-secret-key"
+
+# favicon: "uploads/custom-favicon.png"
+
 frontend:
   basePath: "" # Example: /docs
   appName: "docs"

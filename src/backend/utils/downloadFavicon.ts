@@ -1,11 +1,14 @@
 import path from 'path';
-import fs from 'fs';
+import fs from 'fs-extra';
 import fetch, { RequestInit } from 'node-fetch';
+import appConfig from './appConfig';
 
 /**
  * Uploaded favicon data
  */
 export interface FaviconData {
+  filename: string;
+
   // Uploaded favicon path
   destination: string;
 
@@ -44,47 +47,47 @@ export async function downloadFavicon(
   }
 
   // Get file name by destination
-  const filename = destination.substring(destination.lastIndexOf('/') + 1);
+  const srcFilename = destination.substring(destination.lastIndexOf('/') + 1);
 
   // Get file format
-  const format = filename.split('.')[1];
+  const format = srcFilename.split('.').pop();
+
+  const distFilename = `favicon.${format}`;
+  // Get file path in temporary directory
+  const filePath = path.join(faviconFolder, distFilename);
 
   // Check if string is url
   if (!checkIsUrl(destination)) {
-    return {
-      destination: `/${filename}`,
-      type: `image/${format}`,
-    } as FaviconData;
+    destination = path.join(__dirname + '/../../../', destination);
+    if (!fs.existsSync(destination)) {
+      throw Error(`Favicon does not exist (${destination})`);
+    }
+    // Save file
+    await fs.copyFile(destination, filePath);
+  } else {
+    // Create timeout to abort request
+    const timeoutId = setTimeout(() => {
+      controller.abort();
+      console.log('Favicon request has timed out.');
+    }, 5000);
+
+    // Make get request to url
+    const res = await fetch(destination, {
+      signal: controller.signal as RequestInit['signal'],
+    });
+    // Get buffer data from response
+    const fileData = await res.buffer();
+
+    // Clear timeout, if data was got
+    clearTimeout(timeoutId);
+
+    // Save file
+    await fs.writeFile(filePath, fileData);
   }
 
-  // Create timeout to abort request
-  const timeoutId = setTimeout(() => {
-    controller.abort();
-    console.log('Favicon request has timed out.');
-  }, 5000);
-
-  // Make get request to url
-  const res = await fetch(destination, {
-    signal: controller.signal as RequestInit['signal'],
-  });
-  // Get buffer data from response
-  const fileData = await res.buffer();
-
-  // Clear timeout, if data was got
-  clearTimeout(timeoutId);
-
-  // Get file path in temporary directory
-  const filePath = path.join(faviconFolder, `favicon.${format}`);
-
-  // Save file
-  await fs.writeFile(filePath, fileData, (err) => {
-    if (err) {
-      console.log(err);
-    }
-  });
-
   return {
-    destination: `/favicon/favicon.${format}`,
+    filename: distFilename,
+    destination: appConfig.frontend.basePath + `/favicon/${distFilename}`,
     type: `image/${format}`,
   } as FaviconData;
 }

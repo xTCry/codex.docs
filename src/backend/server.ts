@@ -5,7 +5,7 @@
 import Debug from 'debug';
 import path from 'path';
 import os from 'os';
-import fs from 'fs';
+import fs from 'fs-extra';
 import crypto from 'crypto';
 import http from 'http';
 import express, { NextFunction, Request, Response } from 'express';
@@ -14,6 +14,7 @@ import morgan from 'morgan';
 import i18n from 'i18n';
 import yaml from 'yaml';
 import HawkCatcher from '@hawk.so/nodejs';
+import favicon from 'serve-favicon';
 
 import appConfig from './utils/appConfig';
 import { drawBanner } from './utils/banner';
@@ -31,13 +32,7 @@ const port = normalizePort(appConfig.port.toString() || '3000');
 /**
  * Create Express server
  */
-function createApp(): express.Express {
-  /**
-   * The __dirname CommonJS variables are not available in ES modules.
-   * https://nodejs.org/api/esm.html#no-__filename-or-__dirname
-   */
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  // const __dirname = path.dirname(fileURLToPath(import.meta.url));
+async function createApp() {
   const cwd = process.cwd();
 
   const app = express();
@@ -49,7 +44,7 @@ function createApp(): express.Express {
     bundleRevisionJs = crypto
       .createHash('md5')
       .update(
-        fs.readFileSync(
+        await fs.readFile(
           path.join(__dirname, '../../public/dist/main.bundle.js'),
         ),
       )
@@ -57,7 +52,7 @@ function createApp(): express.Express {
     bundleRevisionCss = crypto
       .createHash('md5')
       .update(
-        fs.readFileSync(path.join(__dirname, '../../public/dist/main.css')),
+        await fs.readFile(path.join(__dirname, '../../public/dist/main.css')),
       )
       .digest('hex');
   } catch (err) {
@@ -82,7 +77,7 @@ function createApp(): express.Express {
   }
 
   // Get url to upload favicon from config
-  const favicon = appConfig.favicon;
+  const faviconPath = appConfig.favicon;
 
   app.locals.config = localConfig;
   // Set client error tracking token as app local.
@@ -95,26 +90,29 @@ function createApp(): express.Express {
   app.set('view engine', 'twig');
   import('./utils/twig');
 
-  const downloadedFaviconFolder = os.tmpdir();
+  const downloadedFaviconFolder = path.join(os.tmpdir(), 'codex.docs');
+  await fs.ensureDir(downloadedFaviconFolder);
 
   // Check if favicon is not empty
-  if (favicon) {
-    // Upload favicon by url, it's path on server is '/temp/favicon.{format}'
-    downloadFavicon(favicon, downloadedFaviconFolder)
+  if (faviconPath) {
+    // Upload favicon by url, it's path on server is '/temp/codex.docs/favicon.{format}'
+    await downloadFavicon(faviconPath, downloadedFaviconFolder)
       .then((res) => {
         app.locals.favicon = res;
-        console.log('Favicon successfully uploaded');
+        console.log('Favicon successfully uploaded', app.locals.favicon);
       })
       .catch((err) => {
-        console.log(err);
         console.log('Favicon has not uploaded');
+        console.error(err);
       });
-  } else {
-    console.log('Favicon is empty, using default path');
+  }
+  if (!app.locals.favicon) {
     app.locals.favicon = {
+      filename: 'favicon.png',
       destination: localConfig.basePath + '/favicon.png',
       type: 'image/png',
     } as FaviconData;
+    console.log('Favicon is empty, using default path', app.locals.favicon);
   }
 
   app.use(morgan('dev'));
@@ -142,9 +140,22 @@ function createApp(): express.Express {
     next();
   });
 
+  /**
+   * Deliver favicon.ico by /favicon.ico route
+   */
+  const faviconMiddleware = favicon(
+    faviconPath
+      ? path.join(downloadedFaviconFolder, app.locals.favicon.filename)
+      : path.join(__dirname, '../../public/', app.locals.favicon.filename),
+  );
+  app.use(faviconMiddleware);
+
   const baseRouter = express.Router();
+  baseRouter.use(faviconMiddleware);
   baseRouter.use(express.static(path.join(__dirname, '../../public')));
-  baseRouter.use('/favicon', express.static(downloadedFaviconFolder));
+  if (faviconPath) {
+    baseRouter.use('/favicon', express.static(downloadedFaviconFolder));
+  }
   if (appConfig.uploads.driver === 'local') {
     const uploadsPath = path.join(cwd, appConfig.uploads.local.path);
     baseRouter.use('/uploads', express.static(uploadsPath));
@@ -206,8 +217,8 @@ function createApp(): express.Express {
 /**
  * Create and run HTTP server.
  */
-export default function runHttpServer(): void {
-  const app = createApp();
+export default async function runHttpServer() {
+  const app = await createApp();
 
   app.set('port', port);
 
