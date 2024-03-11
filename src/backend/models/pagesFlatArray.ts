@@ -176,7 +176,6 @@ class PagesFlatArray {
         locale,
         isAuthorized,
       );
-      console.log('childPages', childPages);
 
       arr = [...arr, ...childPages];
     }
