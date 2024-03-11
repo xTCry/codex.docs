@@ -1,0 +1,8 @@
+<figure class="block-quote">
+  <blockquote style="text-align: {{ alignment }}">
+    {{ text }}
+  </blockquote>
+  {% if caption is not empty %}
+    <figcaption class="block-quote__caption">{{ caption }}</figcaption>
+  {% endif %}
+</figure>

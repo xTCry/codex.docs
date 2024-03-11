@@ -8,6 +8,7 @@ interface Window {
     locale: string;
     locales: Record<string, any>;
   };
+  tns: any;
 }
 
 declare module 'module-dispatcher' {
@@ -41,7 +42,13 @@ declare module '@editorjs/raw';
 declare module '@editorjs/embed';
 declare module '@editorjs/inline-code';
 declare module '@editorjs/marker';
+declare module '@editorjs/quote';
+declare module '@editorjs/underline';
+declare module '@sotaproject/strikethrough';
 declare module 'editorjs-toggle-block';
+declare module 'editorjs-gallery';
 
+declare module 'editorjs-hyperlink';
 declare module 'editorjs-undo';
 declare module 'editorjs-drag-drop';
+declare module 'editorjs-text-color-plugin';

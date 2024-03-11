@@ -75,12 +75,18 @@ editorjs_i18n:
       Italic: Курсив
       InlineCode: Моноширинный
       Image: Картинка
+      Hyperlink: Гипер-ссылка
+      Gallery: Галерея
     tools:
       warning:
         Title: Название
         Message: Сообщение
       link:
         Add a link: Вставьте ссылку
+        # hyperlink:
+        Save: Сохранить
+        Select target: Выберите цель
+        Select rel: Выберите rel
       stub:
         The block can not be displayed correctly.: Блок не может быть отображен
       image:
@@ -114,6 +120,9 @@ editorjs_i18n:
         Add row above: Добавить строку выше
         Add row below: Добавить строку ниже
         Delete row: Удалить строку
+        Gallery:
+          Select an Image: Выбор изображения
+          Gallery caption: Подпись
     blockTunes:
       delete:
         Delete: Удалить

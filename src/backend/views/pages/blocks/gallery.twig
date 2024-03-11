@@ -1,0 +1,43 @@
+{% set classes = ['block-image__content'] %}
+{% set randId = random(100, 5999) %}
+{# style = "slider" or "fit"  #}
+
+<figure class="block-image">
+  <div id="tns-{{ randId }}">
+    {% for file in files %}
+      <div class="{{ classes.join(' ') }}">
+        <a data-fancybox="{{ randId }}" data-src="{{ file.url }}" data-caption="{{ caption ? caption | striptags : '' }}">
+          {% if file.mime and file.mime == 'video/mp4' %}
+            <video autoplay loop muted playsinline>
+              <source src="{{ file.url }}" type="video/mp4">
+            </video>
+          {% else %}
+            <img src="{{ file.url }}" alt="{{ caption ? caption | striptags : '' }}">
+          {% endif %}
+        </a>
+      </div>
+    {% endfor %}
+  </div>
+
+  {% if caption %}
+    <footer class="block-image__caption">
+        {{ caption }}
+    </footer>
+  {% endif %}
+</figure>
+
+<script type="module">
+  var slider{{ randId }} = tns({
+    container: '#tns-{{ randId }}',
+    items: 1,
+    slideBy: 'page',
+    loop: false,
+    controls: false,
+    mouseDrag: true,
+    arrowKeys: true,
+    // autoWidth: true,
+    autoHeight: true,
+    gutter: 8,
+    // autoplay: true,
+  });
+</script>

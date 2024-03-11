@@ -1,7 +1,13 @@
 import Misprints from '@codexteam/misprints';
+import { tns } from 'tiny-slider';
 import { Fancybox } from '@fancyapps/ui';
 
+import 'tiny-slider/dist/tiny-slider.css';
+import '@fancyapps/ui/dist/fancybox/fancybox.css';
+
 import { Storage } from '../utils/storage';
+
+window.tns = tns;
 
 /**
  * Local storage key

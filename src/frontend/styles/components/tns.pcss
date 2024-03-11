@@ -1,0 +1,52 @@
+.tns-outer {
+  .tns-controls {
+    text-align: center;
+    margin-bottom: 10px;
+
+    [aria-controls] {
+      font-size: 15px;
+      margin: 0 5px;
+      padding: 0 1em;
+      height: 2.5em;
+      color: var(--color-text-main);
+      background: var(--color-link-active);
+      border-radius: 3px;
+      border: 0;
+    }
+
+    [disabled] {
+      color: #999999;
+      background: #B3B3B3;
+      cursor: not-allowed !important;
+    }
+  }
+
+  button[data-action] {
+    display: block;
+    margin: 10px auto;
+    font-size: 17px;
+    min-width: 3em;
+    text-align: center;
+    background: transparent;
+    border: 0;
+  }
+
+  .tns-nav {
+    text-align: center;
+    margin: 10px 0;
+
+    &>[aria-controls] {
+      width: 9px;
+      height: 9px;
+      padding: 0;
+      margin: 0 5px;
+      border-radius: 50%;
+      background: var(--color-line-gray);
+      border: 0;
+    }
+
+    &>.tns-nav-active {
+      background: var(--color-link-active);
+    }
+  }
+}
