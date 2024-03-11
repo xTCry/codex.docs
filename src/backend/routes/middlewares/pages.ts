@@ -31,12 +31,23 @@ export const loadMenu = async (
       }
     }
 
-    const pages = await Pages.getAllPages(req.locale, reqIds);
+    const pages = await Pages.getAllPages(
+      req.locale,
+      reqIds,
+      res.locals.isAuthorized,
+    );
+
+    for (const page of pages) {
+      if (page.isPrivate) {
+        page.title = '🔐 ' + page.title;
+      }
+    }
 
     res.locals.menu = createMenuTree(
       parentIdOfRootPages,
       pages,
       pagesOrder,
+      res.locals.isAuthorized,
       appConfig.frontend.maxMenuLevel,
     );
   } catch (error) {

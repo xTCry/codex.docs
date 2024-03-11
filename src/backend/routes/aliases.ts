@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import Aliases from '../controllers/aliases';
 import Pages from '../controllers/pages';
 import verifyToken from './middlewares/token';
@@ -16,61 +16,60 @@ const router = express.Router();
  *
  * Return document with given alias
  */
-router.get('*', verifyToken, async (req: Request, res: Response) => {
-  try {
-    let url = req.originalUrl.slice(appConfig.frontend.basePath.length + 1); // Cuts base route path
-    const queryParamsIndex = url.indexOf('?');
+router.get(
+  '*',
+  verifyToken,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      let url = req.originalUrl.slice(appConfig.frontend.basePath.length + 1); // Cuts base route path
+      const queryParamsIndex = url.indexOf('?');
 
-    if (queryParamsIndex !== -1) {
-      url = url.slice(0, queryParamsIndex); // Cuts off query params
-    }
-
-    const alias = await Aliases.get(url);
-
-    if (alias.id === undefined) {
-      throw new HttpException(404, 'Alias not found');
-    }
-    switch (alias.type) {
-      case Alias.types.PAGE: {
-        const menu = res.locals.menu as Page[];
-        const page = await Pages.get(alias.id);
-        if (!menu.find((m) => m._id === page._id)) {
-          await loadMenu(req, res, page);
-        }
-
-        const pageParent = await page.getParent();
-
-        const previousPage = await PagesFlatArray.getPageBefore(
-          alias.id,
-          req.locale,
-        );
-        const nextPage = await PagesFlatArray.getPageAfter(
-          alias.id,
-          req.locale,
-        );
-
-        res.render('pages/page', {
-          page,
-          pageParent,
-          previousPage,
-          nextPage,
-          config: req.app.locals.config,
-        });
+      if (queryParamsIndex !== -1) {
+        url = url.slice(0, queryParamsIndex); // Cuts off query params
       }
+
+      const alias = await Aliases.get(url);
+
+      if (alias.id === undefined) {
+        throw new HttpException(404, 'Alias not found');
+      }
+      switch (alias.type) {
+        case Alias.types.PAGE: {
+          const menu = res.locals.menu as Page[];
+          const page = await Pages.get(alias.id, res.locals.isAuthorized);
+          if (!menu.find((m) => m._id === page._id)) {
+            await loadMenu(req, res, page);
+          }
+
+          const pageParent = await page.getParent();
+
+          const previousPage = await PagesFlatArray.getPageBefore(
+            alias.id,
+            req.locale,
+            res.locals.isAuthorized,
+          );
+          const nextPage = await PagesFlatArray.getPageAfter(
+            alias.id,
+            req.locale,
+            res.locals.isAuthorized,
+          );
+
+          res.render('pages/page', {
+            page,
+            pageParent,
+            previousPage,
+            nextPage,
+            config: req.app.locals.config,
+          });
+        }
+      }
+    } catch (error) {
+      if ((error as Error).message === 'Page with given id does not exist') {
+        error = new HttpException(404, 'Page not found');
+      }
+      next(error);
     }
-  } catch (err) {
-    if (err instanceof HttpException && (err as HttpException).status === 404) {
-      res.status(404).render('error', {
-        message: 'Page not found',
-        status: 404,
-      });
-    } else {
-      res.status(500).json({
-        success: false,
-        error: err,
-      });
-    }
-  }
-});
+  },
+);
 
 export default router;

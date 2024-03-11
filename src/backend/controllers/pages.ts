@@ -27,8 +27,8 @@ class Pages {
    * @param {string} id - page id
    * @returns {Promise<Page>}
    */
-  public static async get(id: EntityId): Promise<Page> {
-    const page = await Page.get(id);
+  public static async get(id: EntityId, isAuthorized = false): Promise<Page> {
+    const page = await Page.get(id, isAuthorized);
 
     if (!page._id) {
       throw new Error('Page with given id does not exist');
@@ -45,19 +45,30 @@ class Pages {
   public static async getAllPages(
     locale?: string,
     reqIds: EntityId[] = [],
+    isAuthorized = false,
   ): Promise<Page[]> {
-    return Page.getAll(
-      locale
-        ? {
-            $or: [
-              { locale },
-              { isMultiLocale: true },
-              { locale: { $exists: false }, isMultiLocale: { $exists: false } },
-              ...(reqIds.length > 0 ? [{ _id: { $in: reqIds } }] : []),
-            ],
-          }
-        : {},
-    );
+    return Page.getAll({
+      $and: [
+        ...(locale
+          ? [
+              {
+                $or: [
+                  { locale },
+                  { isMultiLocale: true },
+                  {
+                    locale: { $exists: false },
+                    isMultiLocale: { $exists: false },
+                  },
+                  ...(reqIds.length > 0 ? [{ _id: { $in: reqIds } }] : []),
+                ],
+              },
+            ]
+          : []),
+        ...(!isAuthorized
+          ? [{ $or: [{ isPrivate: false }, { isPrivate: { $exists: false } }] }]
+          : []),
+      ],
+    });
   }
 
   /**
@@ -69,19 +80,19 @@ class Pages {
   public static async getAllExceptChildren(
     parent: EntityId,
     locale?: string,
+    isAuthorized = false,
   ): Promise<Page[]> {
     const pagesAvailable = this.removeChildren(
-      await Pages.getAllPages(locale),
+      await Pages.getAllPages(locale, [], isAuthorized),
       parent,
     );
 
     const nullFilteredPages: Page[] = [];
-
-    pagesAvailable.forEach(async (item) => {
+    for (const item of pagesAvailable) {
       if (item instanceof Page) {
         nullFilteredPages.push(item);
       }
-    });
+    }
 
     return nullFilteredPages;
   }
@@ -90,15 +101,14 @@ class Pages {
    * Helper to get all pages as map
    */
   private static async getPagesMap(): Promise<Map<string, Page>> {
-    const pages = await Pages.getAllPages();
+    const pages = await Pages.getAllPages(undefined, [], true);
     const pagesMap = new Map<string, Page>();
 
     pages.forEach((page) => {
-      if (page._id) {
-        pagesMap.set(page._id.toString(), page);
-      } else {
+      if (!page._id) {
         throw new Error('Page id is not defined');
       }
+      pagesMap.set(page._id.toString(), page);
     });
 
     return pagesMap;
@@ -154,25 +164,20 @@ class Pages {
      */
     const result = Object.values(orderGroupedByParent)
       .flatMap((ids) => [...ids])
-      .map((id) => {
-        return pagesMap.get(id.toString()) as Page;
-      });
+      .map((id) => pagesMap.get(id.toString())!);
 
     /**
      * If the pageId passed, it excludes itself from result pages
      * Otherwise just returns result itself
      */
     if (pageId) {
-      return this.removeChildren(result, pageId).reduce((prev, curr) => {
-        if (curr instanceof Page) {
-          prev.push(curr);
-        }
-
-        return prev;
-      }, Array<Page>());
-    } else {
-      return result;
+      return this.removeChildren(result, pageId).reduce(
+        (prev, curr) => [...prev, ...(curr instanceof Page ? [curr] : [])],
+        Array<Page>(),
+      );
     }
+
+    return result;
   }
 
   /**
@@ -187,7 +192,7 @@ class Pages {
     parent: EntityId | undefined,
   ): Array<Page | null> {
     pagesAvailable.forEach(async (item, index) => {
-      if (item === null || !isEqualIds(item._parent, parent)) {
+      if (!item || !isEqualIds(item._parent, parent)) {
         return;
       }
       pagesAvailable[index] = null;
@@ -239,7 +244,7 @@ class Pages {
    * @returns {Promise<Page>}
    */
   public static async update(id: EntityId, data: PageData): Promise<Page> {
-    const page = await Page.get(id);
+    const page = await Page.get(id, true);
     const previousUri = page.uri;
 
     if (!page._id) {
@@ -263,7 +268,7 @@ class Pages {
           updatedPage.uri,
         );
 
-        alias.save();
+        await alias.save();
       }
 
       if (previousUri) {
@@ -282,7 +287,7 @@ class Pages {
    * @returns {Promise<Page>}
    */
   public static async remove(id: EntityId): Promise<Page> {
-    const page = await Page.get(id);
+    const page = await Page.get(id, true);
 
     if (!page._id) {
       throw new Error('Page with given id does not exist');

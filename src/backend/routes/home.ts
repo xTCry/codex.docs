@@ -21,7 +21,7 @@ router.get('/', verifyToken, async (req: Request, res: Response) => {
     // Check if page order consists
     if (pageOrder.order.length > 0) {
       // Get the first parent page
-      const page = await Pages.get(pageOrder.order[0]);
+      const page = await Pages.get(pageOrder.order[0], res.locals.isAuthorized);
 
       res.redirect(`${config.basePath}/${page.uri!}`);
     } else {

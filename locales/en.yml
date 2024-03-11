@@ -26,6 +26,7 @@ form:
     delete_page: Delete Page
   auto_save: Auto save (every 5 seconds)
   multi_locale: Is Multi-locale page
+  private_page: Is Private Page 🔐
   last_save_at: Last save at
 
 page:

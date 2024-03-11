@@ -199,6 +199,8 @@ async function createApp() {
     if (appConfig.hawk?.backendToken && err instanceof Error) {
       HawkCatcher.send(err);
     }
+    console.log('asdad', err instanceof HttpException);
+
     // only send Http based exception to client.
     if (err instanceof HttpException) {
       // set locals, only providing error in development
@@ -207,6 +209,7 @@ async function createApp() {
       // render the error page
       res.status(err.status || 500);
       res.render('error');
+      return;
     }
     next(err);
   });

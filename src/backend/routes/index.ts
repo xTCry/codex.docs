@@ -10,8 +10,9 @@ import allowEdit from './middlewares/locals';
 
 const router = express.Router();
 
+router.use(verifyToken);
 router.use('/', pagesMiddleware, home, pages, auth);
-router.use('/api', verifyToken, allowEdit, api);
+router.use('/api', allowEdit, api);
 router.use('/', aliases);
 
 export default router;

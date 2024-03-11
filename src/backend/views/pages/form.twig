@@ -184,6 +184,10 @@
             <input type="checkbox" id="multi-locale" name="multi-locale" {{ page is not empty ? (page.isMultiLocale ? 'checked' : '') : '' }} />
           </div>
         {% endif %}
+        <div class="checkbox-wrapper">
+          <label for="private-page">{{ __('form.private_page') }}</label>
+          <input type="checkbox" id="private-page" name="private-page" {{ page is not empty ? (page.isPrivate ? 'checked' : '') : '' }} />
+        </div>
       </div>
     </header>
 

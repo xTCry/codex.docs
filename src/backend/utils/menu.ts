@@ -16,6 +16,7 @@ export function createMenuTree(
   parentPageId: EntityId,
   pages: Page[],
   pagesOrder: PageOrder[],
+  isAuthorized = false,
   level = 1,
   currentLevel = 1,
 ): Page[] {
@@ -52,19 +53,16 @@ export function createMenuTree(
    * Each parents children can have subbranches
    */
   return branch
-    .filter((page) => page && page._id)
-    .map((page) => {
-      return Object.assign(
-        {
-          children: createMenuTree(
-            page._id,
-            pages,
-            pagesOrder,
-            level,
-            currentLevel + 1,
-          ),
-        },
-        page.data,
-      );
-    });
+    .filter((page) => page && page._id && (isAuthorized || !page.isPrivate))
+    .map((page) => ({
+      children: createMenuTree(
+        page._id,
+        pages,
+        pagesOrder,
+        isAuthorized,
+        level,
+        currentLevel + 1,
+      ),
+      ...page.data,
+    }));
 }

@@ -11,6 +11,7 @@ const pagesDb = database['pages'];
  * @property {string} title - page title
  * @property {string} locale - page locale
  * @property {boolean} isMultiLocale - is page multi-locale
+ * @property {boolean} isPrivate - is private page
  * @property {string} uri - page uri
  * @property {*} body - page body
  * @property {string} parent - id of parent page
@@ -20,6 +21,7 @@ export interface PageData {
   title?: string;
   locale?: string;
   isMultiLocale?: boolean;
+  isPrivate?: boolean;
   uri?: string;
   body?: any;
   parent?: EntityId;
@@ -32,6 +34,7 @@ export interface PageData {
  * @property {string} title - page title
  * @property {string} locale - page locale
  * @property {boolean} isMultiLocale - is page multi-locale
+ * @property {boolean} isPrivate - is private page
  * @property {string} uri - page uri
  * @property {*} body - page body
  * @property {string} _parent - id of parent page
@@ -42,6 +45,7 @@ class Page {
   public title?: string;
   public locale?: string;
   public isMultiLocale?: boolean;
+  public isPrivate?: boolean;
   public uri?: string;
   public _parent?: EntityId;
 
@@ -67,8 +71,15 @@ class Page {
    * @param {string} _id - page id
    * @returns {Promise<Page>}
    */
-  public static async get(_id: EntityId): Promise<Page> {
-    const data = await pagesDb.findOne({ _id });
+  public static async get(_id: EntityId, isAuthorized = false): Promise<Page> {
+    const data = await pagesDb.findOne({
+      $and: [
+        { _id },
+        ...(!isAuthorized
+          ? [{ $or: [{ isPrivate: false }, { isPrivate: { $exists: false } }] }]
+          : []),
+      ],
+    });
 
     return new Page(data);
   }
@@ -105,12 +116,13 @@ class Page {
    * @param {PageData} pageData - page's data
    */
   public set data(pageData: PageData) {
-    const { body, locale, isMultiLocale, parent, uri } = pageData;
+    const { body, locale, isMultiLocale, isPrivate, parent, uri } = pageData;
 
     this.body = body || this.body;
     this.title = this.extractTitleFromBody();
     this.locale = locale || this.locale;
     this.isMultiLocale = isMultiLocale ?? this.isMultiLocale;
+    this.isPrivate = isPrivate ?? this.isPrivate;
     this.uri = uri || '';
     this._parent = parent || this._parent || ('0' as EntityId);
   }
@@ -126,6 +138,7 @@ class Page {
       title: this.title,
       locale: this.locale,
       isMultiLocale: this.isMultiLocale,
+      isPrivate: this.isPrivate,
       uri: this.uri,
       body: this.body,
       parent: this._parent,

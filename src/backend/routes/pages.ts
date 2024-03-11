@@ -7,6 +7,7 @@ import { loadMenu } from './middlewares/pages';
 import PagesFlatArray from '../models/pagesFlatArray';
 import Page from '../models/page';
 import { toEntityId } from '../database/index';
+import HttpException from '../exceptions/httpException';
 
 const router = express.Router();
 
@@ -44,7 +45,7 @@ router.get(
 
     try {
       const menu = res.locals.menu as Page[];
-      const page = await Pages.get(pageId);
+      const page = await Pages.get(pageId, res.locals.isAuthorized);
       if (!menu.find((m) => m._id === page._id)) {
         await loadMenu(req, res, page);
       }
@@ -52,6 +53,7 @@ router.get(
       const pagesAvailable = await Pages.getAllExceptChildren(
         pageId,
         req.locale,
+        res.locals.isAuthorized,
       );
       const pagesAvailableGrouped = await Pages.groupByParent(pageId);
 
@@ -90,7 +92,7 @@ router.get(
 
     try {
       const menu = res.locals.menu as Page[];
-      const page = await Pages.get(pageId);
+      const page = await Pages.get(pageId, res.locals.isAuthorized);
       if (!menu.find((m) => m._id === page._id)) {
         await loadMenu(req, res, page);
       }
@@ -100,8 +102,13 @@ router.get(
       const previousPage = await PagesFlatArray.getPageBefore(
         pageId,
         req.locale,
+        res.locals.isAuthorized,
       );
-      const nextPage = await PagesFlatArray.getPageAfter(pageId, req.locale);
+      const nextPage = await PagesFlatArray.getPageAfter(
+        pageId,
+        req.locale,
+        res.locals.isAuthorized,
+      );
 
       res.render('pages/page', {
         page,
@@ -111,7 +118,9 @@ router.get(
         config: req.app.locals.config,
       });
     } catch (error) {
-      res.status(404);
+      if ((error as Error).message === 'Page with given id does not exist') {
+        error = new HttpException(404, 'Page not found');
+      }
       next(error);
     }
   },

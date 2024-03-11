@@ -13,10 +13,12 @@ const multer = multerFunc();
  *
  * Return PageData of page with given id
  */
-
 router.get('/page/:id', async (req: Request, res: Response) => {
   try {
-    const page = await Pages.get(toEntityId(req.params.id));
+    const page = await Pages.get(
+      toEntityId(req.params.id),
+      res.locals.isAuthorized,
+    );
 
     res.json({
       success: true,
@@ -37,7 +39,7 @@ router.get('/page/:id', async (req: Request, res: Response) => {
  */
 router.get('/pages', async (req: Request, res: Response) => {
   try {
-    const pages = await Pages.getAllPages();
+    const pages = await Pages.getAllPages(undefined, [], true);
 
     res.json({
       success: true,
@@ -58,12 +60,13 @@ router.get('/pages', async (req: Request, res: Response) => {
  */
 router.put('/page', multer.none(), async (req: Request, res: Response) => {
   try {
-    const { title, body, isMultiLocale } = req.body;
+    const { title, body, isMultiLocale, isPrivate } = req.body;
     const parent = toEntityId(req.body.parent);
     const page = await Pages.insert({
       title,
       locale: req.locale,
       isMultiLocale,
+      isPrivate,
       body,
       parent,
     });
@@ -96,10 +99,11 @@ router.post('/page/:id', multer.none(), async (req: Request, res: Response) => {
   const id = toEntityId(req.params.id);
 
   try {
-    const { title, body, isMultiLocale, putAbovePageId, uri } = req.body;
+    const { title, body, isMultiLocale, isPrivate, putAbovePageId, uri } =
+      req.body;
     const parent = toEntityId(req.body.parent);
-    const pages = await Pages.getAllPages();
-    let page = await Pages.get(id);
+    const pages = await Pages.getAllPages(undefined, [], true);
+    let page = await Pages.get(id, res.locals.isAuthorized);
 
     if (page._id === undefined) {
       throw new Error('Page not found');
@@ -138,6 +142,7 @@ router.post('/page/:id', multer.none(), async (req: Request, res: Response) => {
       title,
       locale: req.locale,
       isMultiLocale,
+      isPrivate,
       body,
       parent,
       uri,
@@ -162,7 +167,7 @@ router.post('/page/:id', multer.none(), async (req: Request, res: Response) => {
 router.delete('/page/:id', async (req: Request, res: Response) => {
   try {
     const pageId = toEntityId(req.params.id);
-    const page = await Pages.get(pageId);
+    const page = await Pages.get(pageId, res.locals.isAuthorized);
 
     if (page._id === undefined) {
       throw new Error('Page not found');
@@ -179,12 +184,14 @@ router.delete('/page/:id', async (req: Request, res: Response) => {
     let pageToRedirect;
 
     if (pageBeforeId) {
-      pageToRedirect = await Pages.get(pageBeforeId);
+      pageToRedirect = await Pages.get(pageBeforeId, res.locals.isAuthorized);
     } else if (pageAfterId) {
-      pageToRedirect = await Pages.get(pageAfterId);
+      pageToRedirect = await Pages.get(pageAfterId, res.locals.isAuthorized);
     } else {
       pageToRedirect =
-        page._parent !== '0' ? await Pages.get(page._parent) : null;
+        page._parent !== '0'
+          ? await Pages.get(page._parent, res.locals.isAuthorized)
+          : null;
     }
 
     /**

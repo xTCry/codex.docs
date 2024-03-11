@@ -9,6 +9,7 @@ type ENodes =
   | 'saveButton'
   | 'autoSaveCheckbox'
   | 'multiLocaleCheckbox'
+  | 'privateCheckbox'
   | 'removeButton'
   | 'goViewButton'
   | 'parentIdSelector'
@@ -62,6 +63,7 @@ export default class Writing {
     saveButton: null,
     autoSaveCheckbox: null,
     multiLocaleCheckbox: null,
+    privateCheckbox: null,
     removeButton: null,
     goViewButton: null,
     parentIdSelector: null,
@@ -73,6 +75,7 @@ export default class Writing {
   autoSaveStorage = new Storage('autoSave');
   autoSaveInterval: NodeJS.Timer | null = null;
   autoSaveLoop = false;
+  savingProcess = false;
 
   /**
    * Called by ModuleDispatcher to initialize module from DOM
@@ -115,6 +118,9 @@ export default class Writing {
 
     this.nodes.multiLocaleCheckbox = moduleEl.querySelector(
       '[name="multi-locale"]',
+    );
+    this.nodes.privateCheckbox = moduleEl.querySelector(
+      '[name="private-page"]',
     );
 
     this.nodes.saveButton = moduleEl.querySelector('[name="js-submit-save"]');
@@ -178,7 +184,7 @@ export default class Writing {
     const loop = async () => {
       while (this.autoSaveLoop) {
         try {
-          if (this.editor) {
+          if (this.editor && !this.savingProcess) {
             if (!(await this.compareData())) {
               this.nodes.saveButton!.classList.add('pulse');
               window.onbeforeunload = () => '';
@@ -263,6 +269,7 @@ export default class Writing {
       isMultiLocale:
         window.config.availableLocales?.length < 2 ||
         this.nodes.multiLocaleCheckbox?.checked,
+      isPrivate: this.nodes.privateCheckbox?.checked,
     };
   }
 
@@ -278,6 +285,7 @@ export default class Writing {
         : `${this.basePath}/api/page`;
 
       try {
+        this.savingProcess = true;
         let response = await fetch(endpoint, {
           method: this.page ? 'POST' : 'PUT',
           headers: {
@@ -309,6 +317,8 @@ export default class Writing {
     } catch (savingError) {
       alert(savingError);
       console.log('Saving error: ', savingError);
+    } finally {
+      this.savingProcess = false;
     }
   }
 
