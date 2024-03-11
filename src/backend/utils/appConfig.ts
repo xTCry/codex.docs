@@ -151,7 +151,7 @@ const defaultConfig: AppConfig = {
     availableLocales: ['en', 'ru'],
     pageUriLocaleMode: 'prefix',
     defaultTheme: 'light',
-    allowChangeTheme: false,
+    allowChangeTheme: true,
     title: 'CodeX Docs',
     description: 'Free Docs app powered by Editor.js ecosystem',
     startPage: '',
