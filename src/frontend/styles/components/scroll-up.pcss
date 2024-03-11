@@ -1,0 +1,40 @@
+.scroll-up {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  padding: 1.75rem 1.25rem;
+  border-radius: .35rem;
+
+  background: linear-gradient(50deg, var(--color-section-list-item-active-1) 0%, var(--color-section-list-item-active-2) 100%);
+  color: var(--color-section-list-item-active-text);
+
+  z-index: 100;
+  font-size: 1.2rem;
+  font-weight: 800;
+  text-align: center;
+  cursor: pointer;
+  opacity: 0;
+
+  -webkit-transition: opacity .15s ease-in;
+  transition: opacity .15s ease-in;
+
+  &.show {
+    opacity: .7;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  &:before {
+    content: "↑";
+  }
+
+  @media (--mobile) {
+    left: auto;
+    bottom: 8px;
+    right: 8px;
+    padding: .8rem .75rem;
+    font-size: 0.825rem;
+  }
+}

@@ -33,6 +33,8 @@ export default class Extensions {
       this.initTheme();
     }
 
+    this.initScrollUp();
+
     Fancybox.bind('[data-fancybox]', {
       // options...
     });
@@ -80,5 +82,21 @@ export default class Extensions {
     });
 
     updateTheme(this.themeMode);
+  }
+
+  initScrollUp() {
+    const btn = document.createElement('div');
+    btn.classList.add('scroll-up');
+    document.body.appendChild(btn);
+
+    const up = () => {
+      window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+    };
+    const onscroll = () =>
+      btn.classList[window.scrollY > 100 ? 'add' : 'remove']('show');
+
+    btn.addEventListener('click', up);
+    window.addEventListener('scroll', onscroll);
+    onscroll();
   }
 }
