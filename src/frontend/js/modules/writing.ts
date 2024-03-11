@@ -205,7 +205,8 @@ export default class Writing {
 
   async compareData() {
     return (
-      this.lastBlocksJson === JSON.stringify((await this.editor!.save()).blocks)
+      this.lastBlocksJson ===
+      JSON.stringify((await this.editor!.save())?.blocks)
     );
   }
 
