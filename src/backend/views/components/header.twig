@@ -61,9 +61,8 @@
       <li>
         {% if option is iterable %}
           <a class="docs-header__menu-link"
-            {% if option.uri %} href="{{ option.uri }}"
-            {% else %} href="{{ config.basePath ~ '/page/' ~ option._id }}"
-            {% endif %}>
+            href="{{ option.uri ? option.uri : (config.basePath ~ '/page/' ~ option._id) }}"
+            target="{{ option.external ? '_blank' : '_self' }}">
             {{ option.title | striptags }}
           </a>
         {% else %}

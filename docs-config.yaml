@@ -38,6 +38,8 @@ frontend:
     - "Guides"
     - title: "CodeX"
       uri: "https://codex.so"
+      # _id: "" # uri or page _id
+      external: true
   hideSidebarLogo: false
 
 auth:

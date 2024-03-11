@@ -90,7 +90,15 @@ const FrontendConfig = z.object({
     placement: z.string().optional(), // Carbon placement
   }),
   menu: z.array(
-    z.union([z.string(), z.object({ title: z.string(), uri: z.string() })]),
+    z.union([
+      z.string(),
+      z.object({
+        title: z.string(),
+        uri: z.string().optional(),
+        _id: z.string().optional(),
+        external: z.boolean().optional(),
+      }),
+    ]),
   ), // Menu for pages
   hideSidebarLogo: z.boolean().optional(), // Hide sidebar logo
 });
