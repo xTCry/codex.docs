@@ -5,6 +5,8 @@ import * as $ from '../utils/dom';
  * Generate dynamic table of content
  */
 export default class TableOfContent {
+  locales: Record<string, any> = window.config.locales.page || {};
+
   /**
    * Array of tags to observe
    */
@@ -242,7 +244,7 @@ export default class TableOfContent {
     this.nodes.wrapper = $.make('section', this.CSS.tocContainer);
 
     const header = $.make('header', this.CSS.tocHeader, {
-      textContent: 'On this page',
+      textContent: this.locales.toc_header,
     });
 
     this.nodes.wrapper.appendChild(header);

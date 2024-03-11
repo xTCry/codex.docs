@@ -38,6 +38,8 @@ js:
     enter_title: Введите заголовок
     wrong_uri: Uri содержит некорректные символы
     wrong_title_block: Запись должна начинаться с Заголовка
+  page:
+    toc_header: На этой странице
 
 editorjs_i18n:
   messages:

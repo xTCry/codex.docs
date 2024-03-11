@@ -38,5 +38,7 @@ js:
     enter_title: Enter a title
     wrong_uri: Uri has unexpected characters
     wrong_title_block: Entry should start with Header
+  page:
+    toc_header: On this page
 
 editorjs_i18n:
