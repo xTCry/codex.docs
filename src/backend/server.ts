@@ -199,7 +199,6 @@ async function createApp() {
     if (appConfig.hawk?.backendToken && err instanceof Error) {
       HawkCatcher.send(err);
     }
-    console.log('asdad', err instanceof HttpException);
 
     // only send Http based exception to client.
     if (err instanceof HttpException) {
