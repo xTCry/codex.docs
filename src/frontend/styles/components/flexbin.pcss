@@ -1,0 +1,46 @@
+.flexbin {
+  display: flex;
+  overflow: hidden;
+  flex-wrap: wrap;
+
+  margin: -2.5px;
+
+  --width: 300px;
+  --height: 300px;
+  --scale: 1;
+
+  &:after {
+    content: '';
+    flex-grow: 999999999;
+    min-width: calc(var(--width) * var(--scale));
+    height: 0;
+  }
+
+  &>* {
+    position: relative;
+    display: block;
+    height: calc(var(--height) * var(--scale));
+    margin: 2.5px;
+    flex-grow: 1;
+
+    >img {
+      height: calc(var(--height) * var(--scale));
+      object-fit: cover;
+      max-width: 100%;
+      min-width: 100%;
+      vertical-align: bottom;
+    }
+  }
+
+  &.flexbin-margin {
+    margin: 2.5px;
+  }
+
+  @media (--tablet) {
+    --scale: 0.85;
+  }
+
+  @media (--mobile) {
+    --scale: 0.5;
+  }
+}
