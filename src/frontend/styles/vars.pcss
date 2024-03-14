@@ -4,11 +4,12 @@
   --color-line-gray: #E8E8EB;
   --color-link-active: #2071cc;
   --color-link-hover: #e4ebf0;
-  --color-bg-light: #f8f7fa;
+  --color-bg: #fff;
+  --color-bg-secondary: #f8f7fa;
+  --color-bg-header: #fff;
   /* --color-page-active: #ff1767; */
   --color-input-primary: #F3F6F8;
   --color-input-border: #477CFF;
-  --color-bg-header: #f8f7fa;
 
   --color-section-list-item-active-text: white;
   --color-section-list-item-active-1: #129bff;
@@ -26,6 +27,10 @@
   --color-code-number: #ff6262;
   --color-code-comment: #6c7f93;
 
+  --color-inline-code-background: #fdf2f2;
+  --color-inline-code-background--hover: #faebeb;
+  --color-inline-code-color: #C44545;
+
   /* Button component styles */
   --color-button-primary: #3389FF;
   --color-button-primary-hover: #2E7AE6;
@@ -39,7 +44,7 @@
   --color-button-warning-hover: #D65151;
   --color-button-warning-active: #BD4848;
 
-  --color-button-copy: var(--color-bg-light);
+  --color-button-copy: var(--color-bg-secondary);
   --color-success: #00e08f;
 
   /**
@@ -220,11 +225,12 @@
    */
   --text-inline-code {
     display: inline-block;
-    background: rgba(251, 241, 241, 0.78);
-    color: #C44545;
-    font-size: 14px;
+    background: var(--color-inline-code-background);
+    color: var(--color-inline-code-color);
+    font-size: 0.9rem;
     line-height: 1.4em;
     letter-spacing: 0;
+    border-radius: 4px;
 
     padding: 3px 4px 2px;
     margin: -1px 2px 0;
@@ -233,7 +239,7 @@
     border-bottom: 0;
 
     &:hover {
-      background: rgba(251, 241, 241, 0.78);
+      background: var(--color-inline-code-background--hover);
     }
   }
 
@@ -298,11 +304,16 @@
   --color-line-gray: #444950;
   --color-link-active: #b34e4e;
   --color-link-hover: #de6161;
-  --color-bg-light: #1b1b1d;
+  --color-bg: #1b1b1d;
+  --color-bg-secondary: #242526;
+  --color-bg-header: #242526;
   /* --color-page-active: #de6161; */
   --color-input-primary: #444950;
   --color-input-border: #de6161;
-  --color-bg-header: #242526;
+
+  --color-inline-code-background: #292e3d;
+  --color-inline-code-background--hover: #2e3340;
+  --color-inline-code-color: #ff6675;
 
   /* Button component styles */
   --color-button-primary: #c75959;
