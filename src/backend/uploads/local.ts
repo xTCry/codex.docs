@@ -1,11 +1,11 @@
-import { UploadsDriver } from './types';
-import multer from 'multer';
+import fs from 'fs-extra';
 import mkdirp from 'mkdirp';
-import { random16 } from '../utils/crypto';
+import multer from 'multer';
 import mime from 'mime';
-import appConfig, { LocalUploadsConfig } from '../utils/appConfig';
-import fs from 'fs';
 import fileType from 'file-type';
+import { UploadsDriver } from './types';
+import { random16 } from '../utils/crypto';
+import { LocalUploadsConfig } from '../utils/appConfig';
 import { FileData } from '../models/file';
 
 /**
@@ -63,7 +63,7 @@ export default class LocalUploadsDriver implements UploadsDriver {
     const ext = type ? type.ext : possibleExtension;
     const fullName = `${filename}.${ext}`;
 
-    fs.writeFileSync(`${appConfig.uploads}/${fullName}`, data);
+    await fs.writeFile(`${this.config.local.path}/${fullName}`, data);
 
     return {
       name: fullName,
